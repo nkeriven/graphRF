@@ -118,7 +118,7 @@ k(P,Q) = \sum_{i,j=1}^N P_i Q_j k(H_i, H_j)
 
 \section{Combining the two}
 
-One can see the link with graphlet sampling, where $f_G$ is the (discrete) probability distribution of the graphlets. If we define $k(F, F') \approx \phi(F)^*\phi(F')$ where $\phi$ is a random feature map that replaces $\phi_k$, then the feature map \eqref{eq:graphlet_kernel_approx} is exactly what appears in \eqref{eq:mean_kernel_approx}. So, now, all the game becomes to find a good feature map $\phi(F)$ for graphlets. The induced MMD metric between graph is the MMD between graphlets probability distributions $f_G$:
+One can see the link with graphlet sampling, where $f_G$ is the (discrete) probability distribution of the graphlets. If we define $k(F, F') \approx \phi(F)^*\phi(F')$ where $\phi$ is a random feature map that replaces $\phi_k$, then the feature map \eqref{eq:graphlet_kernel_approx} is exactly what appears in \eqref{eq:mean_kernel_RF}. So, now, all the game becomes to find a good feature map $\phi(F)$ for graphlets. The induced MMD metric between graph is the MMD between graphlets probability distributions $f_G$:
 \[
 d(G,G') = MMD(f_G, f_{G'}) = \sqrt{k(f_G, f_{G}) + k(f_{G'}, f_{G'}) - 2 k(f_G, f_{G'})} \approx \| \frac{1}{n} \sum_i \phi(F_i) - \frac{1}{n} \sum_i \phi(F'_i)\|_2
 \]
