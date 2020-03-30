@@ -1,0 +1,129 @@
+\documentclass{article}
+\title{Working doc}
+\author{}
+\date{}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
+\usepackage{hyperref}       
+\usepackage{url}            
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{enumitem}
+\usepackage[margin=1.2in]{geometry}
+\usepackage[font={small}]{caption}
+\usepackage{appendix}
+\usepackage{parskip}
+
+
+\begin{document}
+
+\maketitle
+
+\section{Graphlet kernel}
+
+\paragraph{Graphlets.} The graphlet sampling kernel decomposes graphs into graphlets (i.e. small subgraphs
+with $k$ nodes) and counts matching graphlets in the input graphs. Let $H_1 , H_2 , \ldots , H_{N_k}$ be the set of size-$k$ graphlets. Here we have two choices: either we distinguish graphlets that are isomorphic as different, in which case $N_k = 2^{\frac{k(k-1)}{2}}$, or we don't, in which case $N_k$ is still exponential in $k$ but still lower. The first choice has the disadvantage of involving a much higher $N_k$, but the advantage of not requiring to solve the graph isomorphism problem to identify graphlets. Clever procedures exist for small $k$, but in general no polynomial algorithm is known.
+
+We denote by $\phi_k$ the function on size-$k$ graphs that identifies the corresponding graphlet:
+\[
+\phi_k(F) = \left[ 1_{(F = H_i)}\right]_{i=1}^{N_k} \in \{0,1\}^{N_k}
+\]
+In other words, $\phi_k$ puts a $1$ in the coordinate $i$ if $F=H_i$, and $0$ otherwise. Here, equality between $F$ and $H_i$ is to be taken up-to-isomorphism or not, depending on the choice made above.
+
+\paragraph{Sampling and graphlet kernel.} For a graph $G$, let $S_k(G)$ be a \emph{sampling procedure} that randomly extract a subgraph of size $k$ from $G$. The simplest choice is independent node sampling, but many other methods exist. For a graph $G$ and a sampling procedure $S_k$, let $f_G \in [0,1]^{N_k}$ be a vector such that its $i^{th}$ entry is equal to the frequency of
+occurrence of graphlet $i$ in $G$ when sampling with $S_k$:
+\[
+f_G = \left[\mathbb{P}(S_k(G) = H_i)\right]_{i=1}^{N_k} = \mathbb{E}_{F \sim S_k(G)} [\phi_k(F)]
+\]
+For two graphs $G,G'$, the graphlet kernel is then defined as:
+\begin{equation} \label{eq:graphlet_kernel}
+k(G , G') = f_{G}^\top f_{G'}
+\end{equation}
+which naturally involves an associated Euclidean metric $d_k(G,G') = \|f_G - f_{G'}\|_2$.
+
+\paragraph{Subsampling.} Exhaustive enumeration of graphlet is very expensive. Since there are $\binom{k}{n}$ size-$k$ subgraphs in a graph (when using independent node sampling), computing the feature vector for a graph of size $n$ requires $O(n^k)$ time.
+
+So, in practice, given a graph $G$, we sample independently $n$ subgraphs $F_1, \ldots, F_n$ using the sampling process $S_k$. Then, $f_G$ is simply approximated with an empirical average
+\begin{equation}\label{eq:graphlet_kernel_approx}
+f_G \approx \frac{1}{n} \sum_{j=1}^n \phi_k(F_j) = \hat{\mathbb{E}}[\phi_k(F)]
+\end{equation}
+Using simple concentration inequalities, it can be showed \cite{Weissman} that by sampling a fixed number of graphlets the empirical distribution of graphlets will be sufficiently close to their actual distribution if the graph.
+
+\paragraph{Issues.} We identify two issues with the traditional graphlet kernel:
+\begin{itemize}
+\item For general $k$, the function $\phi_k$ itself is expensive to compute. Unless smart procedures can be employed for small $k$, there is no other way than go through the entire graphlet list (and solve or not the graph isomorphism on top of that), and $N_k$ is at least exponential in $k$.
+\item the inner product \eqref{eq:graphlet_kernel} and its associated metric do not take into account a notion of \emph{similarity} between the graphlet themselves, they just compare the frequency counts for each graphlet, independently from the other.
+\end{itemize}
+We adress both question by replacing the function $\phi_k$ with an efficient, randomized high-dimensional mapping.
+
+\section{Random features, MMD}
+
+\paragraph{Random Features} Consider a p.d. kernel $k$ between objects $x \in\mathcal{X}$. Random features for kernel is based on the following expression:
+\begin{equation}\label{eq:RF}
+k(x,y) = \mathbb{E}_{\omega \sim \Lambda} \xi_\omega(x)^* \xi_\omega(y)
+\end{equation}
+for some family of mapping $\xi_\omega:\mathcal{X} \to \mathbb{C}$ indexed by a parameter $\omega \in \mathbb{R}^d$ (often called "frequency" because of Random \emph{Fourier} features) distributed according to some distribution $\Lambda$.
+
+For instance, based on Bochner Theorem: a continuous translation-invariant kernel $k(x,y)=k(x-y)$ on $\mathbb{R}^d$ is positive
+definite if and only if $k(\delta)$ is the Fourier transform of a non-negative measure, i.e. it satisfies \eqref{eq:RF} with $\xi_\omega(x) = e^{i\omega^\top x}$. It is not hard to see that complex exponential can also be replaced with cosines with dithering: $\xi_{\omega, b}(x) = \sqrt{2}\cos(\omega^\top x + b)$ where $b \sim \mathcal{U}([0,1])$.
+%if a shift-invariant kernel k(δ) is properly scaled, it’s Fourier transform p(w) is a
+%proper probability distribution, then:
+%k(x − y) = ∫ p(w)e iw(x−y) dw = E w [ξw (x)ξ w (y)∗ ] , ξ w (x) = e iwx
+%R d
+%So ξ w (x)ξ w (y)∗ is an unbiased estimate of k(x,y) when w is drawn from p.
+
+The RF methodology simply consists in approximating \eqref{eq:RF} with an empirical average: given $\omega_1, \ldots, \omega_m$ drawn $iid$ from $\Lambda$, we have
+\begin{equation}\label{eq:RF_approx}
+k(x,y) \approx \frac{1}{m}\sum_{\ell=1}^m \xi_{\omega_\ell}(x)^* \xi_{\omega_\ell}(y) = \phi(x)^* \phi(y)
+\end{equation}
+where
+\[
+\phi(x) = \frac{1}{\sqrt{m}}\left[\xi_{\omega_\ell}(x)\right]_{\ell=1}^m
+\]
+contains the random mappings of $x$. Hence we have replaced $k$ with a \emph{linear} kernel between the $\phi(x)$.
+
+\paragraph{Mean kernel and MMD} The mean kernel methodology allows to \emph{lift} a kernel from a domain $\mathcal{X}$ to a kernel on \emph{probability distributions} on $\mathcal{X}$. Given a base kernel $k$ and two probability distribution $P,Q$, it is defined as
+\begin{equation}\label{eq:mean_kernel}
+k(P,Q) = \mathbb{E}_{x \sim P, y \sim Q} k(x,y)
+\end{equation}
+In words, the mean kernel is just the expectation of the base kernel with respect to each term. The associated Euclidean metric is called the \emph{Maximum Mean Discrepancy} (for quite obscure reasons), and is naturally defined as
+\begin{equation}\label{eq:MMD}
+MMD(P,Q) = \sqrt{k(P,P) + k(Q,Q) - 2k(P,Q)}
+\end{equation}
+Warning: note that $k(P,P) = \mathbb{E}_{x \sim P, x' \sim P} k(x,x') \neq \mathbb{E}_{x \sim P} k(x,x)$.
+
+Given data $x_1, \ldots, x_n$ drawn $iid$ from $P$ and $y_1, \ldots, y_n$ drawn $iid$ from $Q$, the kernel \eqref{eq:mean_kernel} can naturally be approximated by
+\begin{equation}\label{eq:mean_kernel_approx}
+k(P,Q) \approx \frac{1}{n^2} \sum_{i,j=1}^n k(x_i,y_j)
+\end{equation}
+and the corresponding approximate MMD is
+\[
+MMD(P,Q) \approx \sqrt{\frac{1}{n^2} \sum_{i,j=1}^n k(x_i,x_j) + k(x_i,x_j) - k(x_i,y_j) - k(x_j, y_i)}
+\]
+Note that many variants are possible.
+
+\paragraph{MMD and random features} Mean kernel goes especially well with random features. Combining \eqref{eq:RF_approx} and \eqref{eq:mean_kernel_approx}, it is not hard to see that using RF the mean kernel can be further approximated by
+\begin{equation}
+\label{eq:mean_kernel_RF}
+k(P,Q) \approx \frac{1}{n^2} \sum_{i,j=1}^n \phi(x_i)^*\phi(y_j) = \left(\frac{1}{n} \sum_i \phi(x_i)\right)^* \left(\frac{1}{n} \sum_i \phi(y_i)\right)
+\end{equation}
+So the computation can be drastically improved by first computing the \emph{averaged random features} (also called random \emph{generalized moments}, also called \emph{sketch}) $\frac{1}{n} \sum_i \phi(x_i)$, and taking a linear kernel between them. The corresponding MMD is then just the Euclidean metric between the averaged random features
+\[
+MMD(P,Q) \approx \| \frac{1}{n} \sum_i \phi(x_i) - \frac{1}{n} \sum_i \phi(y_i)\|_2
+\]
+
+\paragraph{MMD for discrete distribution} Note that, for a discrete space of objects $H_1, \ldots, H_N$ with discrete probability distributions $P = [P_1, \ldots, P_N]$ and $Q$ on them, the mean kernel \eqref{eq:mean_kernel} takes a particular form
+\[
+k(P,Q) = \sum_{i,j=1}^N P_i Q_j k(H_i, H_j)
+\]
+
+\section{Combining the two}
+
+One can see the link with graphlet sampling, where $f_G$ is the (discrete) probability distribution of the graphlets. If we define $k(F, F') \approx \phi(F)^*\phi(F')$ where $\phi$ is a random feature map that replaces $\phi_k$, then the feature map \eqref{eq:graphlet_kernel_approx} is exactly what appears in \eqref{eq:mean_kernel_approx}. So, now, all the game becomes to find a good feature map $\phi(F)$ for graphlets. The induced MMD metric between graph is the MMD between graphlets probability distributions $f_G$:
+\[
+d(G,G') = MMD(f_G, f_{G'}) = \sqrt{k(f_G, f_{G}) + k(f_{G'}, f_{G'}) - 2 k(f_G, f_{G'})} \approx \| \frac{1}{n} \sum_i \phi(F_i) - \frac{1}{n} \sum_i \phi(F'_i)\|_2
+\]
+where $F_i$ are graphlets drawn from $G$ and $F'_i$ are graphlets drawn from $G'$.
+
+
+
+\end{document}
