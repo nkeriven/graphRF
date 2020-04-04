@@ -1,3 +1,0 @@
-Adjacency_matrix Lighon random features with :
-nodes_num, samples_num, p_flyback, sigma= 6, 2000, 0.85, 10
-num_expe=5"
