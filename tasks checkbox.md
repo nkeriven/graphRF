@@ -1,4 +1,5 @@
 - [ ] Compute test accuracty on Lighton with differnt logarithmic values of mult_factor 
+- [ ] run code on DD dataset
 - [ ] Benchmark SVM_Random features results with GNN results
 - [ ] search more for concentration ineq's with keywords (union bounds, covering args between compat sets, coding space)
 - [ ] reading this article: https://scholarship.rice.edu/bitstream/handle/1911/21683/JL_RIP.pdf?sequence=1
