@@ -1,3 +1,3 @@
-- [ ] first task
-- [ ] second task
-- [ ] so on
+- [ ] Compute test accuracty on Lighton with differnt logarithmic values of mult_factor 
+- [ ] Benchmark SVM_Random features results with DNN results
+- [ ] search more for concentration ineq's with keywords (union bounds, covering args between compat sets, coding space)
