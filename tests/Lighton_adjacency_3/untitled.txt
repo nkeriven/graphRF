@@ -1,0 +1,4 @@
+Adjacency_matrix Lighon random features with :
+trying different values of mult_factor and graphlet sizes
+samples_num= 2000
+num_expe=1
