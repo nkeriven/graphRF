@@ -1,0 +1,6 @@
+Adjacency_matrix Lighon random features with :
+different values of the number of random features. 
+dataset: DD data set
+samples_num= 4000
+num_expe=3
+nodes_num=7
