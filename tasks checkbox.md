@@ -2,6 +2,6 @@
 - [X] run code on DD dataset
 - [ ] Benchmark SVM_Random features results with GNN results
 - [ ] search more for concentration ineq's with keywords (union bounds, covering args between compat sets, coding space)
-- [ ] reading this article: https://scholarship.rice.edu/bitstream/handle/1911/21683/JL_RIP.pdf?sequence=1
+- [x] reading this article: https://scholarship.rice.edu/bitstream/handle/1911/21683/JL_RIP.pdf?sequence=1
 -------------------------------------------------my plans--------------------------------------------------------------------
 - [ ] reading this paper: https://openreview.net/forum?id=ryGs6iA5Km
