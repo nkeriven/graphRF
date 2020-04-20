@@ -98,6 +98,12 @@ MMD(P,Q) = \sqrt{k(P,P) + k(Q,Q) - 2k(P,Q)}
 \end{equation}
 Warning: note that $k(P,P) = \mathbb{E}_{x \sim P, x' \sim P} k(x,x') \neq \mathbb{E}_{x \sim P} k(x,x)$.
 
+If the kernel has the form \eqref{eq:RF}, then it is immediate that we have
+\begin{equation}
+\label{eq:MMD-RF}
+MMD(P,Q)^2 = \mathbb{E}_{\omega} \Big( | \mathbb{E}_P \xi_\omega(x) - \mathbb{E}_Q \xi_\omega(x) |^2 \Big)
+\end{equation}
+
 Given data $x_1, \ldots, x_n$ drawn $iid$ from $P$ and $y_1, \ldots, y_n$ drawn $iid$ from $Q$, the kernel \eqref{eq:mean_kernel} can naturally be approximated by
 \begin{equation}\label{eq:mean_kernel_approx}
 k(P,Q) \approx \frac{1}{n^2} \sum_{i,j=1}^n k(x_i,y_j)
@@ -125,32 +131,42 @@ k(P,Q) = \sum_{i,j=1}^N P_i Q_j k(H_i, H_j)
 
 \section{Combining the two}
 
-One can see the link with graphlet sampling, where $f_G$ is the (discrete) probability distribution of the graphlets. If we define $k(F, F') \approx \phi(F)^*\phi(F')$ where $\phi$ is a random feature map that replaces $\phi_k$, then the feature map \eqref{eq:graphlet_kernel_approx} is exactly what appears in \eqref{eq:mean_kernel_RF}. So, now, all the game becomes to find a good feature map $\phi(F)$ for graphlets. The induced MMD metric between graph is the MMD between graphlets probability distributions $f_G$:
+One can see the link with graphlet sampling, where $f_G$ is the (discrete) probability distribution of the graphlets. If we define $k(F, F') \approx \phi(F)^*\phi(F')$ where $\phi$ is a random feature map that replaces $\phi_k^{hist}$, then the feature map \eqref{eq:graphlet_kernel_approx} is exactly what appears in \eqref{eq:mean_kernel_RF}. So, now, all the game becomes to find a good feature map $\phi(F)$ for graphlets. The induced MMD metric between graph is the MMD between graphlets probability distributions $f_G$:
 \[
 d(G,G') = MMD(f_G, f_{G'}) = \sqrt{k(f_G, f_{G}) + k(f_{G'}, f_{G'}) - 2 k(f_G, f_{G'})} \approx \| \frac{1}{n} \sum_i \phi(F_i) - \frac{1}{n} \sum_i \phi(F'_i)\|_2
 \]
 where $F_i$ are graphlets drawn from $G$ and $F'_i$ are graphlets drawn from $G'$.
 
-\section{Theoretical guarantees}
-
 It has been shown that the approximation error in \eqref{eq:graphlet_kernel_approx} in $L_1$ norm is small with high probability (already in Hashem report).
 
 For us, it is interesting to see how much, given two graphs $G$ and $G'$, $\|\frac{1}{n} \sum_i \phi(F_i) - \frac{1}{n} \sum_i \phi(F'_i)\|_2$ is close to $d(G,G')$.
 \begin{lemma}[todo]
-Let $G$ and $G'$ be two graphs. Draw $F_i$ (resp. $F'_i$) $iid$ with $S_k(G)$ (resp. $S_k(G)$) and define $y =\frac{1}{n} \sum_i \phi(F_i)$ (resp. $y' = \frac{1}{n} \sum_i \phi(F_i')$) . With probability at least $1-...$, we have
+Let $G$ and $G'$ be two graphs. Draw $F_i$ (resp. $F'_i$) $iid$ with $S_k(G)$ (resp. $S_k(G)$) and define $y =\frac{1}{n} \sum_i \phi(F_i)$ (resp. $y' = \frac{1}{n} \sum_i \phi(F_i')$) . We have
 \[
 \mathbb{P}(|\|y-y'\|^2 - d(G,G')^2| \geq \varepsilon) \leq ...
 \]
 \end{lemma}
 
-\paragraph{Margin condition.} So, if we have training data $G_1, \ldots, G_p$ and $G'_1, \ldots, G'_p$ that satisfy a \textbf{margin condition}:
-\[
-d(G_i, G'_j) \geq \gamma >0
-\]
-such that they can be well-classified, with high probability the corresponding feature $y_i, y'_j$ are also well-separated and can also be well-classified.
+\begin{proof}
+We decompose the proof in two steps.
+\paragraph{Step 1: infinite $n$, finite $m$.} Using Hoeffding's inequality, prove that $d(G, G')^2$ is close to $\frac{1}{m} \sum_{j=1} | \mathbb{E}_{F \sim f_G} \xi_{\omega_j}(F) - \mathbb{E}_{F' \sim f_{G'}} \xi_{\omega_j}(F') |^2 = \| \mathbb{E}_{F \sim f_G} \phi(F) - \mathbb{E}_{F' \sim f_{G'}} \phi(F')\|^2$. Use equation \eqref{eq:MMD-RF}.
 
-To go one step further, we need to specify a model of \emph{distribution of graphs} (really a model of distribution of $f_G$) that gives rise to such margin condition with high probability. This, in turn, allows us to analyze the sample complexity of classical methods that rely on margin condition such as SVM (see eg Shalev-Schwartz book). A model well-adapted to (node-independent) sampling is that of graphon. Can we relate the distance $d(G,G')$ to something well-known in simple graphons, eg SBMs ?
+\paragraph{Step 2: finite $n$ and $m$.} Show that for any \emph{fixed} set of random features $\omega_j$, we have $\| \mathbb{E}_{F \sim f_G} \phi(F) - \mathbb{E}_{F' \sim f_{G'}} \phi(F')\|$ close to $\| \frac{1}{n} \sum_i \phi(F_i) - \frac{1}{n} \sum_i \phi(F'_i)\|$. For this, a version of Hoeffding's inequality for \emph{vectors} might be useful, see for instance Lemma 4 in Appendix A of "Weighted sums of random kitchen sinks: Replacing minimization with randomization in learning" by Rahimi and Recht.
 
-\paragraph{Sparsity.} In practice, it can be observed that very few coefficients of $f_G$ are significantly different from $0$, compared to its total size (todo: numerical illustration). Can we leverage this to improve the sample complexity/the required number of features ? Also, we can prove that there is no \emph{information loss} using techniques from compressed sensing (see eg Keriven and Gribonval "Instance Optimal Decoding and the Restricted Isometry Property")
+Since it is valid for any fixed set of random features, it is also valid with \emph{joint} probability on random features and samples, by the \emph{law of total probability} (complex, we'll talk about it later).
+
+\paragraph{Step 3} Using a \emph{union bound}, conclude.
+
+\end{proof}
+
+%\paragraph{Margin condition.} So, if we have training data $G_1, \ldots, G_p$ and $G'_1, \ldots, G'_p$ that satisfy a \textbf{margin condition}:
+%\[
+%d(G_i, G'_j) \geq \gamma >0
+%\]
+%such that they can be well-classified, with high probability the corresponding feature $y_i, y'_j$ are also well-separated and can also be well-classified.
+%
+%To go one step further, we need to specify a model of \emph{distribution of graphs} (really a model of distribution of $f_G$) that gives rise to such margin condition with high probability. This, in turn, allows us to analyze the sample complexity of classical methods that rely on margin condition such as SVM (see eg Shalev-Schwartz book). A model well-adapted to (node-independent) sampling is that of graphon. Can we relate the distance $d(G,G')$ to something well-known in simple graphons, eg SBMs ?
+
+\paragraph{RIP.} We may prove information preservation guarantees using the \emph{Restricted Isometry Property} (RIP). The RIP is, somehow, a \emph{uniform} version of (Step 1 of) Lemma 1. The features $y$ we compute can be seen as a random embedding of $f_G$. If we have enough features, then all the information in $f_G$ is contained in $y$, in the sense that there exists an \emph{Instance Optimal Decoder} that can retrieve $f_G$ from $y$, with some error (measured in the MMD). This is all the more true if $f_G$ is well-approximated by a \emph{sparse} vector, that has many coefficients close to $0$.
 
 \end{document}
