@@ -8,5 +8,5 @@
 - [ ] reading this paper: https://openreview.net/forum?id=ryGs6iA5Km
 - [ ] readin Deepwalk: online learning of Social representations (Perozzi et al, 2014)
 - [ ] reading node2vec: scalable feature learning for networks (Groveret al, 2016)
--[ ]  Ying+neurIPS 2019 graph classification 
+- [ ]  Ying+neurIPS 2019 graph classification survey.
 
