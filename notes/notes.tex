@@ -149,9 +149,92 @@ Let $G$ and $G'$ be two graphs. Draw $F_i$ (resp. $F'_i$) $iid$ with $S_k(G)$ (r
 
 \begin{proof}
 We decompose the proof in two steps.
-\paragraph{Step 1: infinite $n$, finite $m$.} Using Hoeffding's inequality, prove that $d(G, G')^2$ is close to $\frac{1}{m} \sum_{j=1} | \mathbb{E}_{F \sim f_G} \xi_{\omega_j}(F) - \mathbb{E}_{F' \sim f_{G'}} \xi_{\omega_j}(F') |^2 = \| \mathbb{E}_{F \sim f_G} \phi(F) - \mathbb{E}_{F' \sim f_{G'}} \phi(F')\|^2$. Use equation \eqref{eq:MMD-RF}.
+\paragraph{Step 1: infinite $n$, finite $m$.} Using Hoeffding's inequality, prove that:\newline  $d(G, G')^2$ is close to $\frac{1}{m} \sum_{j=1} | \mathbb{E}_{F \sim f_G} \xi_{\omega_j}(F) - \mathbb{E}_{F' \sim f_{G'}} \xi_{\omega_j}(F') |^2 = \| \mathbb{E}_{F \sim f_G} \phi(F) - \mathbb{E}_{F' \sim f_{G'}} \phi(F')\|^2$. Use equation \eqref{eq:MMD-RF}.\newline 
+Taking into assumption that when we approximate the graphlet kernel using random features, then the $\Lambda$ distribution in \eqref{eq:RF} satisfies that for each simple graph x we have:
+\begin{equation}
+    0\leq\xi_\omega(x)\leq 1, \forall \omega \sim  \Lambda
+\end{equation}
+This is a reasonable assumption since the lifting function $\phi_k^{hist}$ of a k-graphlet kernel  includes the normalized frequency of occurrences of each graphlet of size k in the graph $x$. Thus, in this case and based on this assumption we can make use of Hoeffding's inequality that states:
+\begin{lemma}[Hoeffding's inequality] 
+Let $(x_1,\ldots, x_m)$ be independent random variables such that the variable $x_i$ is strictly bounded by the interval $[a_i , b_i]$, and let $\overline{X}=\frac{1}{m}\Sigma_{i=1}^{m}x_i$ then we have:
+\begin{equation}
+\label{eq:Hoeffding}
+    Pr(|\mathbb{E}\overline{X}-\overline{X}|\geq \epsilon)\leq 2~ exp (-\frac{2m^2\epsilon^2}{\Sigma_{i=1}^m(b_i-a_i)^2)})
+\end{equation}
 
-\paragraph{Step 2: finite $n$ and $m$.} Show that for any \emph{fixed} set of random features $\omega_j$, we have $\| \mathbb{E}_{F \sim f_G} \phi(F) - \mathbb{E}_{F' \sim f_{G'}} \phi(F')\|$ close to $\| \frac{1}{n} \sum_i \phi(F_i) - \frac{1}{n} \sum_i \phi(F'_i)\|$. For this, a version of Hoeffding's inequality for \emph{vectors} might be useful, see for instance Lemma 4 in Appendix A of "Weighted sums of random kitchen sinks: Replacing minimization with randomization in learning" by Rahimi and Recht.
+\end{lemma}
+%\begin
+In our case, and for a finite number of random features $(m)$ we have the variables $x_j=| \mathbb{E}_{F \sim f_G} \xi_{\omega_j}(F) - \mathbb{E}_{F' \sim f_{G'}} \xi_{\omega_j}(F') |^2 $ are independent ( we assume here that when the variables $w_{j\in{1,\ldots,m}}$ are independent then for every graph $F$ the variables $\xi_{\omega_{j\in\{1,\ldots,m\}}}(F)$ are independent too) and bounded by the interval $[0,1]$ too, thus by straight forward application one can prove:
+\begin{equation}
+    Pr(\Big|\frac{1}{m} \sum_{j=1}^m | \mathbb{E}_{F \sim f_G} \xi_{\omega_j}(F) - \mathbb{E}_{F' \sim f_{G'}} \xi_{\omega_j}(F') |^2 - \mathbb{E}_{\omega}  | \mathbb{E}_P \xi_\omega(x) - \mathbb{E}_Q \xi_\omega(x) |^2 \Big| \geq \epsilon) \leq 2~ e^{ -2m\epsilon^2}
+\end{equation}
+
+\paragraph{Step 2: finite $n$ and $m$.} Show that for any \emph{fixed} set of random features $\omega_j$, we have $\| \mathbb{E}_{F \sim f_G} \phi(F) - \mathbb{E}_{F' \sim f_{G'}} \phi(F')\|$ close to $\| \frac{1}{n} \sum_i \phi(F_i) - \frac{1}{n} \sum_i \phi(F'_i)\|$. For this, a version of Hoeffding's inequality for \emph{vectors} might be useful, see for instance Lemma 4 in Appendix A of "Weighted sums of random kitchen sinks: Replacing minimization with randomization in learning" by Rahimi and Recht. \newline
+Let us consider a fixed set of random variables $\{\omega_j\}_{j \in \{1,\ldots, m\}}$ drawn independently from $\Lambda$, thus the random features map of a graph F equals: $\phi(F) = \frac{1}{\sqrt{m}}\left[\xi_{\omega_j}(F)\right]_{j=1}^m$.\newline
+For every graph G , let $F_1,\ldots, F_n$ be n random subgraphs drawn independently from G, we clearly have: 
+\begin{equation}
+\label{eq:subsample}
+    \mathbb{E}_{F \sim f_G} \phi(F)= \mathbb{E} (~\frac{1}{n} \sum_i \phi(F_i)~)
+\end{equation} 
+Here we will assume that we deal with non-sparse and Large-scale Graph G, so that sub-graph $F_i$ cannot be predicted knowing subgraphs $F_1,\ldots,F_{i-1}$. i.e. we can consider the sub-graphs $(F_1,\ldots, F_n)$ (and thus $\phi(F_i)$) independent random variables. 
+What should be noticed now to be used later is that $\forall F\sim f_G, \phi(F)$is in a ball $\mathcal{H}$ of radius $M=\frac{\sqrt{m}}{\sqrt{m}}=1$.
+\begin{lemma}
+\label{lemma:vector_hoeffding}
+let $X={x_1,\ldots,x_n$ be $iid$ random variables in a ball $\mathcal{H}$ of radius $M$ centered around the origin in a Hilbert space. Denote their average by $\overline{X}=\frac{1}{n}\sum_{i=1}^nx_i$. Then for any $\delta>0$, with probability at lest $1-\delta$, 
+\begin{equation}
+\label{eq:vector_hoeffding0}
+  \| \overline{X}-\mathbb{E}\overline{X}\|\leq \frac{M}{\sqrt{n}}(1+\sqrt{2~log\frac{1}{\delta}}
+\end{equation}
+\end{lemma}
+\begin{proof}
+Defining the function $f(x)= \| \overline{X}-\mathbb{E}\overline{X}\|$, and $\widetilde{X}={x_1,\ldots,\widetilde{x}_i,\ldots,x_n}$ to be a copy of $X$ with the ith element replaced by an arbitrary element of $\mathcal{H}$, we can prove using the triangle inequality:
+\begin{equation}
+    |f(X)-f(\widetilde{X})|=\Big|\| \overline{X}-\mathbb{E}\overline{X} \|-\|\overline{\widetilde{X}} - \mathbb{E}\overline{X}  \| \Big|\leq \| \overline{X} - \overline{\widetilde{X}}\|\leq
+    \frac{\|x_i - \widetilde{x_i} \|}{n}\leq
+    \frac{2M}{n}
+\end{equation}
+Therefor, $f(X)$ is insensitive to the ith component of $X,~ \forall i \in \{1,\ldots,n\}$ which is an important requirement to apply McDiarmid's inequality on $f$. \newline
+To bound the expectation of $f$, we use the familiar identity about the variance of the average of $iid$ random variables:
+\begin{equation}
+\mathbb{E}\|\overline{X}-\mathbb{E}\overline{X}\|^2=\frac{1}{n}(\mathbb{E}\|x\|^2-\|\mathbb{E}x\|^2 ) 
+\end{equation}
+Also:
+\[ \mathbb{E}f(X)\leq\sqrt{\mathbb{E}f^2(X)}=\sqrt{\mathbb{E}\|\overline{X}-\mathbb{E}\overline{X}\|^2}\leq \frac{M}{\sqrt{n}}\]
+This bound for the expectation of $f$ and McDiamid's inequality give: 
+\begin{equation}
+\label{eq:vector_hoeffding1}
+    Pr_x \Big [ f(X)-\frac{M}{\sqrt{n}}\geq \epsilon \Big ]\leq
+    Pr_x \Big [ f(X)-\mathbb{E}f(X)\geq \epsilon \Big ]\leq
+    exp\Big( -\frac{n\epsilon^2}{2M^2}\Big)
+\end{equation}
+Which is equivalent to \eqref{eq:vector_hoeffding0} by setting $\delta=exp( -\frac{n\epsilon^2}{2M^2})$ and solving for $\epsilon$.
+\end{proof}
+Now back to Eq. \eqref{eq:subsample} and its corresponding assumptions that we made, we can directly apply lemma \ref{lemma:vector_hoeffding} (and more especially Eq.\eqref{eq:vector_hoeffding1}) to get that:
+\begin{equation}
+    \label{eq:fixed_w}
+    Pr(\|\mathbb{E}_{F \sim f_G} \phi(F)-~\frac{1}{n} \sum_i \phi(F_i)~\|\geq \frac{1}{\sqrt{n}}+\epsilon)\leq
+    e^{-\frac{n\epsilon^2}{2}}
+\end{equation}
+Now applying the triangle inequality again yields:
+\begin{align*}
+    \Big | \| \mathbb{E}_{F \sim f_G} \phi(F) - \mathbb{E}_{F' \sim f_{G'}} \phi(F')\| - \| \frac{1}{n} \sum_i \phi(F_i) - \frac{1}{n} \sum_i \phi(F'_i)\|\Big | \leq  \\
+   \| (\mathbb{E}_{F \sim f_G} \phi(F) -  \frac{1}{n} \sum_i \phi(F_i) )- (\mathbb{E}_{F' \sim f_{G'}} \phi(F') - \frac{1}{n} \sum_i \phi(F'_i))\|\leq \\
+    \| \mathbb{E}_{F \sim f_G} \phi(F) -  \frac{1}{n} \sum_i \phi(F_i) \|+ \|\mathbb{E}_{F' \sim f_{G'}} \phi(F') - \frac{1}{n} \sum_i \phi(F'_i)\|
+\end{align*}
+Thus, since the two variables $\| \mathbb{E}_{F \sim f_G} \phi(F) -  \frac{1}{n} \sum_i \phi(F_i) \|$ and $\|\mathbb{E}_{F' \sim f_{G'}} \phi(F') - \frac{1}{n} \sum_i \phi(F'_i)\|$ are independent (as a direct result of our aforementioned assumptions), $\forall \epsilon>0$ we have:
+\begin{align*}
+    Pr( \| \mathbb{E}_{F \sim f_G} \phi(F) -  \frac{1}{n} \sum_i \phi(F_i) \| \geq \frac{1}{\sqrt{n}}+\frac{\epsilon}{2}, \|\mathbb{E}_{F' \sim f_{G'}} \phi(F') - \frac{1}{n} \sum_i \phi(F'_i)\|\geq\frac{1}{\sqrt{n}}+\frac{\epsilon}{2})=\\
+    Pr( \| \mathbb{E}_{F \sim f_G} \phi(F) -  \frac{1}{n} \sum_i \phi(F_i) \| \geq \frac{1}{\sqrt{n}}+\frac{\epsilon}{2})~Pr( \|\mathbb{E}_{F' \sim f_{G'}} \phi(F') - \frac{1}{n} \sum_i \phi(F'_i)\|\geq\frac{1}{\sqrt{n}}+\frac{\epsilon}{2})\leq 
+    e^{-\frac{n\epsilon^2}{4}}
+\end{align*}
+finally, we get as a straight result from above:
+\begin{align*}
+    Pr(\Big | \| \mathbb{E}_{F \sim f_G} \phi(F) - \mathbb{E}_{F' \sim f_{G'}} \phi(F')\| - \| \frac{1}{n} \sum_i \phi(F_i) - \frac{1}{n} \sum_i \phi(F'_i)\|\Big | \geq
+    \frac{2}{\sqrt{n}}+\epsilon)\leq e^{-\frac{n\epsilon^2}{4}}
+\end{align*}
+and that is true for any fixed set of random variables  $\{\omega_j\}_{j \in \{1,\ldots, m\}}$ drawn independently from $\Lambda$.
+
+
 
 Since it is valid for any fixed set of random features, it is also valid with \emph{joint} probability on random features and samples, by the \emph{law of total probability} (complex, we'll talk about it later).
 
@@ -166,6 +249,7 @@ Since it is valid for any fixed set of random features, it is also valid with \e
 %such that they can be well-classified, with high probability the corresponding feature $y_i, y'_j$ are also well-separated and can also be well-classified.
 %
 %To go one step further, we need to specify a model of \emph{distribution of graphs} (really a model of distribution of $f_G$) that gives rise to such margin condition with high probability. This, in turn, allows us to analyze the sample complexity of classical methods that rely on margin condition such as SVM (see eg Shalev-Schwartz book). A model well-adapted to (node-independent) sampling is that of graphon. Can we relate the distance $d(G,G')$ to something well-known in simple graphons, eg SBMs ?
+
 
 \paragraph{RIP.} We may prove information preservation guarantees using the \emph{Restricted Isometry Property} (RIP). The RIP is, somehow, a \emph{uniform} version of (Step 1 of) Lemma 1. The features $y$ we compute can be seen as a random embedding of $f_G$. If we have enough features, then all the information in $f_G$ is contained in $y$, in the sense that there exists an \emph{Instance Optimal Decoder} that can retrieve $f_G$ from $y$, with some error (measured in the MMD). This is all the more true if $f_G$ is well-approximated by a \emph{sparse} vector, that has many coefficients close to $0$.
 
