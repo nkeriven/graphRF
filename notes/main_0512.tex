@@ -1,0 +1,256 @@
+\documentclass{article}
+\title{Working doc}
+\author{}
+\date{}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
+\usepackage{hyperref}       
+\usepackage{url}            
+\usepackage{amsmath, amssymb, amsthm}
+\newtheorem{lemma}{Lemma}
+\usepackage{enumitem}
+\usepackage[margin=1.2in]{geometry}
+\usepackage[font={small}]{caption}
+\usepackage{appendix}
+\usepackage{parskip}
+
+
+\begin{document}
+
+\maketitle
+
+\section{Graphlet kernel}
+
+\paragraph{Graphlets.} The graphlet sampling kernel decomposes graphs into graphlets (i.e. small subgraphs
+with $k$ nodes) and counts matching graphlets in the input graphs. Let $H_1 , H_2 , \ldots , H_{N_k}$ be the set of size-$k$ graphlets. Here we have two choices: either we distinguish graphlets that are isomorphic as different, in which case $N_k = 2^{\frac{k(k-1)}{2}}$, or we don't, in which case $N_k$ is still exponential in $k$ but still lower. The first choice has the disadvantage of involving a much higher $N_k$, but the advantage of not requiring to solve the graph isomorphism problem to identify graphlets. Clever procedures exist for small $k$, but in general no polynomial algorithm is known.
+
+We denote by $\phi_{k}^{hist.}$ the function on size-$k$ graphs that identifies the corresponding graphlet and serves to construct the corresponding histogram:
+\[
+\phi_k^{hist.}(F) = \left[ 1_{(F = H_i)}\right]_{i=1}^{N_k} \in \{0,1\}^{N_k}
+\]
+In other words, $\phi_k^{hist.}$ puts a $1$ in the coordinate $i$ if $F=H_i$, and $0$ otherwise. Here, equality between $F$ and $H_i$ is to be taken up-to-isomorphism or not, depending on the choice made above.
+
+\paragraph{Sampling and graphlet kernel.} For a graph $G$, let $S_k(G)$ be a \emph{sampling procedure} that randomly extract a subgraph of size $k$ from $G$. The simplest choice is independent node sampling, but many other methods exist. For a graph $G$ and a sampling procedure $S_k$, let $f_G \in [0,1]^{N_k}$ be a vector such that its $i^{th}$ entry is equal to the frequency of
+occurrence of graphlet $i$ in $G$ when sampling with $S_k$:
+\[
+f_G = \left[\mathbb{P}(S_k(G) = H_i)\right]_{i=1}^{N_k} = \mathbb{E}_{F \sim S_k(G)} [\phi_k^{hist.}(F)]
+\]
+For two graphs $G,G'$, the graphlet kernel is then defined as:
+\begin{equation} \label{eq:graphlet_kernel}
+k(G , G') = f_{G}^\top f_{G'}
+\end{equation}
+which naturally involves an associated Euclidean metric $d_k(G,G') = \|f_G - f_{G'}\|_2$.
+
+\paragraph{Subsampling.} Exhaustive enumeration of graphlet is very expensive. Since there are $\binom{k}{n}$ size-$k$ subgraphs in a graph (when using independent node sampling), computing the feature vector for a graph of size $n$ requires $O(n^k)$ time.
+
+So, in practice, given a graph $G$, we sample independently $n$ subgraphs $F_1, \ldots, F_n$ using the sampling process $S_k$. Then, $f_G$ is simply approximated with an empirical average
+\begin{equation}\label{eq:graphlet_kernel_approx}
+f_G \approx \frac{1}{n} \sum_{j=1}^n \phi_k^{hist.}(F_j) = \hat{\mathbb{E}}[\phi_k^{hist.}(F)]
+\end{equation}
+Using simple concentration inequalities, it can be showed \cite{Weissman} that by sampling a fixed number of graphlets the empirical distribution of graphlets will be sufficiently close to their actual distribution if the graph.
+
+\paragraph{Issues.} We identify two issues with the traditional graphlet kernel:
+\begin{itemize}
+\item For general $k$, the function $\phi_k^{hist.}$ itself is expensive to compute. Unless smart procedures can be employed for small $k$, there is no other way than go through the entire graphlet list (and solve or not the graph isomorphism on top of that), and $N_k$ is at least exponential in $k$.
+\item the inner product \eqref{eq:graphlet_kernel} and its associated metric do not take into account a notion of \emph{similarity} between the graphlet themselves, they just compare the frequency counts for each graphlet, independently from the other.
+\end{itemize}
+We adress both question by replacing the function $\phi_k$ with an efficient, randomized high-dimensional mapping.
+
+\section{Random features, MMD}
+
+\paragraph{Random Features} Consider a p.d. kernel $k$ between objects $x \in\mathcal{X}$. Random features for kernel is based on the following expression:
+\begin{equation}\label{eq:RF}
+k(x,y) = \mathbb{E}_{\omega \sim \Lambda} \xi_\omega(x)^* \xi_\omega(y)
+\end{equation}
+for some family of mapping $\xi_\omega:\mathcal{X} \to \mathbb{C}$ indexed by a parameter $\omega \in \mathbb{R}^d$ (often called "frequency" because of Random \emph{Fourier} features) distributed according to some distribution $\Lambda$.
+
+For instance, based on Bochner Theorem: a continuous translation-invariant kernel $k(x,y)=k(x-y)$ on $\mathbb{R}^d$ is positive
+definite if and only if $k(\delta)$ is the Fourier transform of a non-negative measure, i.e. it satisfies \eqref{eq:RF} with $\xi_\omega(x) = e^{i\omega^\top x}$. It is not hard to see that complex exponential can also be replaced with cosines with dithering: $\xi_{\omega, b}(x) = \sqrt{2}\cos(\omega^\top x + b)$ where $b \sim \mathcal{U}([0,1])$.
+%if a shift-invariant kernel k(δ) is properly scaled, it’s Fourier transform p(w) is a
+%proper probability distribution, then:
+%k(x − y) = ∫ p(w)e iw(x−y) dw = E w [ξw (x)ξ w (y)∗ ] , ξ w (x) = e iwx
+%R d
+%So ξ w (x)ξ w (y)∗ is an unbiased estimate of k(x,y) when w is drawn from p.
+
+The RF methodology simply consists in approximating \eqref{eq:RF} with an empirical average: given $\omega_1, \ldots, \omega_m$ drawn $iid$ from $\Lambda$, we have
+\begin{equation}\label{eq:RF_approx}
+k(x,y) \approx \frac{1}{m}\sum_{\ell=1}^m \xi_{\omega_\ell}(x)^* \xi_{\omega_\ell}(y) = \phi(x)^* \phi(y)
+\end{equation}
+where
+\[
+\phi(x) = \frac{1}{\sqrt{m}}\left[\xi_{\omega_\ell}(x)\right]_{\ell=1}^m
+\]
+contains the random mappings of $x$. Hence we have replaced $k$ with a \emph{linear} kernel between the $\phi(x)$.
+
+\paragraph{Preprocessing} For graph(let)s, it may be useful to include to preprocessing function $\gamma(F) \in \mathbb{R}^d$, potentially invariant by permutation, before computing the traditional random features:
+\[
+\xi_\omega(G) = \tilde\xi_\omega(\gamma(F))
+\]
+where $\tilde\xi_\omega$ are traditional RF on $\mathbb{R}^d$, eg, random fourier features.
+
+\paragraph{Mean kernel and MMD} The mean kernel methodology allows to \emph{lift} a kernel from a domain $\mathcal{X}$ to a kernel on \emph{probability distributions} on $\mathcal{X}$. Given a base kernel $k$ and two probability distribution $P,Q$, it is defined as
+\begin{equation}\label{eq:mean_kernel}
+k(P,Q) = \mathbb{E}_{x \sim P, y \sim Q} k(x,y)
+\end{equation}
+In words, the mean kernel is just the expectation of the base kernel with respect to each term. The associated Euclidean metric is called the \emph{Maximum Mean Discrepancy} (for quite obscure reasons), and is naturally defined as
+\begin{equation}\label{eq:MMD}
+MMD(P,Q) = \sqrt{k(P,P) + k(Q,Q) - 2k(P,Q)}
+\end{equation}
+Warning: note that $k(P,P) = \mathbb{E}_{x \sim P, x' \sim P} k(x,x') \neq \mathbb{E}_{x \sim P} k(x,x)$.
+
+If the kernel has the form \eqref{eq:RF}, then it is immediate that we have
+\begin{equation}
+\label{eq:MMD-RF}
+MMD(P,Q)^2 = \mathbb{E}_{\omega} \Big( | \mathbb{E}_P \xi_\omega(x) - \mathbb{E}_Q \xi_\omega(x) |^2 \Big)
+\end{equation}
+
+Given data $x_1, \ldots, x_n$ drawn $iid$ from $P$ and $y_1, \ldots, y_n$ drawn $iid$ from $Q$, the kernel \eqref{eq:mean_kernel} can naturally be approximated by
+\begin{equation}\label{eq:mean_kernel_approx}
+k(P,Q) \approx \frac{1}{n^2} \sum_{i,j=1}^n k(x_i,y_j)
+\end{equation}
+and the corresponding approximate MMD is
+\[
+MMD(P,Q) \approx \sqrt{\frac{1}{n^2} \sum_{i,j=1}^n k(x_i,x_j) + k(x_i,x_j) - k(x_i,y_j) - k(x_j, y_i)}
+\]
+Note that many variants are possible.
+
+\paragraph{MMD and random features} Mean kernel goes especially well with random features. Combining \eqref{eq:RF_approx} and \eqref{eq:mean_kernel_approx}, it is not hard to see that using RF the mean kernel can be further approximated by
+\begin{equation}
+\label{eq:mean_kernel_RF}
+k(P,Q) \approx \frac{1}{n^2} \sum_{i,j=1}^n \phi(x_i)^*\phi(y_j) = \left(\frac{1}{n} \sum_i \phi(x_i)\right)^* \left(\frac{1}{n} \sum_i \phi(y_i)\right)
+\end{equation}
+So the computation can be drastically improved by first computing the \emph{averaged random features} (also called random \emph{generalized moments}, also called \emph{sketch}) $\frac{1}{n} \sum_i \phi(x_i)$, and taking a linear kernel between them. The corresponding MMD is then just the Euclidean metric between the averaged random features
+\[
+MMD(P,Q) \approx \| \frac{1}{n} \sum_i \phi(x_i) - \frac{1}{n} \sum_i \phi(y_i)\|_2
+\]
+
+\paragraph{MMD for discrete distribution} Note that, for a discrete space of objects $H_1, \ldots, H_N$ with discrete probability distributions $P = [P_1, \ldots, P_N]$ and $Q$ on them, the mean kernel \eqref{eq:mean_kernel} takes a particular form
+\[
+k(P,Q) = \sum_{i,j=1}^N P_i Q_j k(H_i, H_j)
+\]
+
+\section{Combining the two}
+
+One can see the link with graphlet sampling, where $f_G$ is the (discrete) probability distribution of the graphlets. If we define $k(F, F') \approx \phi(F)^*\phi(F')$ where $\phi$ is a random feature map that replaces $\phi_k^{hist}$, then the feature map \eqref{eq:graphlet_kernel_approx} is exactly what appears in \eqref{eq:mean_kernel_RF}. So, now, all the game becomes to find a good feature map $\phi(F)$ for graphlets. The induced MMD metric between graph is the MMD between graphlets probability distributions $f_G$:
+\[
+d(G,G') = MMD(f_G, f_{G'}) = \sqrt{k(f_G, f_{G}) + k(f_{G'}, f_{G'}) - 2 k(f_G, f_{G'})} \approx \| \frac{1}{n} \sum_i \phi(F_i) - \frac{1}{n} \sum_i \phi(F'_i)\|_2
+\]
+where $F_i$ are graphlets drawn from $G$ and $F'_i$ are graphlets drawn from $G'$.
+
+It has been shown that the approximation error in \eqref{eq:graphlet_kernel_approx} in $L_1$ norm is small with high probability (already in Hashem report).
+
+For us, it is interesting to see how much, given two graphs $G$ and $G'$, $\|\frac{1}{n} \sum_i \phi(F_i) - \frac{1}{n} \sum_i \phi(F'_i)\|_2$ is close to $d(G,G')$.
+\begin{lemma}[todo]
+Let $G$ and $G'$ be two graphs. Draw $F_i$ (resp. $F'_i$) $iid$ with $S_k(G)$ (resp. $S_k(G)$) and define $y =\frac{1}{n} \sum_i \phi(F_i)$ (resp. $y' = \frac{1}{n} \sum_i \phi(F_i')$) . We have
+\[
+\mathbb{P}(|\|y-y'\|^2 - d(G,G')^2| \geq \varepsilon) \leq ...
+\]
+\end{lemma}
+
+\begin{proof}
+We decompose the proof in two steps.
+\paragraph{Step 1: infinite $n$, finite $m$.} Using Hoeffding's inequality, prove that:\newline  $d(G, G')^2$ is close to $\frac{1}{m} \sum_{j=1} | \mathbb{E}_{F \sim f_G} \xi_{\omega_j}(F) - \mathbb{E}_{F' \sim f_{G'}} \xi_{\omega_j}(F') |^2 = \| \mathbb{E}_{F \sim f_G} \phi(F) - \mathbb{E}_{F' \sim f_{G'}} \phi(F')\|^2$. Use equation \eqref{eq:MMD-RF}.\newline 
+Taking into assumption that when we approximate the graphlet kernel using random features, then the $\Lambda$ distribution in \eqref{eq:RF} satisfies that for each simple graph x we have:
+\begin{equation}
+    0\leq\xi_\omega(x)\leq 1, \forall \omega \sim  \Lambda
+\end{equation}
+This is a reasonable assumption since the lifting function $\phi_k^{hist}$ of a k-graphlet kernel  includes the normalized frequency of occurrences of each graphlet of size k in the graph $x$. Thus, in this case and based on this assumption we can make use of Hoeffding's inequality that states:
+\begin{lemma}[Hoeffding's inequality] 
+Let $(x_1,\ldots, x_m)$ be independent random variables such that the variable $x_i$ is strictly bounded by the interval $[a_i , b_i]$, and let $\overline{X}=\frac{1}{m}\Sigma_{i=1}^{m}x_i$ then we have:
+\begin{equation}
+\label{eq:Hoeffding}
+    Pr(|\mathbb{E}\overline{X}-\overline{X}|\geq \epsilon)\leq 2~ exp (-\frac{2m^2\epsilon^2}{\Sigma_{i=1}^m(b_i-a_i)^2)})
+\end{equation}
+
+\end{lemma}
+%\begin
+In our case, and for a finite number of random features $(m)$ we have the variables $x_j=| \mathbb{E}_{F \sim f_G} \xi_{\omega_j}(F) - \mathbb{E}_{F' \sim f_{G'}} \xi_{\omega_j}(F') |^2 $ are independent ( we assume here that when the variables $w_{j\in{1,\ldots,m}}$ are independent then for every graph $F$ the variables $\xi_{\omega_{j\in\{1,\ldots,m\}}}(F)$ are independent too) and bounded by the interval $[0,1]$ too, thus by straight forward application one can prove:
+\begin{equation}
+    Pr(\Big|\frac{1}{m} \sum_{j=1}^m | \mathbb{E}_{F \sim f_G} \xi_{\omega_j}(F) - \mathbb{E}_{F' \sim f_{G'}} \xi_{\omega_j}(F') |^2 - \mathbb{E}_{\omega}  | \mathbb{E}_P \xi_\omega(x) - \mathbb{E}_Q \xi_\omega(x) |^2 \Big| \geq \epsilon) \leq 2~ e^{ -2m\epsilon^2}
+\end{equation}
+
+\paragraph{Step 2: finite $n$ and $m$.} Show that for any \emph{fixed} set of random features $\omega_j$, we have $\| \mathbb{E}_{F \sim f_G} \phi(F) - \mathbb{E}_{F' \sim f_{G'}} \phi(F')\|$ close to $\| \frac{1}{n} \sum_i \phi(F_i) - \frac{1}{n} \sum_i \phi(F'_i)\|$. For this, a version of Hoeffding's inequality for \emph{vectors} might be useful, see for instance Lemma 4 in Appendix A of "Weighted sums of random kitchen sinks: Replacing minimization with randomization in learning" by Rahimi and Recht. \newline
+Let us consider a fixed set of random variables $\{\omega_j\}_{j \in \{1,\ldots, m\}}$ drawn independently from $\Lambda$, thus the random features map of a graph F equals: $\phi(F) = \frac{1}{\sqrt{m}}\left[\xi_{\omega_j}(F)\right]_{j=1}^m$.\newline
+For every graph G , let $F_1,\ldots, F_n$ be n random subgraphs drawn independently from G, we clearly have: 
+\begin{equation}
+\label{eq:subsample}
+    \mathbb{E}_{F \sim f_G} \phi(F)= \mathbb{E} (~\frac{1}{n} \sum_i \phi(F_i)~)
+\end{equation} 
+Here we will assume that we deal with non-sparse and Large-scale Graph G, so that sub-graph $F_i$ cannot be predicted knowing subgraphs $F_1,\ldots,F_{i-1}$. i.e. we can consider the sub-graphs $(F_1,\ldots, F_n)$ (and thus $\phi(F_i)$) independent random variables. 
+What should be noticed now to be used later is that $\forall F\sim f_G, \phi(F)$is in a ball $\mathcal{H}$ of radius $M=\frac{\sqrt{m}}{\sqrt{m}}=1$.
+\begin{lemma}
+\label{lemma:vector_hoeffding}
+let $X={x_1,\ldots,x_n$ be $iid$ random variables in a ball $\mathcal{H}$ of radius $M$ centered around the origin in a Hilbert space. Denote their average by $\overline{X}=\frac{1}{n}\sum_{i=1}^nx_i$. Then for any $\delta>0$, with probability at lest $1-\delta$, 
+\begin{equation}
+\label{eq:vector_hoeffding0}
+  \| \overline{X}-\mathbb{E}\overline{X}\|\leq \frac{M}{\sqrt{n}}(1+\sqrt{2~log\frac{1}{\delta}}
+\end{equation}
+\end{lemma}
+\begin{proof}
+Defining the function $f(x)= \| \overline{X}-\mathbb{E}\overline{X}\|$, and $\widetilde{X}={x_1,\ldots,\widetilde{x}_i,\ldots,x_n}$ to be a copy of $X$ with the ith element replaced by an arbitrary element of $\mathcal{H}$, we can prove using the triangle inequality:
+\begin{equation}
+    |f(X)-f(\widetilde{X})|=\Big|\| \overline{X}-\mathbb{E}\overline{X} \|-\|\overline{\widetilde{X}} - \mathbb{E}\overline{X}  \| \Big|\leq \| \overline{X} - \overline{\widetilde{X}}\|\leq
+    \frac{\|x_i - \widetilde{x_i} \|}{n}\leq
+    \frac{2M}{n}
+\end{equation}
+Therefor, $f(X)$ is insensitive to the ith component of $X,~ \forall i \in \{1,\ldots,n\}$ which is an important requirement to apply McDiarmid's inequality on $f$. \newline
+To bound the expectation of $f$, we use the familiar identity about the variance of the average of $iid$ random variables:
+\begin{equation}
+\mathbb{E}\|\overline{X}-\mathbb{E}\overline{X}\|^2=\frac{1}{n}(\mathbb{E}\|x\|^2-\|\mathbb{E}x\|^2 ) 
+\end{equation}
+Also:
+\[ \mathbb{E}f(X)\leq\sqrt{\mathbb{E}f^2(X)}=\sqrt{\mathbb{E}\|\overline{X}-\mathbb{E}\overline{X}\|^2}\leq \frac{M}{\sqrt{n}}\]
+This bound for the expectation of $f$ and McDiamid's inequality give: 
+\begin{equation}
+\label{eq:vector_hoeffding1}
+    Pr_x \Big [ f(X)-\frac{M}{\sqrt{n}}\geq \epsilon \Big ]\leq
+    Pr_x \Big [ f(X)-\mathbb{E}f(X)\geq \epsilon \Big ]\leq
+    exp\Big( -\frac{n\epsilon^2}{2M^2}\Big)
+\end{equation}
+Which is equivalent to \eqref{eq:vector_hoeffding0} by setting $\delta=exp( -\frac{n\epsilon^2}{2M^2})$ and solving for $\epsilon$.
+\end{proof}
+Now back to Eq. \eqref{eq:subsample} and its corresponding assumptions that we made, we can directly apply lemma \ref{lemma:vector_hoeffding} (and more especially Eq.\eqref{eq:vector_hoeffding1}) to get that:
+\begin{equation}
+    \label{eq:fixed_w}
+    Pr(\|\mathbb{E}_{F \sim f_G} \phi(F)-~\frac{1}{n} \sum_i \phi(F_i)~\|\geq \frac{1}{\sqrt{n}}+\epsilon)\leq
+    e^{-\frac{n\epsilon^2}{2}}
+\end{equation}
+Now applying the triangle inequality again yields:
+\begin{align*}
+    \Big | \| \mathbb{E}_{F \sim f_G} \phi(F) - \mathbb{E}_{F' \sim f_{G'}} \phi(F')\| - \| \frac{1}{n} \sum_i \phi(F_i) - \frac{1}{n} \sum_i \phi(F'_i)\|\Big | \leq  \\
+   \| (\mathbb{E}_{F \sim f_G} \phi(F) -  \frac{1}{n} \sum_i \phi(F_i) )- (\mathbb{E}_{F' \sim f_{G'}} \phi(F') - \frac{1}{n} \sum_i \phi(F'_i))\|\leq \\
+    \| \mathbb{E}_{F \sim f_G} \phi(F) -  \frac{1}{n} \sum_i \phi(F_i) \|+ \|\mathbb{E}_{F' \sim f_{G'}} \phi(F') - \frac{1}{n} \sum_i \phi(F'_i)\|
+\end{align*}
+Thus, since the two variables $\| \mathbb{E}_{F \sim f_G} \phi(F) -  \frac{1}{n} \sum_i \phi(F_i) \|$ and $\|\mathbb{E}_{F' \sim f_{G'}} \phi(F') - \frac{1}{n} \sum_i \phi(F'_i)\|$ are independent (as a direct result of our aforementioned assumptions), $\forall \epsilon>0$ we have:
+\begin{align*}
+    Pr( \| \mathbb{E}_{F \sim f_G} \phi(F) -  \frac{1}{n} \sum_i \phi(F_i) \| \geq \frac{1}{\sqrt{n}}+\frac{\epsilon}{2}, \|\mathbb{E}_{F' \sim f_{G'}} \phi(F') - \frac{1}{n} \sum_i \phi(F'_i)\|\geq\frac{1}{\sqrt{n}}+\frac{\epsilon}{2})=\\
+    Pr( \| \mathbb{E}_{F \sim f_G} \phi(F) -  \frac{1}{n} \sum_i \phi(F_i) \| \geq \frac{1}{\sqrt{n}}+\frac{\epsilon}{2})~Pr( \|\mathbb{E}_{F' \sim f_{G'}} \phi(F') - \frac{1}{n} \sum_i \phi(F'_i)\|\geq\frac{1}{\sqrt{n}}+\frac{\epsilon}{2})\leq 
+    e^{-\frac{n\epsilon^2}{4}}
+\end{align*}
+finally, we get as a straight result from above:
+\begin{align*}
+    Pr(\Big | \| \mathbb{E}_{F \sim f_G} \phi(F) - \mathbb{E}_{F' \sim f_{G'}} \phi(F')\| - \| \frac{1}{n} \sum_i \phi(F_i) - \frac{1}{n} \sum_i \phi(F'_i)\|\Big | \geq
+    \frac{2}{\sqrt{n}}+\epsilon)\leq e^{-\frac{n\epsilon^2}{4}}
+\end{align*}
+and that is true for any fixed set of random variables  $\{\omega_j\}_{j \in \{1,\ldots, m\}}$ drawn independently from $\Lambda$.
+
+
+
+Since it is valid for any fixed set of random features, it is also valid with \emph{joint} probability on random features and samples, by the \emph{law of total probability} (complex, we'll talk about it later).
+
+\paragraph{Step 3} Using a \emph{union bound}, conclude.
+
+\end{proof}
+
+%\paragraph{Margin condition.} So, if we have training data $G_1, \ldots, G_p$ and $G'_1, \ldots, G'_p$ that satisfy a \textbf{margin condition}:
+%\[
+%d(G_i, G'_j) \geq \gamma >0
+%\]
+%such that they can be well-classified, with high probability the corresponding feature $y_i, y'_j$ are also well-separated and can also be well-classified.
+%
+%To go one step further, we need to specify a model of \emph{distribution of graphs} (really a model of distribution of $f_G$) that gives rise to such margin condition with high probability. This, in turn, allows us to analyze the sample complexity of classical methods that rely on margin condition such as SVM (see eg Shalev-Schwartz book). A model well-adapted to (node-independent) sampling is that of graphon. Can we relate the distance $d(G,G')$ to something well-known in simple graphons, eg SBMs ?
+
+
+\paragraph{RIP.} We may prove information preservation guarantees using the \emph{Restricted Isometry Property} (RIP). The RIP is, somehow, a \emph{uniform} version of (Step 1 of) Lemma 1. The features $y$ we compute can be seen as a random embedding of $f_G$. If we have enough features, then all the information in $f_G$ is contained in $y$, in the sense that there exists an \emph{Instance Optimal Decoder} that can retrieve $f_G$ from $y$, with some error (measured in the MMD). This is all the more true if $f_G$ is well-approximated by a \emph{sparse} vector, that has many coefficients close to $0$.
+
+\end{document}
