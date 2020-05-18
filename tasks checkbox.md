@@ -14,5 +14,6 @@
 - [ ] Sampling techniques
 - [ ] introduction to GCN  
 - [ ] more about Gaussian kernel and its approximation
+- [ ] more experiments on DD (and another dataset if possible)
 
 
