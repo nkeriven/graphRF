@@ -13,7 +13,9 @@
 -------------------------------------------------report--------------------------------------------------------------------
 - [ ] Sampling techniques
 - [ ] introduction to GCN  
-- [ ] more about Gaussian kernel and its approximation
+- [ ] more about Gaussian kernel and its approximation (experiments )
 - [ ] more experiments on DD (and another dataset if possible)
+- [ ] try to train the dataset on LightOn platform OPU in one shot to reduce processing time .
+- [ ] add the cureves of test accuracy with respect to number of samples 
 
 
