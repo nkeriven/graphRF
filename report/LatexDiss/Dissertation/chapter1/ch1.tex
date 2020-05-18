@@ -1,5 +1,8 @@
 \addchapheadtotoc
-\chapter{Theoretical analysis}
+\chapter{Theoretical Analysis}
+We recall that the majority of our work (especially the practical side) focus on using Random Features, mainly OPUs' light-speed random features, to approximate the graphlet kernel to approach Graph Classification problems. We also focus in some stage of this work on using Fourier Random Features to approximate the Gaussian kernel. Thus, in this chapter we first introduce the mathematical notions of Graph Kernels and Random Features. Then, we prove the efficiency of replacing the classical Graph Kernels which have two drawbacks (time, memory) by the use of their corresponding Random Features mapping function, this is to be done using concentration inequalities and information preservation concept. Finally, we show the structure of the OPU and its mathematical model. 
+
+\section{Necessary Notations}
 Before proceeding to the analysis of used methods, we first introduce the necessary notations related to Graph definition and Graph kernels.
 A graph by definition is a pair $G=(V,E)$, where V is the set of the graph nodes (vertices) $V={v_1,...,v_n}$, and $E\in V\times V$ is the set of edges between these nodes, i.e. $(v_i, v_j)\in E$ means that the graph has an edge from node $v_i$ to node $v_j$ (or vice versa since we consider undirected graphs in this work).
 \newline $H=(V_H,E_H)$ is said to be a subgraph (graphlet) of G ($H\sqsubseteq G$) if and only if there exist an injective function $\mathcal{M}:V_H\xrightarrow{} V$ such that $(v,w)\in E_H \Leftrightarrow{(\mathcal{M}(v),\mathcal{M}(w))\in E}$.\newline
@@ -10,8 +13,8 @@ A simple graph can equivalently be represented by an adjacency matrix $A$ of siz
 Two graphs $G=(V,E)$ and $G'=(V',E')$ are isomorphic $(G'\cong G)$ if there exists a bijective function $\mathcal{M}:V\xrightarrow{} V'$ such that $(v_i,v_j)\in E$ iff $(\mathcal{M}(v_i),\mathcal{M}(v_j))\in E'$
 
 
-\section{Kernels and Random Features}
-The kernel trick is a way to generate features for algorithms that depend only on the inner product between pairs of input points. The mathematical basis behind it is that any positive definite function $k(x,y)$ with $x,y \in \mathcal{R}^d$ defines an inner product and a lifting function $\phi$ so that the inner product between lifted data points equals its kernel $<\phi(x),\phi(y)>=k(x,y)$. The convenience one gets is that there is no need to access the lifting function $\phi$, instead, the used algorithm accesses the data only through evaluations of $k(x,y)$. To better illustrate this benefit, we take the Gaussian Radial Basis function (RBF) kernel as an example, where:
+\section{Graph Kernels}
+The kernel trick is a way to generate features for algorithms that depend only on the inner product between pairs of input points. The mathematical basis behind it is that any positive definite function $k(x,y)$ with $x,y \in \mathcal{R}^d$ defines an inner product and a lifting function $\phi$ so that the inner product between lifted data points equals its kernel $<\phi(x),\phi(y)>=k(x,y)$. The convenience one gets deploying kernels-baed models is that there is no need to access the lifting function $\phi$, instead, the used algorithm accesses the data only through evaluations of $k(x,y)$. To better illustrate this benefit, we take the Gaussian Radial Basis function (RBF) kernel as an example, where:
 \begin{equation}
     K_{RBF}(x,y)=exp(-\frac{\left \| x-y\right\|^2}{2\sigma^2})
 \end{equation}
@@ -50,7 +53,7 @@ Given two graphs $G$ and $G'$ of size $n,n'\geq k$, the graphlet kernel $k_g$ is
 
 The drawback of this kernel is that computing the k-spectrum vector costs a lot of computational time, since there are $\tbinom{n}{k}$ size-k subgraphs in a graph G of size n ($O(n^k) $ processing steps required), thus there is a trade off between a more accurate representation of the graph (large value of k) and the computational cost. However, some techniques are used in order to resolve this limitation as Sampling From Graph technique (section \ref{graph_sampling}).
 
-\subsection{Sampling From Graph}
+\subsection{Graph Sampling to approximate k-Graphlet Spectrum}
 \label{graph_sampling}
 The problem of Graph Sampling arises when we deal with a large-scale graph and the task is to pick a small-size sample subgraph/s that would be similar to the original graph with respect to some important properties.\newline
 Sampling from graph techniques are used to resolve the processing cost limitation of graphlet kernel, and it can deployed in two different manners:
@@ -70,8 +73,8 @@ m=\left \lceil \frac{2(log(2)a+log(\frac{1}{\delta} ))}{\epsilon^2} \right \rcei
 \end{equation}
 samples suffice to ensure that $P\{\left\| f-\hat{f} \right\|_1 \geq \epsilon \}\leq\delta$
 \end{theorem}
-Therefore this theorem gives a lower bound on the number of samples considered respecting the first manner using Graph Sampling to approximate the Graphlet Kernel in order to ensure some certainty $\epsilon$ with prabability $(1-\delta)$.
-\subsection{Random Features}
+Therefore this theorem gives a lower bound on the number of samples considered respecting the first manner using Graph Sampling to approximate the k-Graphlet spectrum vector in order to ensure some certainty $\epsilon$ with prabability $(1-\delta)$.
+\section{Random Features}
 Kernel machines are of interest as they approximate any function arbitrarily well with sufficiently large training data set. On the other hand, the methods that operate on the kernel matrix (Gram matrix) require a lot of time in order to compute this matrix and to train the machine; for example, a dataset with half a million training examples might take days to train on modern workstations \citep{rahimi2008random}.
 Unlike kernel machines, linear support vector machines and regularized regression run much faster especially with low-dimensionality training data. 
 One way to combine the advantages of the linear and nonlinear vector machines is to convert the training and evaluation of any kernel machine into the corresponding operations of a linear machine by mapping data into a relatively low-dimensional randomized feature space.
@@ -81,7 +84,7 @@ Instead of considering the implicit lifting function which corresponds to the ke
 k(x,y)=<\phi(x),\phi(y)> \approx z(x)^Tz(y)
 \end{equation}
 Considering this approximation, we can simply transform the input with $z$ and then apply a fast linear learning method to approximate the answer of the real kernel. \newline
-In what follows, two methods to construct the random feature map function $z$ are to be presented.
+In what follows, Random Fourier Features method to construct the random feature map function $z$ is presented.
 
 \subsection{Random Fourier Features}
 The following Theorem represents the key idea behind this mapping technique
@@ -100,7 +103,7 @@ But both $p(w)$ and $k(\delta)$ are real-valued functions, thus from Eq.~\ref{Fo
 k(x-y)=\int_{\mathcal{R}^d}p(w)cos({{w}'(x-y)})dw=E_w[z_w(x)z_w(y)]
 \end{equation}
 where $z_w(x)=\sqrt{2}cos({w}'x+b)$ such that $w$ is drawn from $p(w)$ and b is drawn uniformly from $[0,2\pi]$.\newline
-As a straight result, $\ z_w(x)z_w(y)$ is an unbiased estimate of k(x,y). We can achieve lower variance estimation to the expectation (\ref{real Fourier integral}) by averaging $D$ instances of the estimator with different random frequencies $w$. i.e. the low-variance estimator can be written as: $z(x)'z(y)=\frac{1}{D} \Sigma_{j=1}^D z_w(x)z_w(y)$. this estimator and based on Hoeffding's inequality guarantees exponentially fast convergence in $D$ between $z(x)'z(y)$ and the kernel true value:
+As a straight result, $\ z_w(x)z_w(y)$ is an unbiased estimate of k(x,y). We can achieve lower variance estimation to the expectation (Eq. \ref{real Fourier integral}) by averaging $D$ instances of the estimator with different random frequencies $w$. i.e. the low-variance estimator can be written as: $z(x)'z(y)=\frac{1}{D} \Sigma_{j=1}^D z_{w_j}(x)z_{w_j}(y)$. this estimator and based on Hoeffding's inequality guarantees exponentially fast convergence in $D$ between $z(x)'z(y)$ and the kernel true value:
 \begin{equation}
     Pr(|z(x)'z(y)-k(x,y)|\geq\epsilon)\leq2e^\frac{-D\epsilon^2}{4}
 \end{equation}
@@ -270,7 +273,7 @@ k(P,Q) \approx \frac{1}{n^2} \sum_{i,j=1}^n k(x_i,y_j)
 \end{equation}
 and the corresponding approximate MMD is (other variants exist):
 \[
-MMD(P,Q) \approx \sqrt{\frac{1}{n^2} \sum_{i,j=1}^n k(x_i,x_j) + k(x_i,x_j) - k(x_i,y_j) - k(x_j, y_i)}
+MMD(P,Q) \approx \sqrt{\frac{1}{n^2} \sum_{i,j=1}^n k(x_i,x_j) + k(y_i,y_j) - k(x_i,y_j) - k(x_j, y_i)}
 \]
 
 \paragraph{MMD and random features}
@@ -303,7 +306,7 @@ where $F_i$ are graphlets drawn from $G$ and $F'_i$ are graphlets drawn from $G'
 
 
 
-\subsection{Random Projections with Optical Processing Units (OPU's)}
+\section{Random Projections with Optical Processing Units (OPU's)}
 Random projections is one of the important techniques in machine learning and signal processing, but it requires either to store a very large random matrix, or to use a
 different, structured matrix to reduce the computational and memory costs. Optical processing units (OPU's) are the tools used to overcome this difficulty, an OPU performs random projections at the speed of light without having to store any matrix in memory. In general, Random projections are the result of two procedures where the first one is the linear-random projections and the second one is non-linear mapping.
 Mathematically speaking, OPU's perform the following operation \citep{saade_opu}:
