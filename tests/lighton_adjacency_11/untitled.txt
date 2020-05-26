@@ -1,0 +1,5 @@
+Adjacency_matrix Lighton random features on SBM dataset with :
+trying different values of number of samples and graphlet sizes
+mult_factor= 1.75, features num=5000
+num_expe=1
+
