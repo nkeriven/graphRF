@@ -1,0 +1,189 @@
+\chapter{Theoretical Analysis}
+\label{chapter:analysis}
+\section{Computational Cost Of Graphlet Kernel With Graph Sampling}
+As we indicated in section \ref{subsection: graphlet kernel}, to evaluate the k-graphlet kernel for a graph dataset we need to compute the k-spectrum vector for each graph $G$ in this dataset. We also pointed out that to do so, $\tbinom{n}{k}$ subgraphs of size $k$ must be enumerated from each graph $G$ of size $n$ in the dataset, which is extremely expensive. However, we can use graph sampling proposed in section \ref{graph_sampling} to accelerate this process by estimating the k-spectrum vector for each graph. We can do that by just randomly enumerate $N_s$ subgraph samples of size $k$ instead of exhaustive enumeration. The question here is how many samples we should consider in order to have a desired certainty in our estimation.
+%\newtheorem{theorem}{Theorem} 
+\begin{theorem}
+Let $f$ be a probability distribution on the
+finite set of k-nodes graphlets  $\mathcal{G}=\{g_1,...,g_{N_k}\}$, ${(F_j)}_{j=1}^{N_s}$ be a set of independent identically distributed (iid) random variables drawn from $f$, and $\hat{f}(g_i)=\frac{1}{N_s}\Sigma_{j=1}^{N_s}\mathbbm{1}(F_j=g_i)$. Then for a given $\epsilon>0$ and $\delta >0$ we have \citep{graphlet_kernel}:
+\begin{equation}
+N_{s,min}=\left \lceil \frac{2(log(2)N_k+log(\frac{1}{\delta} ))}{\epsilon^2} \right \rceil
+\end{equation}
+samples suffice to ensure that $P(MMD( f,\hat{f}) \geq \epsilon )=P(\| f-\hat{f} \|_2 \geq \epsilon )\leq\delta$
+\end{theorem}
+We denote by $\phi_{k}^{hist.}$ the function on size-$k$ graphs that identifies the corresponding graphlet and serves to construct the corresponding histogram:
+\[
+\phi_k^{hist.}(F) = \left[ 1_{(F = g_i)}\right]_{i=1}^{N_k} \in \{0,1\}^{N_k}
+\]
+In other words, $\phi_k^{hist.}$ puts a $1$ in the coordinate $i$ if $F=H_i$, and $0$ otherwise. Here, equality between $F$ and $H_i$ is to be taken up-to-isomorphism.
+And we recall here that MMD(P,Q) is the maximum mean discrepancy metric explained in section \ref{subsec:MMD}.
+Therefore this theorem gives a lower bound on the number of size-k graphlet samples needed to approximate the k-spectrum vector with respect to MMD metric, with certainty $\epsilon$ and probability $(1-\delta)$. When $\epsilon, \delta$ are reasonably chosen, this bound is better than exhaustively enumerating all possible $\tbinom{n}{k}$ graphlets, especially that $N_k$ is exponential function of the graphlets size $k$ not of the graph size $n$. However, when certainty intervals are required to be narrow with high probability (i.e. small values of $\epsilon, \delta$), or/and when high value of $k$ is required then this method is still computationally expensive. In addition, we must not forget the computational cost of mapping the sampled graphlets to their isomorphic correspondent in the list $\mathcal{G}$ (isomorphism test). 
+
+\paragraph{Issues.} In short, we identify two issues with the traditional graphlet kernel:
+\begin{itemize}
+\item For general $k$, $N_k$ is at least exponential in $k$ and the function $\phi_k^{hist.}$ itself is expensive to compute. Moreover, graphlet kernel still expensive when using graph sampling to approximate k-spectrum vector with high certainty.
+\item The inner product in Eq. \ref{eq:graphlet_kernel} and its associated Euclidean metric (not MMD metric) do not take into account a notion of \emph{similarity} between the graphlet themselves, they just compare the frequency counts for each graphlet, independently from the other.
+\end{itemize}
+We address both question by replacing the function $\phi_k^{hist}$ used to compute the k-spectrum vector $f_G$ with an efficient, randomized high-dimensional mapping.
+
+\section{Proposed Algorithm}
+The proposed algorithm can be seen as the combination of the notions presented in chapter \ref{chapter:background}, which are mean kernel associated with MMD metric, size-k graphlets spectrum and random features. We first combine the mean kernel with random features, then we combine the mean kernel with discrete probability distributions (graphlets distribution), and finally we integrate all in the final algorithm.\newline
+We recall that for two probability distributions $P,Q$, the mean kernel is written as follows:
+\begin{equation}
+\label{eq:mean_kernel_1}
+\mathcal{K}(P,Q) = \mathbb{E}_{x \sim P, y \sim Q} \mathcal{K}(x,y)
+\end{equation}
+If the kernel has the following form (as in the case of continuous and shift-invariant kernels in Eq. \ref{real Fourier integral}):
+\begin{equation}\label{eq:RF}
+\mathcal{K}(x,y) = \mathbb{E}_{\omega \sim \Lambda} z_\omega(x)^* z_\omega(y)
+\end{equation}
+Then it is immediate that we have:
+\begin{equation}
+\label{eq:MMD-RF}
+MMD(P,Q)^2 = \mathbb{E}_{\omega} \Big( | \mathbb{E}_P z_\omega(x) - \mathbb{E}_Q z_\omega(x) |^2 \Big)
+\end{equation}
+Now given data points $(x_1, \ldots, x_{N_s})$ drawn $iid$ (identically and independently) from $P$ and $(y_1, \ldots, y_{N_s})$ drawn $iid$ from $Q$, the kernel in Eq. \ref{eq:mean_kernel_1} can naturally be approximated by:
+\begin{equation}\label{eq:mean_kernel_approx}
+\mathcal{K}(P,Q) \approx \frac{1}{N_s^2} \sum_{i,j=1}^{N_s} \mathcal{K}(x_i,y_j)
+\end{equation}
+And the corresponding approximate MMD is (other variants exist):
+\[
+MMD(P,Q) \approx \sqrt{\frac{1}{{N_s}^2} \sum_{i,j=1}^{N_s} \mathcal{K}(x_i,x_j) + \mathcal{K}(y_i,y_j) - \mathcal{K}(x_i,y_j) - \mathcal{K}(x_j, y_i)}
+\]
+
+\subsection{MMD And Random Features}
+
+Mean kernel works especially well with random features. Combining \eqref{eq:approx_RF} and \eqref{eq:mean_kernel_approx}, it is not hard to see that using random features the mean kernel can be further approximated by:
+\begin{equation}
+\label{eq:mean_kernel_RF}
+\mathcal{K}(P,Q) \approx \frac{1}{{N_s}^2} \sum_{i,j=1}^{N_s} z(x_i)^*z(y_j) = \left(\frac{1}{{N_s}} \sum_i z(x_i)\right)^* \left(\frac{1}{{N_s}} \sum_i z(y_i)\right)
+\end{equation}
+So the computation can be drastically improved by first computing the \emph{averaged random features} (also called random \emph{generalized moments}, also called \emph{sketch}) $\frac{1}{{N_s}} \sum_i z(x_i)$, and taking a linear kernel between them. The corresponding MMD is then just the Euclidean metric between the averaged random features
+\[
+MMD(P,Q) \approx \| \frac{1}{{N_s}} \sum_i z(x_i) - \frac{1}{{N_s}} \sum_i z(y_i)\|_2
+\]
+
+\subsection{MMD For Discrete Distributions}
+For a discrete space of objects $\{g_1, \ldots, g_N\}$ with discrete probability distributions $P = \{P_1, \ldots, P_N\}$ and $Q= \{Q_1, \ldots, Q_N\}$ on them, the mean kernel \ref{eq:mean_kernel_1} takes a particular form:
+\[
+\mathcal{K}(P,Q) = \sum_{i,j=1}^N P_i Q_j k(g_i, g_j)
+\]
+
+\subsection{MMD With Random Features On Discrete Distributions}
+To combine all notions in the final algorithm, one can see the link with graphlet sampling, where $f_G$ is the (discrete) probability distribution of the graphlets. If we define $\mathcal{K}(F, F') \approx z(F)^*z(F')$ where $z$ is a random feature map that replaces $\phi_k^{hist}$, then the feature map is exactly what appears in \eqref{eq:mean_kernel_RF}. So, now, all that left is to construct the aforementioned feature map $z(F)$ for graphlets. The induced MMD metric between graphs is the MMD between graphlets probability distributions $f_G$:
+\[
+d(G,G') = MMD(f_G, f_{G'}) = \sqrt{\mathcal{K}(f_G, f_{G}) + \mathcal{K}(f_{G'}, f_{G'}) - 2 \mathcal{K}(f_G, f_{G'})} \approx \| \frac{1}{{N_s}} \sum_i z(F_i) - \frac{1}{{N_s}} \sum_i z(F'_i)\|_2
+\]
+where $F_i$ are graphlets drawn from $G$ and $F'_i$ are graphlets drawn from $G'$.
+
+.
+.
+(here there is a missing part on how to theoretically connect OPUs random features to this algorithm).Beside, the algorithm in its latex algorithmic form to be stated).
+
+\section{Concentration Analysis}
+For us, it is necessary to see how much, given two graphs $G$ and $G'$, $\|\frac{1}{{N_s}} \sum_i z(F_i) - \frac{1}{{N_s}} \sum_i z(F'_i)\|_2$ is close to $d(G,G')= MMD (G,G')$.
+We assume that when we replace $\phi_k^{hist}$ of the graphlet kernel with the random features map $z$, then the $\Lambda$ distribution in \eqref{eq:RF} satisfies that for each graph $F$ we have:
+\begin{equation}
+\label{eq:z_assumption}
+    0\leq z_\omega(F)\leq 1, \forall \omega \sim  \Lambda
+\end{equation}
+This is a reasonable assumption since by definition $\forall F,F'; \phi_k^{hist}(F)^T\phi_k^{hist}(F') \in [0,1]$.
+\newtheorem{lemma}{Lemma} 
+\begin{lemma}
+Let $G$ and $G'$ be two graphs, $\{F_i\}_{i=1}^{N_s}$ (resp. $\{F_i\}_{i=1}^{N_s}$) be $iid$ size-k graphlet samples drawn from $G$ (resp. $G'$). We have that $\forall \epsilon >0$:
+\begin{align*}
+    Pr(\Big | \mathbb{E}_{\omega} \Big( | \mathbb{E}_{f_G} z_\omega(F) - \mathbb{E}_{f_{G'}} z_\omega(F') |^2 \Big) - \| \frac{1}{N_s} \sum_i z(F_i) - \frac{1}{N_s} \sum_i z(F'_i)\|\Big | \geq
+    \frac{2}{\sqrt{N_s}}+\epsilon)\leq e^{-\frac{N_s\epsilon^2}{4}}
+\end{align*}
+\end{lemma}
+
+\begin{proof}
+We decompose the proof in two steps.
+\paragraph{Step 1: infinite $N_s$, finite $m$ (number of random features).} Based on our assumption on $z_\omega$ in \eqref{eq:z_assumption}, it is a straight forward result of Hoeffding's inequality that  $d(G, G')^2$ is close to $\frac{1}{m} \sum_{j=1} | \mathbb{E}_{F \sim f_G} z_{\omega_j}(F) - \mathbb{E}_{F' \sim f_{G'}} z_{\omega_j}(F') |^2 = \| \mathbb{E}_{F \sim f_G} z(F) - \mathbb{E}_{F' \sim f_{G'}} z(F')\|^2$.  
+\begin{lemma}[Hoeffding's inequality] 
+Let $(x_1,\ldots, x_m)$ be independent random variables such that the variable $x_i$ is strictly bounded by the interval $[a_i , b_i]$, and let $\overline{X}=\frac{1}{m}\Sigma_{i=1}^{m}x_i$ then we have:
+\begin{equation}
+\label{eq:Hoeffding}
+    Pr(|\mathbb{E}\overline{X}-\overline{X}|\geq \epsilon)\leq 2~ exp (-\frac{2m^2\epsilon^2}{\Sigma_{i=1}^m(b_i-a_i)^2)})
+\end{equation}
+
+\end{lemma}
+%\begin
+In our case, and for a finite number of random features $(m)$ we have the variables $x_j=| \mathbb{E}_{F \sim f_G} z_{\omega_j}(F) - \mathbb{E}_{F' \sim f_{G'}} z_{\omega_j}(F') |^2 $ are independent and bounded by the interval $[0,1]$ too, thus it is an easy result to see that:
+\begin{equation}
+    Pr(\Big|\frac{1}{m} \sum_{j=1}^m | \mathbb{E}_{F \sim f_G} z_{\omega_j}(F) - \mathbb{E}_{F' \sim f_{G'}} z_{\omega_j}(F') |^2 - \mathbb{E}_{\omega}  | \mathbb{E}_P z_\omega(x) - \mathbb{E}_Q z_\omega(x) |^2 \Big| \geq \epsilon) \leq 2~ e^{ -2m\epsilon^2}
+\end{equation}
+
+\paragraph{Step 2: finite ${N_s}$ and $m$.} We show that for any \emph{fixed} set of random features $\omega_j$, we have $\| \mathbb{E}_{F \sim f_G} z(F) - \mathbb{E}_{F' \sim f_{G'}} z(F')\|$ close to $\| \frac{1}{{N_s}} \sum_i z(F_i) - \frac{1}{{N_s}} \sum_i z(F'_i)\|$.  \newline
+Let us consider a fixed set of random variables $\{\omega_j\}_{j \in \{1,\ldots, m\}}$ drawn independently from $\Lambda$, thus the random features map of a graph F equals: $z(F) = \frac{1}{\sqrt{m}}\left[z_{\omega_j}(F)\right]_{j=1}^m$.\newline
+For every graph G , let $F_1,\ldots, F_{N_s}$ be ${N_s}$ random subgraphs drawn independently from G, we clearly have: 
+\begin{equation}
+\label{eq:subsample}
+    \mathbb{E}_{F \sim f_G} z(F)= \mathbb{E} (~\frac{1}{{N_s}} \sum_i z(F_i)~)
+\end{equation} 
+What should be noticed now to be used later is that $\forall F\sim f_G, z(F)$ is in a ball $\mathcal{H}$ of radius $M=\frac{\sqrt{m}}{\sqrt{m}}=1$.
+\begin{lemma}
+\label{lemma:vector_hoeffding}
+let $X=\{x_1,\ldots,x_{N_s}\}$ be $iid$ random variables in a ball $\mathcal{H}$ of radius $M$ centered around the origin in a Hilbert space. Denote their average by $\overline{X}=\frac{1}{{N_s}}\sum_{i=1}^{N_s}x_i$. Then for any $\delta>0$, with probability at lest $1-\delta$, 
+\begin{equation}
+\label{eq:vector_hoeffding0}
+  \| \overline{X}-\mathbb{E}\overline{X}\|\leq \frac{M}{\sqrt{{N_s}}}(1+\sqrt{2~log\frac{1}{\delta}}
+\end{equation}
+\end{lemma}
+\begin{proof}
+Defining the function $f(x)= \| \overline{X}-\mathbb{E}\overline{X}\|$, and $\widetilde{X}={x_1,\ldots,\widetilde{x}_i,\ldots,x_{N_s}}$ to be a copy of $X$ with the ith element replaced by an arbitrary element of $\mathcal{H}$, we can prove using the triangle inequality:
+\begin{equation}
+    |f(X)-f(\widetilde{X})|=\Big|\| \overline{X}-\mathbb{E}\overline{X} \|-\|\overline{\widetilde{X}} - \mathbb{E}\overline{X}  \| \Big|\leq \| \overline{X} - \overline{\widetilde{X}}\|\leq
+    \frac{\|x_i - \widetilde{x_i} \|}{{N_s}}\leq
+    \frac{2M}{{N_s}}
+\end{equation}
+Therefor, $f(X)$ is insensitive to the ith component of $X,~ \forall i \in \{1,\ldots,{N_s}\}$ which is an important requirement to apply McDiarmid's inequality on $f$. \newline
+To bound the expectation of $f$, we use the familiar identity about the variance of the average of $iid$ random variables:
+\begin{equation}
+\mathbb{E}\|\overline{X}-\mathbb{E}\overline{X}\|^2=\frac{1}{n}(\mathbb{E}\|x\|^2-\|\mathbb{E}x\|^2 ) 
+\end{equation}
+Also:
+\[ \mathbb{E}f(X)\leq\sqrt{\mathbb{E}f^2(X)}=\sqrt{\mathbb{E}\|\overline{X}-\mathbb{E}\overline{X}\|^2}\leq \frac{M}{\sqrt{{N_s}}}\]
+This bound for the expectation of $f$ and McDiamid's inequality give: 
+\begin{equation}
+\label{eq:vector_hoeffding1}
+    Pr_x \Big [ f(X)-\frac{M}{\sqrt{{N_s}}}\geq \epsilon \Big ]\leq
+    Pr_x \Big [ f(X)-\mathbb{E}f(X)\geq \epsilon \Big ]\leq
+    exp\Big( -\frac{{N_s}\epsilon^2}{2M^2}\Big)
+\end{equation}
+Which is equivalent to \eqref{eq:vector_hoeffding0} by setting $\delta=exp( -\frac{{N_s}\epsilon^2}{2M^2})$ and solving for $\epsilon$.
+\end{proof}
+Now back to Eq. \eqref{eq:subsample} and its corresponding assumptions that we made, we can directly apply lemma \ref{lemma:vector_hoeffding} (and more especially Eq.\eqref{eq:vector_hoeffding1}) to get that:
+\begin{equation}
+    \label{eq:fixed_w}
+    Pr(\|\mathbb{E}_{F \sim f_G} z(F)-~\frac{1}{n} \sum_i z(F_i)~\|\geq \frac{1}{\sqrt{n}}+\epsilon)\leq
+    e^{-\frac{n\epsilon^2}{2}}
+\end{equation}
+Now applying the triangle inequality again yields:
+\begin{align*}
+    \Big | \| \mathbb{E}_{F \sim f_G} z(F) - \mathbb{E}_{F' \sim f_{G'}} z(F')\| - \| \frac{1}{{N_s}} \sum_i z(F_i) - \frac{1}{{N_s}} \sum_i z(F'_i)\|\Big | \leq  \\
+   \| (\mathbb{E}_{F \sim f_G} z(F) -  \frac{1}{{N_s}} \sum_i z(F_i) )- (\mathbb{E}_{F' \sim f_{G'}} z(F') - \frac{1}{{N_s}} \sum_i z(F'_i))\|\leq \\
+    \| \mathbb{E}_{F \sim f_G} z(F) -  \frac{1}{{N_s}} \sum_i z(F_i) \|+ \|\mathbb{E}_{F' \sim f_{G'}} z(F') - \frac{1}{{N_s}} \sum_i z(F'_i)\|
+\end{align*}
+Thus, since the two variables $\| \mathbb{E}_{F \sim f_G} z(F) -  \frac{1}{{N_s}} \sum_i z(F_i) \|$ and $\|\mathbb{E}_{F' \sim f_{G'}} z(F') - \frac{1}{{N_s}} \sum_i z(F'_i)\|$ are independent (as a direct result of our aforementioned assumption of independent random sampling), $\forall \epsilon>0$ we have:
+\begin{align*}
+    Pr( \| \mathbb{E}_{F \sim f_G} z(F) -  \frac{1}{{N_s}} \sum_i z(F_i) \| \geq \frac{1}{\sqrt{{N_s}}}+\frac{\epsilon}{2}, \|\mathbb{E}_{F' \sim f_{G'}} z(F') - \frac{1}{{N_s}} \sum_i z(F'_i)\|\geq\frac{1}{\sqrt{{N_s}}}+\frac{\epsilon}{2})=\\
+    Pr( \| \mathbb{E}_{F \sim f_G} z(F) -  \frac{1}{{N_s}} \sum_i z(F_i) \| \geq \frac{1}{\sqrt{{N_s}}}+\frac{\epsilon}{2})~Pr( \|\mathbb{E}_{F' \sim f_{G'}} z(F') - \frac{1}{{N_s}} \sum_i z(F'_i)\|\geq\frac{1}{\sqrt{{N_s}}}+\frac{\epsilon}{2})\leq 
+    e^{-\frac{{N_s}\epsilon^2}{4}}
+\end{align*}
+finally, we get as a straight result from above:
+\begin{align*}
+    Pr(\Big | \| \mathbb{E}_{F \sim f_G} z(F) - \mathbb{E}_{F' \sim f_{G'}} z(F')\| - \| \frac{1}{{N_s}} \sum_i z(F_i) - \frac{1}{{N_s}} \sum_i z(F'_i)\|\Big | \geq
+    \frac{2}{\sqrt{{N_s}}}+\epsilon)\leq e^{-\frac{n\epsilon^2}{4}}
+\end{align*}
+And that is true for any fixed set of random variables  $\{\omega_j\}_{j \in \{1,\ldots, m\}}$ drawn independently from $\Lambda$.
+Since it is valid for any fixed set of random features, it is also valid with \emph{joint} probability on random features and samples, by the \emph{law of total probability}. So we can write:
+\begin{align*}
+    Pr(\Big | \mathbb{E}_{\omega} \Big( | \mathbb{E}_{f_G} z_\omega(F) - \mathbb{E}_{f_{G'}} z_\omega(F') |^2 \Big) - \| \frac{1}{N_s} \sum_i z(F_i) - \frac{1}{N_s} \sum_i z(F'_i)\|\Big | \geq
+    \frac{2}{\sqrt{N_s}}+\epsilon)\leq e^{-\frac{N_s\epsilon^2}{4}}
+\end{align*}
+
+\end{proof}
+
+\section{Complexity analysis}
+Here is the place to mention what part of the original complexity the the OPUs reduce to O(1).
