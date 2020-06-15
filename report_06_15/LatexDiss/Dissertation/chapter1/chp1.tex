@@ -19,7 +19,7 @@ We show now how kernels can be incorporated within learning models and how that 
 The values $[\alpha_i]_{i=1}^n$ in Eq. \ref{eq:inner_product} are optimized based on the dataset $(\mathbf{X,Y})$ by the learning algorithm. The intuition behind Eq. \ref{eq:inner_product} is that the output class for every new data point $x$ is expected to be the same class of nearby points in the input set $\mathcal{D}$. This is achieved by introducing the inner product $\mathbf{x}_i^T\mathbf{x}$ to control how much the class $y_i$ contributes in the output $\hat{y}(\mathbf{x})$. The parameters $[\alpha_i]_{i=1}^n$ controls how strongly can the train data point $x_i$ affect other neighbor points, and they mainly depend on how both classes are distributed in the input set $\mathcal{D}$, and on how much the dataset $(\mathbf{X,Y})$ is noisy. 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.5]{LatexDiss/Dissertation/figs/svm.png}
+\includegraphics[scale=0.5]{figs/svm.png}
 \caption[The case where classes aren't separable using linear boundary]{The left figure shows a case where the input data in their original space are not separable by a linear boundary. The right figure shows the same data transformed to a new space using a lifting function \o, and we can see that different classes are now separable  using linear boundary.}
 %Source:
 \label{fig:SVM_boundaries}
@@ -27,7 +27,7 @@ The values $[\alpha_i]_{i=1}^n$ in Eq. \ref{eq:inner_product} are optimized base
 However, with Eq. \ref{eq:inner_product} can be rewritten as $\hat{y}(\mathbf{x})=sign\{\textbf{x}^T(\mathbf{X}^T~diag([\alpha]_{i=1}^n)~\mathbf{Y})\}$, where $diag([\alpha]_{i=1}^n)$ is the diagonal square matrix whose eigenvalues are $[\alpha]_{i=1}^n$, and $\mathbf{X}$ are the data points in the dataset. To get the decision boundary of such models we solve $\textbf{x}^T\textbf{q}=0$, where $\textbf{q}=(\mathbf{X}^T~diag([\alpha]_{i=1}^n)~\mathbf{Y})\in\mathbb{R}^d$, so what we get is that it is an equation of a hyper-plane in the input space $\mathbb{R}^d$, and we refer to this as a linear decision boundary. The question here is what if the the two classes are not separable by a hyper-plane as shown in Fig. \ref{fig:SVM_boundaries}. One common solution to this problem is to map the data points from $\mathbb{R}^d$ to another space $\mathbb{R}^m$  through a proper mapping function \o~such that classes become separable with a linear decision boundary in $\mathbb{R}^m$.Then we can apply the same learning models specified in Eq. \ref{eq:inner_product} but on the transformed data. Let's consider for example the dataset shown in Fig. \ref{fig:polynomial_kernel},  we can use the following mapping function \o$:(x_1,x_2)\mapsto (\sqrt{2}x_1x_2,x_1^2,x_2^2)$ to move from $\mathbb{R}^2$ on the left where data are not linearly separable to $\mathbb{R}^3$ on the right where they are.
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.25]{LatexDiss/Dissertation/figs/poly_kenrnel.png}
+\includegraphics[scale=0.25]{figs/poly_kenrnel.png}
 \caption[Lifting data to a higher-dimension space to get linearly separable classes]{ Using the mapping function \o$:(x_1,x_2)\mapsto (\sqrt{2}x_1x_2,x_1^2,x_2^2)$ to map the data on the left in $\mathbb{R}^2$ to $\mathbb{R}^3$ where they are linearly separable}
 %Source:
 \label{fig:polynomial_kernel}
