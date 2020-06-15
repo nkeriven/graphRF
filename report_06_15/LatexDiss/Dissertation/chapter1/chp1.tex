@@ -1,24 +1,26 @@
 \newcommand{\todoNK}[1]{\textbf{\textcolor{red}{NK: #1}}}
-\chapter{Preliminaries and necessary background}
+\chapter{Background}
 \label{chapter:background}
 \newtheorem{theorem}{Theorem}
 In this chapter we present the necessary background that the reader should have in order to proceed through the next two chapters, which are the core of this work. After a brief overview of kernel methods in machine learning, we will present random features and graph kernels. In the next chapter, these different notions will be combined in the proposed algorithm.
+
 \section{Kernel methods and random features}
 
 We first start by an overview of kernel methods.
 
 \subsection{Kernel methods and kernel trick}
-Kernel methods is a family of classic algorithms in machine learning that learn models as a combination of similarity functions between data points $(x,x')$, represented by positive semi-definite (psd) \emph{kernels} $\mathcal{K}(x,x')$. Denote by $\mathcal{D}$ the set of all possible data points. A symmetric function $\mathcal{K}:\mathcal{D}\times\mathcal{D}\mapsto\mathbb{R}$ is said to be a positive semi-definite kernel if:
+Kernel methods is a family of classic algorithms in machine learning that learn models as a combination of similarity functions between data points $(x,x')$, defined by positive semi-definite (psd) \emph{kernels} $\mathcal{K}(x,x')$. Denote by $\mathcal{D}$ the set of all possible data points. A symmetric function $\mathcal{K}:\mathcal{D}\times\mathcal{D}\mapsto\mathbb{R}$ is said to be a positive semi-definite kernel if:
 \begin{equation}
-\forall n\in \mathbb{N}, \forall \alpha_1,\ldots,\alpha_n\in \mathbb{R},\forall x_1,\ldots,x_n\in \mathcal{D},\quad \sum_{i,j}^n\alpha_i\alpha_j\mathcal{K}(x_i,x_j)\geq 0 \, .
+\forall n\in \mathbb{N},~\forall \alpha_1,\ldots,\alpha_n\in \mathbb{R},~\forall x_1,\ldots,x_n\in \mathcal{D},\quad \sum_{i,j}^n\alpha_i\alpha_j\mathcal{K}(x_i,x_j)\geq 0 \, .
 \end{equation}
+\nt{Can we \emph{not} use mathcal for a function? I suggest $\kappa$}
 
-Let us now illustrate how kernels can be incorporated within learning models and how that is useful to learn more complex functions. To do that let's consider a simple classification problem: take $\mathcal{D}=\mathbb{R}^d; d\in\mathbb{N}$, and let $(\mathbf{X},\mathbf{Y})$ be a labeled dataset of size $n$ with datapoints $\mathbf{X}\in \mathbb{R}^{n\times d} $ and labels $\mathbf{Y}\in \{-1,1\}^n$. Many of the learning models designed to solve this problem, like Support Vector Machine (SVM) and Perceptron binary classifier, rely on the inner product as a measure of similarity between data points: during the training, they only use inner products $\mathbf{x}_i^T \mathbf{x}_j$, and then produce models with the following form \citep{inner_product}:
+Let us now illustrate how kernels can be incorporated to learning models and how that is useful to learn more complex functions. To do that let us consider a simple classification problem: take $\mathcal{D}=\mathbb{R}^d; d\in\mathbb{N}$, and let $(\mathbf{X},\mathbf{Y})$ be a labeled dataset of size $n$ with datapoints $\mathbf{X}\in \mathbb{R}^{n\times d} $ and labels $\mathbf{Y}\in \{-1,1\}^n$. \nt{and here $X$ and $Y$ should be mathcal right? Ok, I'll stop here for notation comments as I recall you were saying that you had not changed notations yet. Also I guess you'll need to define the vector $\mathbf{y}$ where $y_i$ is the label of $\mathbf{x}_i$} Many of the learning models designed to solve this problem, like Support Vector Machine (SVM) \nt{add ref} and Perceptron binary classifier \nt{add ref}, rely on the inner product as a measure of similarity between data points: during the training, they only use inner products $\mathbf{x}_i^T \mathbf{x}_j$, and then produce models with the following form \citep{inner_product}:
 \begin{equation}
 \label{eq:inner_product}
- \hat{y}(\mathbf{x})=\text{sign}\{\sum_{i=1}^n\alpha_iy_i\mathbf{x}_i^T\mathbf{x}\} \text{ with } \alpha_i\in \mathbb{R}
+ \hat{y}(\mathbf{x})=\text{sign}\left\{\sum_{i=1}^n\alpha_iy_i\mathbf{x}_i^T\mathbf{x}\right\} \text{ with } \alpha_i\in \mathbb{R}
 \end{equation}
-where the values $[\alpha_i]_{i=1}^n$ in Eq. \ref{eq:inner_product} are optimized based on the dataset $(\mathbf{X,Y})$ by the learning algorithm. The intuition behind Eq. \ref{eq:inner_product} is that the output class for every new data point $x$ is expected to be the same class of nearby points in the input set $\mathcal{D}$. This is achieved by introducing the inner product $\mathbf{x}_i^T\mathbf{x}$ to control how much the class $y_i$ contributes in the output $\hat{y}(\mathbf{x})$. The parameters $[\alpha_i]_{i=1}^n$ controls how strongly the data point $x_i$ can affect other neighbor points. They mainly depend on how both classes are distributed in the input set $\mathcal{D}$, and on how much the dataset $(\mathbf{X,Y})$ is noisy. 
+where the values $[\alpha_i]_{i=1}^n$ in Eq. \ref{eq:inner_product} are optimized based on the dataset $(\mathbf{X,Y})$ by the learning algorithm. The intuition behind Eq. \ref{eq:inner_product} is that the output class for every new data point $x$ is expected to be the same class of nearby points in the input set $\mathcal{D}$. This is achieved by introducing the inner product $\mathbf{x}_i^T\mathbf{x}$ to control how much the class $y_i$ contributes in the output $\hat{y}(\mathbf{x})$. The parameters $[\alpha_i]_{i=1}^n$ controls how strongly the data point $x_i$ can affect other neighboring points. They mainly depend on how both classes are distributed in the input set $\mathcal{D}$, and on how much the dataset $(\mathbf{X,Y})$ is noisy. 
 
 \begin{figure}[H]
 \centering
@@ -31,9 +33,14 @@ where the values $[\alpha_i]_{i=1}^n$ in Eq. \ref{eq:inner_product} are optimize
 A \emph{kernel method} consists in replacing every inner products $\mathbf{x}_i^T \mathbf{x}_j$ by a psd kernel $\mathcal{K}(\mathbf{x}_i, \mathbf{x}_j)$ during training, and similarly $\mathbf{x}_i^T\mathbf{x}$ by $\mathcal{K}(\mathbf{x}_i, \mathbf{x})$ during prediction.
 Let us now explain the intuition behind this, starting by rewriting Eq. \ref{eq:inner_product} as 
 \[
-\hat{y}(\mathbf{x})=sign\{\textbf{x}^T(\mathbf{X}^T~diag([\alpha]_{i=1}^n)~\mathbf{Y})\},
+\hat{y}(\mathbf{x})=\text{sign}\{\textbf{x}^T(\mathbf{X}^T~diag([\alpha]_{i=1}^n)~\mathbf{Y})\},
 \]
-where $diag([\alpha]_{i=1}^n)$ is the diagonal square matrix with values $[\alpha]_{i=1}^n$. To get the decision boundary of such models we solve $\textbf{x}^T\textbf{q}=0$, where $\textbf{q}=(\mathbf{X}^T~diag([\alpha]_{i=1}^n)~\mathbf{Y})\in\mathbb{R}^d$. It is the equation of a hyper-plane in the input space $\mathbb{R}^d$, also referred to as a \emph{linear} decision boundary. The question here is: what if the the two classes are not separable by a hyper-plane (Fig. \ref{fig:SVM_boundaries})? One common solution to this problem is to map the data points from $\mathbb{R}^d$ to another space $\mathbb{R}^m$  through a proper mapping function \o~such \todoNK{Not fond of \o. How about $\varphi$ ?} that the two classes become separable with a linear decision boundary in $\mathbb{R}^m$. Then we can apply the same learning models specified in Eq. \ref{eq:inner_product} but on the transformed data. Let's consider for example the dataset shown in Fig. \ref{fig:polynomial_kernel},  we can use the following mapping function \o$:(x_1,x_2)\mapsto (\sqrt{2}x_1x_2,x_1^2,x_2^2)$ to move from $\mathbb{R}^2$ on the left, where data are not linearly separable, to $\mathbb{R}^3$ on the right, where they are.
+where $diag([\alpha]_{i=1}^n)$ is the diagonal matrix with values $[\alpha]_{i=1}^n$. \nt{**As $\mathbf{Y}$ is not really well defined, the reader, as it is, does not really understand the algebraic calculus at stake here**}
+
+To get the decision boundary of such models we solve $\textbf{x}^T\textbf{q}=0$, where $\textbf{q}=(\mathbf{X}^T~diag([\alpha]_{i=1}^n)~\mathbf{Y})\in\mathbb{R}^d$. It is the equation of a hyper-plane in the input space $\mathbb{R}^d$, also referred to as a \emph{linear} decision boundary. 
+The question here is: what if the the two classes are not separable by a hyper-plane (Fig. \ref{fig:SVM_boundaries})? 
+
+One common solution to this problem is to map the data points from $\mathbb{R}^d$ to another space $\mathbb{R}^m$  through a proper mapping function \o~such \todoNK{Not fond of \o. How about $\varphi$ ?} \nt{I agree: $\varphi, \psi$?} that the two classes become separable with a linear decision boundary in $\mathbb{R}^m$. Then we can apply the same learning models specified in Eq. \ref{eq:inner_product} but on the transformed data. Let us consider for example the dataset shown in Fig. \ref{fig:polynomial_kernel},  we can use the following mapping function \o$:(x_1,x_2)\mapsto (\sqrt{2}x_1x_2,x_1^2,x_2^2)$ to move from $\mathbb{R}^2$ on the left, where data are not linearly separable, to $\mathbb{R}^3$ on the right, where they are.
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.25]{figs/poly_kenrnel.png}
@@ -41,7 +48,7 @@ where $diag([\alpha]_{i=1}^n)$ is the diagonal square matrix with values $[\alph
 %Source:
 \label{fig:polynomial_kernel}
 \end{figure}
-Learning such a function \o~is what is typically done for neural networks, using complex optimization methods. Kernel methods are instead justified with the following key theorem.
+Learning such a function \o~is what is typically done by neural networks using complex optimization methods.  Kernel methods are much simpler (and elegant) methods to perform this mapping. They are justified by the following key theorem.
 \begin{theorem}[Mercer theorem]
 To every positive semi-definite kernel $\mathcal{K}:\mathbb{R}^d\times \mathbb{R}^d\mapsto \mathbb{R}$, there exists a Hilbert space $\mathbb{H}$ and a feature map $\phi:\mathbb{R}^d\mapsto\mathbb{H}$ such that for all $x,x'\in\mathbb{R}^d$ we have: 
 \begin{equation}
@@ -50,60 +57,72 @@ To every positive semi-definite kernel $\mathcal{K}:\mathbb{R}^d\times \mathbb{R
 \end{equation}
 where $<\phi(\mathbf{x}),\phi(\mathbf{x}')>_\mathbb{H}$ is the inner product defined in $\mathbb{H}$.
 \end{theorem}
-This theorem state that replacing the inner product $\mathbf{x}_i^T\mathbf{x}$ in Eq. \ref{eq:inner_product} by a positive semi-definite kernel $\mathcal{K}(\mathbf{x},\mathbf{x}')$ is equivalent to implicitly map the data from the original input space $\mathcal{D}$ to another feature space $\mathbb{H}$ and then apply the classical inner product learning models. Therefore, one \emph{does not need to know explicitely the mapping} $\phi$ nor the new feature space $\mathbb{H}$, instead, it is sufficient to evaluate the kernel $\mathcal{K}$ for pairs of data points in the original input space $\mathcal{D}$. This main feature of kernel methods is known as the \emph{kernel trick}. That has two main advantages:
+This theorem states that replacing the inner product $\mathbf{x}_i^T\mathbf{x}$ in Eq. \ref{eq:inner_product} by a positive semi-definite kernel $\mathcal{K}(\mathbf{x}_i,\mathbf{x})$ is equivalent to implicitly map the data from the original input space $\mathcal{D}$ to another feature space $\mathbb{H}$ and then apply the classical inner product. Therefore, one \emph{does not need to know explicitely the mapping} $\phi$ nor the new feature space $\mathbb{H}$, instead, it is sufficient to evaluate the kernel $\mathcal{K}$ for pairs of data points in the original input space $\mathcal{D}$. This main feature of kernel methods is known as the \emph{kernel trick}. It has two main advantages:
 \begin{itemize}
     \item Kernels allow us to transform data to a new Hilbert space of very high or even infinite dimensionality, which can make the learning model able to represent more complex functions.
-    \item Kernels are often computationally cheaper, since they save the time required to compute the explicit co-ordinates of the data in the new feature space by directly calculate the inner product between the transformed data.
+    \item Kernels are often computationally cheaper, since they save the time required to compute the explicit co-ordinates of the data in the new feature space by directly calculating the inner product between the transformed data.
 \end{itemize}
-To better illustrate these benefits, we take the Gaussian kernel as an example, which is one of the most classical kernels on $\mathbb{R}^d$, defined as:
+To better illustrate these benefits, we take the Gaussian kernel as an example, which is one of the most classical kernels in $\mathbb{R}^d$, defined as:
 \begin{equation}
 \label{eq:Guassian_kernel}
-    \mathcal{K}_{G}(\mathbf{x},\mathbf{x}')=\exp(-\frac{\left \| \mathbf{x}-\mathbf{x}'\right\|^2}{2\sigma^2})
+    \mathcal{K}_{G}(\mathbf{x},\mathbf{x}')=\exp^{-\frac{\left \| \mathbf{x}-\mathbf{x}'\right\|^2}{2\sigma^2}}
 \end{equation}
-where $\sigma>0$ is called the bandwidth parameter of the kernel. The lifting function $\phi_G$ of this kernel is located in a Hilbert space of infinite dimension, but the kernel can be easily evaluated for any pair $(\mathbf{x},\mathbf{x}')\in \mathcal{D}=\mathbb{R}^d$.\newline
+where $\sigma>0$ is called the bandwidth parameter of the kernel. The lifting function $\phi_G$ of this kernel is located in a Hilbert space of infinite dimension, but the kernel can be easily evaluated for any pair $(\mathbf{x},\mathbf{x}')\in \mathcal{D}=\mathbb{R}^d$.
+
 Despite their advantages, kernel methods still have some drawbacks:
 \begin{itemize}
-    \item Since for most kernels we need to evaluate the kernel on each pairs of data points, for a dataset $(\mathbf{X},\mathbf{X})$ of size $n$, we need $O(n^2)$ memory entries to compute what is called a Gram matrix, whose $(i,j)_{th}$ entry equals the kernel between points $\mathcal{K}(\mathbf{x_i}, \mathbf{x_j})$.
-    \item Even if most kernels are designed so that they can be evaluated in polynomial time in the dimensionality of the input space $\mathcal{D}$, as we will see some kernels (especially on on graphs) are computationally expensive \citep{graphlet_kernel}.
+    \item Since for most kernels we need to evaluate the kernel on each pairs of data points, for a dataset $(\mathbf{X},\mathbf{X})$ \nt{?} of size $n$, we need $O(n^2)$ memory entries to compute what is called a Gram matrix, whose $(i,j)_{th}$ entry equals the kernel between points $\mathcal{K}(\mathbf{x_i}, \mathbf{x_j})$.
+    \item Even if most kernels are designed so that they can be evaluated in polynomial time in the dimensionality of the input space $\mathcal{D}$ (for instance computing $\mathcal{K}_{G}(\mathbf{x},\mathbf{x}')$ for two vectors in $\mathbb{R}^d$ costs $d$ operations),  some kernels (especially on graphs) are computationally expensive \citep{graphlet_kernel}.
 \end{itemize}
-To overcome these disadvantages, random feature projections is a technique developed to approximate kernels with less computational time and less memory storage.
+To overcome these disadvantages, random feature projections is a technique developed to approximate kernels with less computational time and less memory storage. \nt{do RFs really overcome both of these problems?}
 
 \subsection{Random features}
-Random features (RF) \citep{rahimi2008random} is a approach developed to approximate kernel methods with reduced computational time. The idea is that, instead of considering the true lifting function $\phi$ in Eq. \ref{eq:kernel_main_equation}, we explicitly map the data points using an appropriate randomized feature map $\varphi:\mathcal{D} \xrightarrow{}\mathbb{C}^m$, such that the kernel of two data points $x, x'$ is approximated by the inner product of their random features with high probability:
+Random features (RF) \citep{rahimi2008random} is an approach developed to approximate kernel methods with reduced computational time. The idea is that, instead of considering the true lifting function $\phi$ in Eq. \ref{eq:kernel_main_equation}, we explicitly map the data points using an appropriate randomized feature map $\varphi:\mathcal{D} \xrightarrow{}\mathbb{C}^m$, such that the kernel evaluated for two data points $x, x'$ is approximated by the inner product of their random features with high probability:
 \begin{equation}
 \label{eq:approx_RF}
 \mathcal{K}(x,x')=<\phi(x),\phi(x')>_\mathbb{H} \approx \varphi(x)^*\varphi(x')
 \end{equation}
-Considering this approximation, we can transform the input with $\varphi$ and then apply a linear learning method as in Eq. \ref{eq:inner_product} to have a similar learning power as the original non-linear kernel machine, while avoiding the $\mathcal{O}(n^2)$ cost of constructing the Gram matrix. Remark that with RF we do not use the kernel trick anymore, but construct an explicit mapping $\varphi$ to approximate the kernel $\mathcal{K}$.
+Considering this approximation, we can transform the input with $\varphi$ and then apply a linear learning method as in Eq. \ref{eq:inner_product} to have a similar learning power as the original non-linear kernel machine, while avoiding the $\mathcal{O}(n^2)$ cost of constructing the Gram matrix \nt{whatever the embedding, computing a Gram matrix between $n$ elements takes $\mathcal{O}(n^2)$ What are you trying to say?}. Note that with RF we do not use the kernel trick anymore, but construct an explicit mapping $\varphi$ to approximate the kernel $\mathcal{K}$.
 
 Most RF constructions are known as Random \emph{Fourier} Features (RFF), and are based on the following theorem.
 \begin{theorem}[Bochner's theorem]
-A continuous and shift-invariant kernel $\mathcal{K}(x,x')=\mathcal{K}(x-x')$ on $\mathbb{R}^d$ is positive definite if and only if $\mathcal{K}(\delta)$ is the Fourier transform of a non-negative measure.
+A continuous and shift-invariant kernel $\mathcal{K}(x,x')=\mathcal{K}(x-x')$ on $\mathbb{R}^d$ is positive definite if and only if $\mathcal{K}$ is the Fourier transform of a non-negative measure.
 \end{theorem}
 As a direct consequence, we can easily scale any shift-invariant kernel to obtain $\mathcal{K}(0) = \int p = 1$, so that its Fourier transform $p(w)$ is a correct probability distribution. We obtain that any shift-invariant psd kernel is of the form:
 \begin{equation}
 \label{Fourier integral}
 \mathcal{K}(x-x')=\int_{\mathbb{R}^d}p(w)e^{jw^T(x-x')}dw= E_w[\xi_w(x)^*\xi_w(x')]
 \end{equation}
-where $\xi_w(x)=e^{-jw^Tx}$, for some probability distribution $p(w)$. Note that, since $\mathcal{K}(\delta)$ is a real-valued function, from Eq.~\ref{Fourier integral} one can also prove that:
+where $\xi_w(x)=e^{-jw^Tx}$, where the expectation $E_w$ is over the appropriate probability distribution $p(w)$. Note that, since $\mathcal{K}$ is a real-valued function, from Eq.~\ref{Fourier integral} one can also prove that:
 \begin{equation}
 \label{real Fourier integral}
 \mathcal{K}(x-x')=\int_{\mathbb{R}^d}p(w)cos({w^T(x-x')})dw=E_w[\tilde \xi_w(x)\tilde \xi_w(x')]
 \end{equation}
 where $\tilde \xi_w(x)=\sqrt{2}cos(w^Tx+b)$ such that $w$ is drawn from $p(w)$ and b is drawn uniformly from $[0,2\pi]$, so we can use real-valued mapping if desired.
 
-As a result, for $w$ a random variable drawn from $p(w)$, $\ \xi_w(x)\xi_w(x')$ is an unbiased estimate of $\mathcal{K}(x,x')$. The RF methodology consists in averaging $m$ instances of the estimator with different random frequencies $w_j$ drawn identically and independently (iid), that is, define
+As a result, for $w$ a random variable drawn from $p(w)$, $\ \xi_w(x)\xi_w(x')$ is an unbiased estimate of $\mathcal{K}(x,x')$. The RF methodology consists in averaging $m$ instances of the estimator with different random frequencies $w_j$ drawn identically and independently (iid) from $p(w)$, that is, define
 \[
 \varphi(x) = \frac{1}{\sqrt{m}} ( \xi_{w_j}(x) )_{j=1}^m
 \]
+\nt{**make it clearer that this is a vector in dimension $m$. **} 
 such that $\varphi(x)^*\varphi(x')=\frac{1}{m} \sum_{j=1}^m \xi_{w_j}(x)^*\xi_{w_j}(x')$, which converges to $\mathcal{K}(x,x')$ by the law of large numbers. Moreover, Hoeffding's inequality guarantees exponentially fast convergence in $m$ between $\varphi(x)^*\varphi(x')$ and the kernel true value:
 \begin{equation}
-    Pr(|\varphi(x)^*\varphi(x')-\mathcal{K}(x,x')|\geq\epsilon)\leq2e^\frac{-m\epsilon^2}{4};~~~ \forall \epsilon >0
+   \forall \epsilon >0\qquad Pr(|\varphi(x)^*\varphi(x')-\mathcal{K}(x,x')|\geq\epsilon)\leq2e^\frac{-m\epsilon^2}{4},
 \end{equation}
+that is, for any error $\epsilon$, the probability that the estimation is off by more than $\epsilon$ is controlled by an exponentially decaying term.
 
-As an illustration, consider the Gaussian kernel in Eq. \ref{eq:Guassian_kernel} as an example. This kernel is knwon to be a shift-invariant, positive semi-definite kernel. It is already correctly normalized since $\mathcal{K}(0) = 1$, and its Fourier transformation is a Gaussian probability distribution with inverted variance:
-\[p(w)=FT\big(\mathcal{K}_G(\delta)\big)(w)=(\frac{\sigma^2}{2\pi})^\frac{d}{2}e^{-\frac{\sigma^2\|w\|^2}{2}}\]
-So, drawing $w$ from a Gaussian distribution and applying RF approximates a kernel method with a Gaussian kernel.
+\nt{I would add here the theorem of the form (the union bound on the previous Hoeffding):
+\begin{theorem}\label{thm:RF_vs_logn}
+Let $\epsilon\in(0,1)$ and $\delta\in(0,1)$. Consider a dataset $\mathcal{X}=(\mathbf{x}_1,\ldots,\mathbf{x}_n)$ of $n$ elements, and a psd shift-invariant kernel $\kappa$. The random embedding  $\varphi(x)\in\mathbb{R}^m$ enables a controlled approximation of \emph{all} the elements of the Gram matrix with probability larger than $1-\delta$, \emph{i.e.}
+$$\text{Pr}\left(\forall (\mathbf{x}, \mathbf{x}')\in\mathcal{X}^2\quad|\varphi(x)^*\varphi(x')-\mathcal{K}(x,x')|\leq\epsilon\right)\geq 1-\delta$$ 
+provided that 
+$$m\geq\mathcal{O}\left(\frac{1}{\epsilon^2}\log{\frac{n}{\delta}}\right).$$
+\end{theorem}
+I find this version useful as we clearly see that in fact random embedding is classically useful when $\log{n}\leq d$. If $d$ is too small, random embedding is in general useless. }
+
+As an illustration, consider the Gaussian kernel in Eq. \ref{eq:Guassian_kernel} as an example. This kernel is shift-invariant and known to be positive semi-definite. It is already correctly normalized since $\mathcal{K}(0) = 1$, and its Fourier transform is a Gaussian probability distribution with inverted variance:
+\[p(w)=FT\big(\mathcal{K}_G\big)(w)=\left(\frac{\sigma^2}{2\pi}\right)^\frac{d}{2}e^{-\frac{\sigma^2\|w\|^2}{2}}\]
+Thus, in practice, in order to approximate the Gram matrix of $\mathcal{K}_G$ on a dataset $\mathcal{X}$ of size $n$, one i/~draws $m$ iid frequencies from this probability distribution, with $m$ as in Theorem~\ref{thm:RF_vs_logn}; ii/~uses these frequencies to associate to each element $x\in\mathcal{X}$ its associated random feature vector $\varphi(x)\in\mathbb{R}^m$; iii/~uses $\varphi(x)^*\varphi(x')$ as an approximation of $\kappa_G(\mathbf{x},\mathbf{x}')$ where necessary in any kernel-based learning algorithms.
 
 \section{Graph kernels}
  We first introduce  necessary notations related to graph definition and graph kernels.\newline $F=(\mathcal{V}_F,\mathcal{E}_F)$ is said to be a subgraph (graphlet) of $\mathcal{G}$ and we write $F\sqsubseteq \mathcal{G}$, if and only if there exist an injective function $\mathcal{M}:\mathcal{V}_F\xrightarrow{} \mathcal{V}$ such that $(u,u')\in \mathcal{E}_F \Leftrightarrow{(\mathcal{M}(u),\mathcal{M}(u'))\in \mathcal{E}}$.\newline
