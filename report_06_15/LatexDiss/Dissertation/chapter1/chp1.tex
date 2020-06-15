@@ -104,7 +104,7 @@ As a result, for $w$ a random variable drawn from $p(w)$, $\ \xi_w(x)\xi_w(x')$ 
 \[
 \varphi(x) = \frac{1}{\sqrt{m}} ( \xi_{w_j}(x) )_{j=1}^m
 \]
-\nt{**make it clearer that this is a vector in dimension $m$. **} 
+\nt{**make it clearer that this is a vector in dimension $m$. For instance use bold.**} 
 such that $\varphi(x)^*\varphi(x')=\frac{1}{m} \sum_{j=1}^m \xi_{w_j}(x)^*\xi_{w_j}(x')$, which converges to $\mathcal{K}(x,x')$ by the law of large numbers. Moreover, Hoeffding's inequality guarantees exponentially fast convergence in $m$ between $\varphi(x)^*\varphi(x')$ and the kernel true value:
 \begin{equation}
    \forall \epsilon >0\qquad Pr(|\varphi(x)^*\varphi(x')-\mathcal{K}(x,x')|\geq\epsilon)\leq2e^\frac{-m\epsilon^2}{4},
