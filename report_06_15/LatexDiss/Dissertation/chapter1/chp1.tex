@@ -69,33 +69,41 @@ Despite their advantages, kernel methods still have some drawbacks:
 To overcome these disadvantages, random feature projections is a technique developed to approximate kernels with less computational time and less memory storage.
 
 \subsection{Random features}
-Random features is a method developed to approximate kernel machines whose computational time  scales exponentially in the input dimensionality, and of course the goal is to reduce this time.   The idea is that instead of considering the true lifting function $\phi$ in Eq. \ref{eq:kernel_main_equation}, we explicitly map the data points to an Euclidean space of low dimensionality. This mapping is done using an appropriate randomized feature map $\varphi:\mathcal{D} \xrightarrow{}\mathbb{R}^m$. Then we approximate the kernel of two data points $x, x'$ by the inner product of their random features:
+Random features (RF) \citep{rahimi2008random} is a approach developed to approximate kernel methods with reduced computational time. The idea is that, instead of considering the true lifting function $\phi$ in Eq. \ref{eq:kernel_main_equation}, we explicitly map the data points using an appropriate randomized feature map $\varphi:\mathcal{D} \xrightarrow{}\mathbb{C}^m$, such that the kernel of two data points $x, x'$ is approximated by the inner product of their random features with high probability:
 \begin{equation}
 \label{eq:approx_RF}
-\mathcal{K}(x,x')=<\phi(x),\phi(x')> \approx \varphi(x)^*\varphi(x')
+\mathcal{K}(x,x')=<\phi(x),\phi(x')>_\mathbb{H} \approx \varphi(x)^*\varphi(x')
 \end{equation}
-Considering this approximation, we can transform the input with $\varphi$ and then apply a fast linear learning method as in Eq. \ref{eq:inner_product} to have a similar learning power as the original non-linear kernel machine. In what follows, random Fourier features method to construct the random mapping function $\varphi$ is presented.
+Considering this approximation, we can transform the input with $\varphi$ and then apply a linear learning method as in Eq. \ref{eq:inner_product} to have a similar learning power as the original non-linear kernel machine, while avoiding the $\mathcal{O}(n^2)$ cost of constructing the Gram matrix. Remark that with RF we do not use the kernel trick anymore, but construct an explicit mapping $\varphi$ to approximate the kernel $\mathcal{K}$.
+
+Most RF constructions are known as Random \emph{Fourier} Features (RFF), and are based on the following theorem.
 \begin{theorem}[Bochner's theorem]
 A continuous and shift-invariant kernel $\mathcal{K}(x,x')=\mathcal{K}(x-x')$ on $\mathbb{R}^d$ is positive definite if and only if $\mathcal{K}(\delta)$ is the Fourier transform of a non-negative measure.
 \end{theorem}
-Direct consequence, we can easily scale a shift-invariant kernel so that its Fourier transform $p(w)$ is a correct probability distribution, since it is non-negative measure and integral-bounded function, and we write:
+As a direct consequence, we can easily scale any shift-invariant kernel to obtain $\mathcal{K}(0) = \int p = 1$, so that its Fourier transform $p(w)$ is a correct probability distribution. We obtain that any shift-invariant psd kernel is of the form:
 \begin{equation}
 \label{Fourier integral}
-\mathcal{K}(x-x')=\int_{\mathbb{R}^d}p(w)e^{jw^T(x-x')}dw=E_w[e^{jw^Tx}{e^{jw^Tx'}}^*]
+\mathcal{K}(x-x')=\int_{\mathbb{R}^d}p(w)e^{jw^T(x-x')}dw= E_w[\xi_w(x)^*\xi_w(x')]
 \end{equation}
-Both $p(w)$ and $\mathcal{K}(\delta)$ are real-valued functions, thus from Eq.~\ref{Fourier integral} one can prove that:
+where $\xi_w(x)=e^{-jw^Tx}$, for some probability distribution $p(w)$. Note that, since $\mathcal{K}(\delta)$ is a real-valued function, from Eq.~\ref{Fourier integral} one can also prove that:
 \begin{equation}
 \label{real Fourier integral}
-\mathcal{K}(x-x')=\int_{\mathbb{R}^d}p(w)cos({w^T(x-x')})dw=E_w[\xi_w(x)\xi_w(x')]
+\mathcal{K}(x-x')=\int_{\mathbb{R}^d}p(w)cos({w^T(x-x')})dw=E_w[\tilde \xi_w(x)\tilde \xi_w(x')]
 \end{equation}
-where $\varphi_w(x)=\sqrt{2}cos(w^Tx+b)$ such that $w$ is drawn from $p(w)$ and b is drawn uniformly from $[0,2\pi]$.\newline
-As a result, $\ \xi_w(x)\xi_w(x')$ is an unbiased estimate of $\mathcal{K}(x,x')$. Moreover, we can achieve lower variance estimation to the expectation (Eq. \ref{real Fourier integral}) by averaging $m$ instances of the estimator with different random frequencies $w$, \emph{i.e.} the low-variance estimator can be written as: $\varphi(x)^T\varphi(x')=\frac{1}{m} \Sigma_{j=1}^m \xi_{w_j}(x)\xi_{w_j}(x')$ where frequencies $w_j$ are identically and independently drawn from $p(w)$. This estimator and based on Hoeffding's inequality guarantees exponentially fast convergence in $m$ between $\varphi(x)^T\varphi(x')$ and the kernel true value:
+where $\tilde \xi_w(x)=\sqrt{2}cos(w^Tx+b)$ such that $w$ is drawn from $p(w)$ and b is drawn uniformly from $[0,2\pi]$, so we can use real-valued mapping if desired.
+
+As a result, for $w$ a random variable drawn from $p(w)$, $\ \xi_w(x)\xi_w(x')$ is an unbiased estimate of $\mathcal{K}(x,x')$. The RF methodology consists in averaging $m$ instances of the estimator with different random frequencies $w_j$ drawn identically and independently (iid), that is, define
+\[
+\varphi(x) = \frac{1}{\sqrt{m}} ( \xi_{w_j}(x) )_{j=1}^m
+\]
+such that $\varphi(x)^*\varphi(x')=\frac{1}{m} \sum_{j=1}^m \xi_{w_j}(x)^*\xi_{w_j}(x')$, which converges to $\mathcal{K}(x,x')$ by the law of large numbers. Moreover, Hoeffding's inequality guarantees exponentially fast convergence in $m$ between $\varphi(x)^*\varphi(x')$ and the kernel true value:
 \begin{equation}
-    Pr(|\varphi(x)^T\varphi(x')-\mathcal{K}(x,x')|\geq\epsilon)\leq2e^\frac{-m\epsilon^2}{4};~~~ \forall \epsilon >0
+    Pr(|\varphi(x)^*\varphi(x')-\mathcal{K}(x,x')|\geq\epsilon)\leq2e^\frac{-m\epsilon^2}{4};~~~ \forall \epsilon >0
 \end{equation}
-To better illustrate that, we consider the Gaussian kernel in Eq. \ref{eq:Guassian_kernel} as an example. This kernel is a function of the difference between both input points $\mathcal{K}_G(x,x')=f(x-x')$ and it is a positive semi-definite kernel. If we multiply this kernel with the constant $\frac{1}{2\pi}^d$ where $d$ is the dimensionality of the input data, then its Fourier transformation is a correct probability distribution:
+
+As an illustration, consider the Gaussian kernel in Eq. \ref{eq:Guassian_kernel} as an example. This kernel is knwon to be a shift-invariant, positive semi-definite kernel. It is already correctly normalized since $\mathcal{K}(0) = 1$, and its Fourier transformation is a Gaussian probability distribution with inverted variance:
 \[p(w)=FT\big(\mathcal{K}_G(\delta)\big)(w)=(\frac{\sigma^2}{2\pi})^\frac{d}{2}e^{-\frac{\sigma^2\|w\|^2}{2}}\]
-Where $\delta\in\mathbb{R}^d$ and $w\in\mathbb{R}^d$.
+So, drawing $w$ from a Gaussian distribution and applying RF approximates a kernel method with a Gaussian kernel.
 
 \section{Graph kernels}
  We first introduce  necessary notations related to graph definition and graph kernels.\newline $F=(\mathcal{V}_F,\mathcal{E}_F)$ is said to be a subgraph (graphlet) of $\mathcal{G}$ and we write $F\sqsubseteq \mathcal{G}$, if and only if there exist an injective function $\mathcal{M}:\mathcal{V}_F\xrightarrow{} \mathcal{V}$ such that $(u,u')\in \mathcal{E}_F \Leftrightarrow{(\mathcal{M}(u),\mathcal{M}(u'))\in \mathcal{E}}$.\newline
