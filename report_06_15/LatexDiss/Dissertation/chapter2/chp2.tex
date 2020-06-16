@@ -30,7 +30,7 @@ We recall from chapter \ref{chapter:background} that the computational cost of g
 
 It is also interesting to notice that within the new paradigm, the defined $\varphi$ is not necessary to respect the isomorphism between sampled subgraphs, \emph{i.e.} the case of graphlets without repetition. Instead, apply some preprocessing function $Q$ on a subgraph $F$ before passing it to $\varphi$ , we can respect the isomorphism  when $Q$ does without any condition on $\varphi$. An example of such function is $Q:\R^{k\times k}\mapsto \R^k, Q(F)=Eigenvalues(\mathbf{A}_F)$.
 
-\iffalse
+
 \section{Using random features framework in our algorithm}
 After we presented the generic algorithm, now we combine it with random features kernels.
 Let's assume that we have a psd and shift-invariant graph kernel, as a recap, we know it can be written in the form:
@@ -45,20 +45,33 @@ we can write:
 \[
 \mathcal{K}(F,F')\approx \varphi(F)^*\varphi(F')
 \]
-We first define the mean kernel methodology, which  allows to \emph{lift} a kernel from a domain $\mathcal{X}$ to a kernel on \emph{probability distributions} on $\mathcal{X}$. Given a base kernel $k$ and two probability distribution $P,Q$, it is defined as:
+In this point and based on such kernel, we define another one, called \emph{mean kernel} $\K_{mk}$, with presenting its corresponding metric, called \emph{Maximum Mean Discrepancy (MMD)}. Next, we show with the aid of concentration inequalities how using the random features map $\varphi$ of $\K$ in  our algorithm $GSA-\varphi$ will lead to an approximation of $\K_{mk}$ concentrated around its true value with high probability.
+
+The mean kernel methodology allows to \emph{lift} a kernel from a domain $\phlet$ to a kernel on \emph{probability distributions} on $\phlet$. Given a base kernel $\K$ and two probability distribution $\mathcal{P},\mathcal{Q}$, it is defined as:
 \begin{equation}
 \label{eq:mean_kernel}
-\mathcal{K}(P,Q) = \mathbb{E}_{x \sim P, y \sim Q} \mathcal{K}(x,y)
+\mathcal{K}_{mk}(\mathcal{P},\mathcal{Q}) = \mathbb{E}_{x \sim \mathcal{P}, y \sim \mathcal{Q}} \mathcal{K}(x,y)
 \end{equation}
-methodology 
-
-In other words, the mean kernel is just the expectation of the base kernel with respect to each term. The associated Euclidean metric is referred to by the  \emph{Maximum Mean Discrepancy (MMD)}, and is naturally defined as:
+In other words, the mean kernel is just the expectation of the base kernel with respect to each term. Mean kernel is associated to an Euclidean metric which is referred to by the  \emph{Maximum Mean Discrepancy (MMD)}, and is defined as:
 \begin{equation}\label{eq:MMD}
-MMD(P,Q) = \sqrt{\mathcal{K}(P,P) + \mathcal{K}(Q,Q) - 2\mathcal{K}(P,Q)}
+MMD(\mathcal{P},\mathcal{Q}) = \sqrt{\mathcal{K}_{mk}(\mathcal{P},\mathcal{P}) + \mathcal{K}_{mk}(\mathcal{Q},\mathcal{Q}) - 2\mathcal{K}_{mk}(\mathcal{P},\mathcal{Q})}
 \end{equation}
-It should be noticed here that $\mathcal{K}(P,P) = \mathbb{E}_{x \sim P, x' \sim P} \mathcal{K}(x,x') \neq \mathbb{E}_{x \sim P} \mathcal{K}(x,x)$.
+It should be noticed here that $\mathcal{K}_{mk}(\mathcal{P},\mathcal{P}) = \mathbb{E}_{x \sim \mathcal{P}, x' \sim \mathcal{P}} \mathcal{K}(x,x') \neq \mathbb{E}_{x \sim \mathcal{P}} \mathcal{K}(x,x)$.
+
+\textbf{The link between the mean kernel and graphs} can be identified easily, since as we already pointed out that a graph $\G$ introduces a probability distribution $f_\G$ on the set of size-$k$ graphlets $\phlet$. Thus, for two graphs $\G,\G'$ , the mean kernel can be reformulated to:
+\begin{equation}
+\label{eq:mean_kernel_graphs}
+\mathcal{K}_{mk}(\G,\G') = \mathcal{K}_{mk}(f_\G,f_\G')= \mathbb{E}_{F \sim S_k(\G), F' \sim S_k(\G')} \mathcal{K}(F,F')=\sum_{i,j}^{N_k}f_{\G,i}f_{\G',j}\mathcal{K}(\phlet,\phlet') 
+\end{equation}
+where $S_k$ is a random sampler that is compatible with the graphlet kernel random sampling method, such that uniform sampler but not random walk sampler.
+.
+
+.
+.
 
 
-%\section{Accelerate the algorithm with Optical random features}
-\fi
+
+
+\section{Accelerate the algorithm with Optical random features}
+
 
