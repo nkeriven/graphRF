@@ -1,0 +1,64 @@
+\chapter{Fast graph kernel classifier based on optical random features }
+\label{chapter:fast_algorithm}
+Graphlet kernel  is a good method to solve graph classification problem but as we have seen in chapter \ref{chapter:background}, it suffers from the high computational cost. However, it is inspiring to study the $GSA-{\varphi_k^{match}}$ (Graph sampling and averaging $\varphi_k^{match}$), how it is used to reduce this cost, and more importantly how  the $k$-spectrum vector $f_\G$ is replaced with an empirical average of the matching function $\varphi_k^{match}$. We hereby propose to extend $GSA-{\varphi_k^{match}}$ beyond the borders of graphlet kernel paradigm. We also show how random features can be incorporated within the new framework to get a faster but  competitive algorithm in graph classification. Moreover, we introduce the optical processing units (OPUs) in this chapter and how it can be used to get the fastest version of the algorithm. 
+
+\section{Proposed algorithm}
+We recall from chapter \ref{chapter:background} that the computational cost of graphlet kernel is $C_{gk}= O(\tbinom{v}{k} N_k C_k)$. As an attempt to lower this cost, $GSA-\varphi_k^{match}$ compute an empirical approximation of $k$-spectrum vector so the new that cost becomes $C_{GSA-{\varphi_k^{match}}}= O(C_S s N_k C_k)$. What changed is that $\tbinom{v}{k}$ is replaced with $C_Ss$, but the question is whether that is enough or not. To answer this we recall that the minimum number of samples required to ensure some certainty sharply increases as the certainty and the graphlet size increase. It is clear then that the number of graph samples is not the only bottle neck here but also the cost to compute $\varphi_k^{match}$: $C_{\varphi_k^{match}}=(N_k C_k)$. So what we propose is the bring into use another user-defined function $\varphi:\phlet_k\mapsto\R^m$ instead of $\varphi_k^{match}$ and keep everything else as it is. We refer to this new generic framework by $GSA-\varphi$ and it is better stated through the following pseudo script.\newline 
+
+\begin{algorithm}[H]
+\DontPrintSemicolon
+  \KwInput{2-Classes labelled graph dataset $\mathcal{X}=(\G_i,y_i)$}
+  \KwOutput{Trained model to classify graphs}
+  \tools{Graph random sampler $S_k$, a function $\varphi$, linear classifier (ex. SVM) }\\
+  \Hyp{m:  k:graphlet size, $s$:\#graphlet samples per graph}\\
+  %\KwData{Testing set $x$}
+  %$\sum_{i=1}^{\infty} := 0$ \tcp*{this is a comment}
+  %\tcc{}
+  \Algo{\\}
+  Random initialization of SVM weights\\
+  \For{$\G_i$ in $\mathcal{X}$}{
+  $\varphi_i=0$\\
+  \For{j=1:$s$}{
+  $F_{i,j}\gets S_k(\G_i)$\\
+  $\varphi_i\gets \varphi_i +\frac{1}{s}\varphi_{i,j}$
+  }
+  }
+  $\mathcal{X}_{\varphi}\gets (\varphi_i,Y_i)$\\
+  Train the linear classifier on the new vector-valued dataset on $\mathcal{D}_{\varphi}$
+\caption{$GSA-\varphi$}
+\end{algorithm}
+
+It is also interesting to notice that within the new paradigm, the defined $\varphi$ is not necessary to respect the isomorphism between sampled subgraphs, \emph{i.e.} the case of graphlets without repetition. Instead, apply some preprocessing function $Q$ on a subgraph $F$ before passing it to $\varphi$ , we can respect the isomorphism  when $Q$ does without any condition on $\varphi$. An example of such function is $Q:\R^{k\times k}\mapsto \R^k, Q(F)=Eigenvalues(\mathbf{A}_F)$.
+
+\iffalse
+\section{Using random features framework in our algorithm}
+After we presented the generic algorithm, now we combine it with random features kernels.
+Let's assume that we have a psd and shift-invariant graph kernel, as a recap, we know it can be written in the form:
+\begin{equation}
+\mathcal{K}(F,F')= \mathbb{E}_w, \xi_w(F)\xi_w(F')
+\end{equation}
+which gives that by defining:
+\begin{equation}
+\varphi(F) = \frac{1}{\sqrt{m}} ( \xi_{w_j}(F) )_{j=1}^m \in \mathbb{C}^m,~~~ m\in \mathbb{N}
+\end{equation}
+we can write:
+\[
+\mathcal{K}(F,F')\approx \varphi(F)^*\varphi(F')
+\]
+We first define the mean kernel methodology, which  allows to \emph{lift} a kernel from a domain $\mathcal{X}$ to a kernel on \emph{probability distributions} on $\mathcal{X}$. Given a base kernel $k$ and two probability distribution $P,Q$, it is defined as:
+\begin{equation}
+\label{eq:mean_kernel}
+\mathcal{K}(P,Q) = \mathbb{E}_{x \sim P, y \sim Q} \mathcal{K}(x,y)
+\end{equation}
+methodology 
+
+In other words, the mean kernel is just the expectation of the base kernel with respect to each term. The associated Euclidean metric is referred to by the  \emph{Maximum Mean Discrepancy (MMD)}, and is naturally defined as:
+\begin{equation}\label{eq:MMD}
+MMD(P,Q) = \sqrt{\mathcal{K}(P,P) + \mathcal{K}(Q,Q) - 2\mathcal{K}(P,Q)}
+\end{equation}
+It should be noticed here that $\mathcal{K}(P,P) = \mathbb{E}_{x \sim P, x' \sim P} \mathcal{K}(x,x') \neq \mathbb{E}_{x \sim P} \mathcal{K}(x,x)$.
+
+
+%\section{Accelerate the algorithm with Optical random features}
+\fi
+

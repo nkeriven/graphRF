@@ -61,6 +61,19 @@
 % in the hyperref package documentation
 \usepackage[bookmarksnumbered,pdfpagelabels=true,plainpages=false,colorlinks=true,
             linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
+            
+            
+            
+% algorithm framework package             
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
+\SetCommentSty{mycommfont}
+
+\SetKwInput{KwInput}{Input}                % Set the Input
+\SetKwInput{KwOutput}{Output}              % set the Output
+\SetKw{Hyp}{Hyperparameters}
+\SetKw{Algo}{Algorithm}
+\SetKw{tools}{Tools}        
 
 %   \makepreliminarypages : Makes the preliminary pages
 %   \clearemptydoublepage : same as \cleardoublepage but doesn't put page numbers
@@ -69,6 +82,13 @@
 %   \doublespace          : switch to double spaced lines
 \newcommand{\bibs}{DissertationRefs}
 \newcommand{\comments}[1]{}
+\newcommand{\R}[0]{\mathbb{R}}
+\newcommand{\phlet}[0]{\mathcal{H}}
+\newcommand{\G}[0]{\mathcal{G}}
+\newcommand{\V}[0]{\mathcal{V}}
+\newcommand{\E}[0]{\mathcal{E}}
+
+
 
 % ==================================================== %
 %                                                      %
