@@ -132,25 +132,25 @@ Any edge $(u_i, u_i)$ is called a self loop. In a general graph two vertices $u_
 one edge. A simple graph is a graph with no self loops or multiple edges. Here we always consider simple graphs.
 A (simple) graph can equivalently be represented by an adjacency matrix $\mathbf{A}$ of size $v \times v$. The $(i,j)-th$ entry of $\mathbf{A}$ is 1 if an edge $(u_i, u_j)$ exists and zero otherwise.
 
-Two graphs $\mathcal{G}=(\mathcal{V},\mathcal{E})$ and $\mathcal{G'}=(\mathcal{V'},\mathcal{E'})$ are said to be \emph{isomorphic}, written $\mathcal{G}'\cong \mathcal{G}$, if there exists a bijective function $\mathcal{M}:\mathcal{V}\xrightarrow{} \mathcal{V}'$ such that $(u_i,u_j)\in \mathcal{E}$ iff $(\mathcal{M}(u_i),\mathcal{M}(u_j))\in \mathcal{E}'$. Deciding is two graphs are isomorphic is known to be a difficult problem: it is actually an open question if this problem is solvable in polynomial time or is NP-complete. However, we refer to the required time cost to test the isomorphism between two graphs of size $k$ with $C_k$
+Two graphs $\mathcal{G}=(\mathcal{V},\mathcal{E})$ and $\mathcal{G'}=(\mathcal{V'},\mathcal{E'})$ are said to be \emph{isomorphic}, written $\mathcal{G}'\cong \mathcal{G}$, if there exists a bijective function $\mathcal{M}:\mathcal{V}\xrightarrow{} \mathcal{V}'$ such that $(u_i,u_j)\in \mathcal{E}$ iff $(\mathcal{M}(u_i),\mathcal{M}(u_j))\in \mathcal{E}'$. Deciding is two graphs are isomorphic is known to be a difficult problem: it is actually an open question if this problem is solvable in polynomial time or is NP-complete. It is equivalent to test if two adjacency matrices are permutation of each other. This gives us a clue why the isomorphism test is expensive: in the worst case where the graphs to be compared don't have a specific structure which can used as \emph{a prior}, the brute force method considers all the $k!$ permutation matrices. There are efficient, specific methods for small graphs \citep{graphlet_kernel}, but the general case is still open. We denote by $C_k$ the time cost of testing the isomorphism between two graphs of size $k$.
 
-Let us denote by $\mathcal{H}=\{\mathcal{H}_1,..., \mathcal{H}_{N_k}\}$ the set of all graphs of size $k$. Depending on the context, there is two choices in defining this set. Either we count all possible adjacency matrices and treat isomorphic graphs as different graphs, in which case we have $N_k=2^{k(k-1)/2}$ different graphlets. We refer to this case as graphlets \emph{with repetition}. Or we do not distinguish isomorphic graphs, so we have here $N_k<2^{k(k-1)/2}$ but it is still exponential in $k$. We call this case graphlets \emph{without repetition}. The classical graphlet kernel uses graphlets without repetition, which can require expensive isomorphism tests. We will see that some methods on graphlets \emph{with} repetition also perform well in practice.
+As we will see, for a given graph the graphlet kernel is defined by counting small subgraphs of size $k$, also called graphlets. We introduce some convenient notations. Let us denote by $\mathcal{H}=\{\mathcal{H}_1,..., \mathcal{H}_{N_k}\}$ the set of all graphs of size $k$. Depending on the context, there is two choices in defining this set. Either we count all possible adjacency matrices and treat isomorphic graphs as different graphs, in which case we have $N_k=2^{k(k-1)/2}$ different graphlets. We refer to this case as graphlets \emph{with repetition}. Or we do not distinguish isomorphic graphs, so we have here $N_k<2^{k(k-1)/2}$ but it is still exponential in $k$. We call this case graphlets \emph{without repetition}. The classical graphlet kernel uses graphlets without repetition, which can require expensive isomorphism tests. We will see that some methods on graphlets \emph{with} repetition also perform well in practice.
 
-To match a subgraph $F$ of size $k$ to the corresponding graphlet of the same size, we define the matching function $\varphi_{k}^{match}$. Where in the case of graphlets with repetition it is defined as: 
+To match a subgraph $F$ of size $k$ to the corresponding graphlet of the same size, we define the matching function $\varphi_{k}^{match}$. In the case of graphlets with repetition it is defined as: 
 \[
 \varphi_k^{match}(F) = \left[ 1_{(F = \phlet_i)}\right]_{i=1}^{N_k}= \left[ 1_{(\mathbf{A}_F = \mathbf{A}_{\phlet_i})}\right]_{i=1}^{N_k} \in \{0,1\}^{N_k}
 \]
-In other words, $\varphi_k^{match}$ puts a $1$ in the coordinate $i$ if the adjacency matrices of both graphs $F, \phlet_i$ are equal, and $0$ otherwise. Clearly the cost of each test is $k^2$ which is a polynomial function in $k$. On the other hand, when the case of graphlets without repetition is considered, $\varphi_k^{match}$ is rather defined as:
+In other words, $\varphi_k^{match}$ puts a $1$ in the coordinate $i$ if the adjacency matrices of both graphs $F, \phlet_i$ are equal, and $0$ otherwise. Clearly the cost of each test is $k^2$, and the global cost of applying $\varphi^{match}_k$ is $O(N_k k^2)$. On the other hand, when the case of graphlets \emph{without repetition} is considered, $\varphi_k^{match}$ is rather defined as:
 \[
 \varphi_k^{match}(F) = \left[ 1_{(F \cong \phlet_i)}\right]_{i=1}^{N_k} \in \{0,1\}^{N_k}
 \]
-which means that $\varphi_k^{match}$ puts a $1$ in the coordinate $i$ if $F\cong \phlet_i$, and $0$ otherwise. Actually, this test is equivalent to test if the adjacency matrix of $F$ is a permutation of the adjacency matrix of $\phlet_i$, \emph{i.e.} to test if there is a $k\times k$ permutation matrix $\mathbf{P}$ that satisfies $\mathbf{A}_{F}=\mathbf{P}\mathbf{A}_{\phlet_i}\mathbf{P}^T$. Actually, this gives us a clue why the isomorphism test is expensive, where in the worst case that graphs to be compared up to isomorphism don't have a specific structure which can used as \emph{a prior} in this test, then we  must consider all the permutation matrices  which count $k!$, that is beside the cost of equality test between two $k\times k$ matrices for each $\mathbf{P}$.
+which means that $\varphi_k^{match}$ puts a $1$ in the coordinate $i$ if $F\cong \phlet_i$, and $0$ otherwise. The global cost is now $O(N_k C_k)$, although for a $N_k$ smaller than the case with repetition.
 
-Let $\G=(\V,\E)$ be a graph of size $v$, and let $\mathbf{F}_\G=\{F_1,\ldots,F_s\}$ be  $s$ size-k subgraphs of $\G$, we define the counting function $\varphi_k^{hist}:\mathbf{F}_\G\mapsto \R^{N_k}$ which counts for each graphlet $\phlet_i$ in $\phlet$ how many matches it has in $\mathbf{F}$. Here, the match can mean  either isomorphism match or exact match between adjacency matrices, just as in the case of $\varphi_k^{match}$. Based on that, we can write:
+Let $\mathfrak{F}=\{F_1,\ldots,F_s\}$ be a set of $s$ size-$k$ graphs. We define the function $\varphi_k^{hist}$ which counts, for each graphlet $\phlet_i$ in $\phlet$, how many matches it has in $\mathfrak{F}$. Here we use either version of $\varphi_k^{match}$, and write:
 \[
-\varphi_k^{hist}(\mathbf{F}_\G)=\frac{1}{s}\sum_{j=1}^s \varphi_k^{match} (F_j)
+\varphi_k^{hist}(\mathfrak{F})=\frac{1}{s}\sum_{j=1}^s \varphi_k^{match} (F_j) \in \R^{N_k}
 \]
-where the term $\frac{1}{s}$ is introduced for normalization purposes. With this definition and when $s$ is sufficiently large, $\varphi_k^{hist}(\mathbf{F}_\G)$ can be seen as the vector whose $i_{th}$ entry has the frequency of graphlet $\phlet_i$ in the graph $\G$.
+where the term $\frac{1}{s}$ is introduced for normalization purposes, such that $\varphi_k^{hist}(\mathfrak{F})$ is a proper histogram. %With this definition and when $s$ is sufficiently large, $\varphi_k^{hist}(\mathbf{F}_\G)$ can be seen as the vector whose $i_{th}$ entry has the frequency of graphlet $\phlet_i$ in the graph $\G$.
 
 
 \subsection{Convolutional graph kernels}
@@ -176,19 +176,17 @@ The advantage of using convolution kernel framework with graphs is that kernels 
 
 As mentioned above, the graphlet kernel is a special instance of convolution kernel equivalently described as follows: one enumerates all the subgraphs of size $k$ of each graph (where $k$ is small), counts them to build a histogram of their frequencies of apparition, and takes the inner product between the two histograms to obtain the final kernel. In this context, the subgraphs are called ``graphlets'', as an analogy with classical wavelets, which are individual components of more traditional signals.
 
-
-
-For either case, we define for a graph $\mathcal{G}=(\V,\E)$ the vector $f_\mathcal{G}\in \mathcal{R}^{N_k}$ whose $i$-th entry equals the normalized-number of occurrences of $\mathcal{H}_i$ in $\mathcal{G}$, that is $\#(\mathcal{H}_i\sqsubseteq G)/\tbinom{v}{k}$. The vector $f_\G$ is usually referred to by the $k$-spectrum of $\G$, and it is the key idea behind graphlet kernel. It is to be noticed that if $\mathbf{F}_\G=\{F_1,\ldots,F_s\}$ is the set of all size-k subgraphs in $\G$, $s=\tbinom{v}{k}$, then we have:
+For a graph $\mathcal{G}=(\V,\E)$, we define the vector $f_\mathcal{G}\in \mathcal{R}^{N_k}$ whose $i$-th entry equals the normalized-number of occurrences of $\mathcal{H}_i$ in $\mathcal{G}$, usually referred to as the $k$-spectrum of $\G$. In details, defining $\mathfrak{F}_\G=\{F_1,\ldots,F_s\}$ the set of \emph{all} size-$k$ subgraphs in $\G$, that is, $s=\tbinom{v}{k}$ for graphlets without repetition. We have:
 \[
-f_\G=\varphi_k^{hist}(\mathbf{F}_\G)
+f_\G=\varphi_k^{hist}(\mathfrak{F}_\G)
 \]
+where graphlets are considered without repetition. The graphlet kernel is then the inner product between the histograms.
 \begin{definition}[Graphlet Kernel]
 Given two graphs $\mathcal{G}$ and $\mathcal{G}'$ of size $\geq k$, the graphlet kernel $\mathcal{K}_\G$ is defined as \citep{graphlet_kernel}:
 \begin{equation}
 \label{eq:graphlet_kernel}
     \mathcal{K}_g(\mathcal{G},\mathcal{G}')=f_{\mathcal{G}}^Tf_{\mathcal{G}'}.
 \end{equation}
-where graphlets are taken without repetition.
 \end{definition}
 In this case the distance between graphs in the kernel space is just the Euclidean metric between histograms $d_\mathcal{K}({\mathcal{G}},{\mathcal{G}'}) = \|f_{\mathcal{G}} - f_{{\mathcal{G}'}}\|_2$.
 
@@ -203,14 +201,14 @@ As a result, there is a trade off between a more accurate representation of the 
 \label{graph_sampling}
 %Graph sampling arises when we deal with a large-scale graph and the task is to pick a small-size sample subgraph that would be similar to the original graph with respect to some important properties.
 
-The graphlet kernel can be interpreted as follows: if one draws a subgraph randomly from $\mathcal{G}$, then one has a probability $(f_\mathcal{G})_i$ of obtaining $\mathcal{H}_i$. So, it is natural to approach $f_\mathcal{G}$ with an empirical histogram, built by  sampling $s$ subgraphs $\mathbf{F}_\G=\{F_1,...,F_s\} \sqsubseteq \mathcal{G}$ of size $k$, and then estimate the $k$-spectrum vector empirically: $[\hat f_\mathcal{G}]_i =[\varphi_k^{hist}(\mathbf{F}_\G)]_i= \frac{1}{s}[\sum_{j=1}^s \varphi^{match}_k(F_j)]_i$. In other words, we count the number of times $\mathcal{H}_i$ appears among the samples. The Law of Large Numbers states that $\varphi_k^{hist}(\mathbf{F}_\G) \xrightarrow[s \to \infty]{} f_\mathcal{G}$ with probability $1$.
+The graphlet kernel can be interpreted as follows: if one draws a subgraph randomly from $\mathcal{G}$, then one has a probability $(f_\mathcal{G})_i$ of obtaining $\mathcal{H}_i$. So, it is natural to approach $f_\mathcal{G}$ with an empirical histogram, built by  sampling $s$ subgraphs $\hat{\mathfrak{F}}_\G=\{F_1,...,F_s\} \sqsubseteq \mathcal{G}$ of size $k$, and then estimate the $k$-spectrum vector empirically: $\hat f_\mathcal{G} =\varphi_k^{hist}(\hat{\mathfrak{F}}_\G)= \frac{1}{s}\sum_{j=1}^s \varphi^{match}_k(F_j)$. In other words, we count the number of times $\mathcal{H}_i$ appears among the samples. The Law of Large Numbers states that $\varphi_k^{hist}(\hat{\mathfrak{F}}_\G) \xrightarrow[s \to \infty]{} f_\mathcal{G}$ with probability $1$.
 
-This adds another degree of freedom to the method: there are many different ways of sampling a subgraph \citep{graph_sampling}, and each of them defines a different histogram $f_\mathcal{G}$ when $s \to \infty$. A \emph{sampling method} will be denoted by $S_k(\mathcal{G})$, it is a random variable that extracts a $k$-subgraph of $\mathcal{G}$. We describe two examples that we will use in the experiments.
+This adds another degree of freedom to the method: there are many different ways of sampling a subgraph from a graph \citep{graph_sampling}. A \emph{sampling method} will be denoted by $S_k(\mathcal{G})$, it is a random variable that extracts a $k$-subgraph of $\mathcal{G}$. Note that each sampling method defines \emph{a different histogram} $f_\mathcal{G} = \mathbb{E}_{F \sim S_k(\G)} \varphi^{match}_k(F)$ when $s \to \infty$. We describe two examples that we will use in the experiments.
 \begin{itemize}
 \item \textbf{Uniform sampling}: this is the simplest sampling method. We select a subset of $k$ nodes uniformly randomly among the $\tbinom{v}{k}$ possible choices, and extract the subgraph on these nodes. This is the sampling method that corresponds to the classical graphlet kernel \eqref{eq:graphlet_kernel} when $s \to \infty$.
-\item \textbf{Random walk sampling}: here we sample the subgraph node by node, we first randomly choose a node $u$ from $\V$ to be the starting node. Then and till we collect $k$ nodes, we choose the next node randomly from current node's neighbors in $\G$, and with probability $p_{fly_back}$ we either go back to the starting node and repeat the same from there, or we stay at the recently chosen node.
+\item \textbf{Random walk sampling}: here we sample the subgraph node by node, we first randomly choose a node $u$ from $\V$ to be the starting node. Then and till we collect $k$ nodes, we choose the next node randomly from the current node's neighbors in $\G$, and with probability $p_{flyback}$ we go back to the starting node and repeat the same from there, or we stay at the recently chosen node.
 \end{itemize}
-The difference between the two methods is that unlike uniform sampling , random walk sampling tends to generate connected subgraphs, \emph{i.e.} there is a path of edges between any pair of the subgraph. This difference is important when we want to sample large graphs where the average number of edges incident to a node is small compared to the graph size, as uniform sampling in this case generates sparse subgraphs that don't have any edge or just few with high probability. Taking this into account, it is necessary to use random walk when possible since the frequencies of sparse graphlets is high in all the graphs and thus not  discriminative to be used in a learning algorithm.
+The difference between the two methods is that unlike uniform sampling, random walk sampling tends to generate connected subgraphs, \emph{i.e.} there is a path of edges between any pair of the subgraph. This difference is important when we want to sample large graphs where the average number of edges incident to a node is small compared to the graph size, as uniform sampling in this case generates sparse subgraphs that don't have any edge or just few with high probability. Taking this into account, it is necessary to use random walk when possible since the frequencies of sparse graphlets is high in all the graphs and thus not discriminative to be used in a learning algorithm.
 
 The question here is how many samples we should consider in order to have a desired certainty in our estimation, the following answer this question for every sampling technique $S_k$ whose corresponding $\varphi_k^{hist}$ converge to $f_\G$ when the number of sample grows to infinity.
 %\newtheorem{theorem}{Theorem} 
@@ -222,12 +220,12 @@ s_{min}=\left \lceil \frac{2(log(2)N_k+log(\frac{1}{\delta} ))}{\epsilon^2} \rig
 samples are enough to ensure that $Pr(\| f_\G-\varphi_k^{hist}(\mathbf{F}) \|_1 \geq \epsilon )\leq\delta$, where $\lceil.\rceil$ is the ceiling function.
 \end{theorem}
 
-\textbf{The computational cost} of approximating $k$-graphlet spectrum using \emph{ graph sampling and then averaging} the matching function $\varphi_k^{match}$, will be referred to with $\mathbf{GSA}-{\varphi_k^{match}}$, includes the cost of sampling a subgraph $C_s$ iterating over all $s$ sampled subgraphs $F_j\sqsubseteq \G$, iterating over all $N_k$ graphlets $\phlet_i$ and testing the isomorphism between each subgraph and each graphlet $F_i\cong \phlet_i$. So the computational cost of this method is:
-
+\textbf{The computational cost} of approximating $k$-graphlet spectrum using graph sampling %and then averaging} the matching function $\varphi_k^{match}$, will be referred to with $\mathbf{GSA}-{\varphi_k^{match}}$, 
+includes the cost of sampling a single subgraph with the process $S_k$, denoted by $C_S$, iterating over all $s$ sampled subgraphs $F_j\sqsubseteq \G$, then applying $\varphi^{match}_k$ as before. So the computational cost of this method is:
 \begin{equation}
 \label{eq:cost_graphlet_sampling}
-    C_{GSA-{\varphi_k^{match}}}= O(C_s s N_k C_k)
+    C_{gk + gs}= O(C_s s N_k C_k)
 \end{equation}
 
-
+\todoNK{Quick comparison with the exhaustive case since the proposition above states $s \sim N_k$ ?}
 
