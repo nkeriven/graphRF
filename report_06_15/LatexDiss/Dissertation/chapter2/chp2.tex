@@ -31,7 +31,7 @@ So we propose to replace $\varphi^{match}_k$ with another user-defined function 
 \caption{Graph Sampling and Averaging (GSA-$\varphi$)}
 \end{algorithm}
 
-For a set $\mathfrak{F} = \{F_1,\ldots, F_s\}$ and a feature map $\varphi$, similarly to $\bm{\varphi}^{hist}$ we define $\bm{\varphi}(\mathfrak{F}) = \frac{1}{s} \sum_i \varphi(F_i)$. The GSA-$\varphi$ algorithm computes, for each graph $\G$ in the dataset, an embedding $\bm{\varphi}(\mathfrak{F}_\G)$ where $\mathfrak{F}_\G$ is a set of $s$ subgraphs drawn $iid$ from $S_k(\G)$, then trains a classifier on it.
+For a set $\mathfrak{F} = \{F_1,\ldots, F_s\}$ and a feature map $\varphi$, similarly to ${\varphi}^{hist}$ we define ${\varphi}(\mathfrak{F}) = \frac{1}{s} \sum_i \varphi(F_i)$. The GSA-$\varphi$ algorithm computes, for each graph $\G$ in the dataset, an embedding ${\varphi}(\mathfrak{F}_\G)$ where $\mathfrak{F}_\G$ is a set of $s$ subgraphs drawn $iid$ from $S_k(\G)$, then trains a classifier on it.
 
 We note that within the new paradigm, the defined $\varphi$ does not necessarily respect the isomorphism between sampled subgraphs: if $\varphi(F) = \varphi(F')$ whenever $F \cong F'$, then we are in the framework of graphlet \emph{without} repetition, otherwise we are in the other case. As we will see, choosing a randomized $\varphi$ presents both theoretical and practical advantages, however it does not respect isomorphism. Nevertheless, it is possible to apply some preprocessing function $Q$ invariant by permutation before passing it to a randomized $\varphi$, and in this case isomorphism is respected without any condition on $\varphi$. An example of such function is $Q:\R^{k\times k}\mapsto \R^k, Q(F)=Sort(Eigenvalues(\mathbf{A}_F))$, that is, the sorted eigenvalues of the adjacency matrix.
 
@@ -104,10 +104,10 @@ MMD(\G,\G')^2 \approx \frac{1}{s^2}\mathbb{E}_{\omega} ( | \xi_\omega(F) -\xi_\o
 No we consider both a finite number $s$ of \emph(iid) samples, and a feature map $\varphi$ with finite number $m$ of random features defined as \eqref{eq:RF}, so the formula of our final approximation is:
 \begin{equation}
 \label{eq:mean_kernel_RF}
-\mathcal{K}_{mk}(\G,\G') \approx \frac{1}{s^2} \sum_{i,j=1}^s \varphi(F_i)^*\varphi(F_j')=\Big(\frac{1}{s}\sum_{i=1}^s\varphi(F_i)\Big)^*~\Big(\frac{1}{s}\sum_{i=1}^s\varphi(F_i')\Big) = \bm{\varphi}(\mathfrak{F}_{\G})^* \bm{\varphi}(\mathfrak{F}_{\G'})
+\mathcal{K}_{mk}(\G,\G') \approx \frac{1}{s^2} \sum_{i,j=1}^s \varphi(F_i)^*\varphi(F_j')=\Big(\frac{1}{s}\sum_{i=1}^s\varphi(F_i)\Big)^*~\Big(\frac{1}{s}\sum_{i=1}^s\varphi(F_i')\Big) = {\varphi}(\mathfrak{F}_{\G})^* {\varphi}(\mathfrak{F}_{\G'})
 \end{equation}
 \[
-MMD(\G,\G')^2 \approx  \| \bm{\varphi}(\mathfrak{F}_{\G}) - \bm{\varphi}(\mathfrak{F}_{\G'}) \|_2^2 
+MMD(\G,\G')^2 \approx  \| {\varphi}(\mathfrak{F}_{\G}) - {\varphi}(\mathfrak{F}_{\G'}) \|_2^2 
 \]
 Indeed, we just proved that, when using random features, GSA-$\varphi$ theoretically represents an unbiased estimation of the mean kernel $\mathcal{K}_{mk}$. The corresponding MMD is then the key to the performance of the algorithm: if the graphs are well-separated by this metric, then a machine learning algorithm will be able to classify them.
 
@@ -115,7 +115,7 @@ Now, we have two issues to discuss: how is this estimation concentrates around i
 
 \begin{theorem}
 \label{theorem:concentration}
-Let $\G$ and $\G'$ be two graphs, $\{F_i\}_{i=1}^{s}$ (resp. $\{F_i'\}_{i=1}^{s}$) be $iid$ size-k graphlet samples drawn from $S_k(\G)$ (resp. $S_k(\G')$). Assume a kernel of the form \eqref{eq:random_features_3} and a random feature map \eqref{eq:RF}. Assume that $\abs{\xi_w(F)} \leq 1$ for any $w,F$.
+Let $\G$ and $\G'$ be two graphs, $\{F_i\}_{i=1}^{s}$ (resp. $\{F_i'\}_{i=1}^{s}$) be $iid$ size-k graphlet samples drawn from $S_k(\G)$ (resp. $S_k(\G')$). Assume a kernel of the form \eqref{eq:random_features_3} and a random feature map \eqref{eq:RF}. Assume that $|\xi_w(F)| \leq 1$ for any $w,F$.
 
 We have that, for all $\delta>0$, with probability at least $1-\delta$:
 \begin{align*}
@@ -216,20 +216,9 @@ After what we presented about OPUs and optical random features projections, we c
 \label{section:proof}
 
 \begin{proof}
-<<<<<<< HEAD
 Here, we prove theorem \ref{theorem:concentration}. We decompose the proof in two steps.
 
-\paragraph{Step 1: infinite $s$, finite $m$ (number of random features).} Based on our assumption $|\xi_w|\leq 1$, it is a straightforward result of Hoeffding's inequality that  $MMD(\G, \G')^2$ is close to $\frac{1}{m} \sum_{j=1} | \mathbb{E}_{F \sim S_k(\G)} \xi_{w_j}(F) - \mathbb{E}_{F' \sim S_k(\G')}} \xi_{w_j}(F') |^2 = | \mathbb{E}_{F \sim S_k(\G)} \xi_{w_j}(F) - \mathbb{E}_{F' \sim S_k(\G')}} \xi_{w_j}(F') |^2$. We recall Hoeffding's inequality below.
-=======
-Here, we prove theorem \ref{theorem:concentration}, where We decompose the proof in two steps.
-we first assume that:
-\begin{equation}
-\label{eq:z_assumption}
-    0\leq z_\omega(F)\leq 1, \forall \omega \sim  \Lambda
-\end{equation}
-This is a reasonable assumption from what we have seen in random Fourier features maps referred to in Eq. \ref{eq:Fourier_xi}.
-\paragraph{Step 1: infinite $s$, finite $m$ (number of random features).} Based on our assumption on $z_\omega$ in \eqref{eq:z_assumption}, it is a straight forward result of Hoeffding's inequality that  $d(G, G')^2$ is close to $\frac{1}{m} \sum_{j=1} | \mathbb{E}_{F \sim f_G} z_{\omega_j}(F) - \mathbb{E}_{F' \sim f_{G'}} z_{\omega_j}(F') |^2 = \| \mathbb{E}_{F \sim f_G} z(F) - \mathbb{E}_{F' \sim f_{G'}} z(F')\|^2$.  
->>>>>>> 212a4937ba12b07559998ab673b99f81e8f360f4
+\paragraph{Step 1: infinite $s$, finite $m$ (number of random features).} Based on our assumption $|\xi_w|\leq 1$, it is a straightforward result of Hoeffding's inequality that  $MMD(\G, \G')^2$ is close to $\frac{1}{m} \sum_{j=1} | \mathbb{E}_{F \sim S_k(\G)} \xi_{w_j}(F) - \mathbb{E}_{F' \sim S_k(\G')} \xi_{w_j}(F') |^2 = | \mathbb{E}_{F \sim S_k(\G)} \varphi(F) - \mathbb{E}_{F' \sim S_k(\G')} \varphi(F') |^2$. We recall Hoeffding's inequality below.
 \begin{lemma}[Hoeffding's inequality] 
 Let $(x_1,\ldots, x_m)$ be independent random variables such that the variable $x_i$ is strictly bounded by the interval $[a_i , b_i]$, and let $\overline{X}=\frac{1}{m}\Sigma_{i=1}^{m}x_i$ then we have:
 \begin{equation}
@@ -238,9 +227,9 @@ Let $(x_1,\ldots, x_m)$ be independent random variables such that the variable $
 \end{equation}
 \end{lemma}
 %\begin
-In our case, we define the variables $x_j=| \mathbb{E}_{F \sim S_k(\G)} \xi_{w_j}(F) - \mathbb{E}_{F' \sim S_k(\G')}} \xi_{w_j}(F') |^2$. They are independent, have expectation $MMD(\G,\G')^2$, and are bounded by the interval $[0,4]$, thus we have:
+In our case, we define the variables $x_j=| \mathbb{E}_{F \sim S_k(\G)} \xi_{w_j}(F) - \mathbb{E}_{F' \sim S_k(\G')} \xi_{w_j}(F') |^2$. They are independent, have expectation $MMD(\G,\G')^2$, and are bounded by the interval $[0,4]$, thus we have:
 \begin{equation*}
-    \mathbb{P}\left(\Big|\frac{1}{m} \sum_{j=1}^m | \mathbb{E}_{F \sim S_k(\G)} \xi_{w_j}(F) - \mathbb{E}_{F' \sim S_k(\G')}} \xi_{w_j}(F') |^2 - MMD(\G,\G')^2 \Big| \geq \epsilon\right) \leq 2~ e^{ -2m\epsilon^2/16}
+    \mathbb{P}\left(\Big|\frac{1}{m} \sum_{j=1}^m | \mathbb{E}_{F \sim S_k(\G)} \xi_{w_j}(F) - \mathbb{E}_{F' \sim S_k(\G')} \xi_{w_j}(F') |^2 - MMD(\G,\G')^2 \Big| \geq \epsilon\right) \leq 2~ e^{ -2m\epsilon^2/16}
 \end{equation*}
 Or, in other words, with probability $1-\delta$,
 \begin{equation}\label{eq:step1}
@@ -320,7 +309,7 @@ Finally, combining \eqref{eq:step1}, \eqref{eq:step2}, a union bound and a trian
 \begin{equation}
 \Big|\|\varphi(\mathfrak{F}_\G) - \varphi(\mathfrak{F}_{\G'})\|^2 - MMD(\G,\G')^2 \Big| \leq \frac{4 \sqrt{\log (2/\delta)}}{\sqrt{m}} + \frac{8}{\sqrt{{s}}}\left(1+\sqrt{2\log\frac{1}{\delta}}\right)
 \end{equation}
-which concludes the proof.
+which concludes the proof by taking $\delta$ as $\delta/3$.
 
 \end{proof}
 
