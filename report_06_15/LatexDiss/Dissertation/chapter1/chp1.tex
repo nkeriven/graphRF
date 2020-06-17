@@ -101,9 +101,11 @@ where $\xi_w(x)=e^{-jw^Tx}$, where the expectation $E_w$ is over the appropriate
 where $\tilde \xi_w(x)=\sqrt{2}cos(w^Tx+b)$ such that $w$ is drawn from $p(w)$ and b is drawn uniformly from $[0,2\pi]$, so we can use real-valued mapping if desired.
 
 As a result, for $w$ a random variable drawn from $p(w)$, $\ \xi_w(x)\xi_w(x')$ is an unbiased estimate of $\mathcal{K}(x,x')$. The RF methodology consists in averaging $m$ instances of the estimator with different random frequencies $w_j$ drawn identically and independently (iid) from $p(w)$, that is, define
-\[
-\varphi(x) = \frac{1}{\sqrt{m}} ( \xi_{w_j}(x) )_{j=1}^m \in \mathbb{C}^m
-\]
+\begin{equation}
+    \label{eq:Fourier_xi}
+    \varphi(x) = \frac{1}{\sqrt{m}} ( \xi_{w_j}(x) )_{j=1}^m \in \mathbb{C}^m
+\end{equation}
+
 such that $\varphi(x)^*\varphi(x')=\frac{1}{m} \sum_{j=1}^m \xi_{w_j}(x)^*\xi_{w_j}(x')$, which converges to $\mathcal{K}(x,x')$ by the law of large numbers. Moreover, Hoeffding's inequality guarantees exponentially fast convergence in $m$ between $\varphi(x)^*\varphi(x')$ and the kernel true value:
 \begin{equation}
    \forall \epsilon >0\qquad Pr(|\varphi(x)^*\varphi(x')-\mathcal{K}(x,x')|\geq\epsilon)\leq2e^\frac{-m\epsilon^2}{4},
@@ -120,7 +122,10 @@ $$m\geq\mathcal{O}\left(\frac{1}{\epsilon^2}\log{\frac{n}{\delta}}\right).$$
 I find this version useful as we clearly see that in fact random embedding is classically useful when $\log{n}\leq d$. If $d$ is too small, random embedding is in general useless. }
 
 As an illustration, consider the Gaussian kernel in Eq. \ref{eq:Guassian_kernel} as an example. This kernel is shift-invariant and known to be positive semi-definite. It is already correctly normalized since $\mathcal{K}(0) = 1$, and its Fourier transform is a Gaussian probability distribution with inverted variance:
-\[p(w)=FT\big(\mathcal{K}_G\big)(w)=\left(\frac{\sigma^2}{2\pi}\right)^\frac{d}{2}e^{-\frac{\sigma^2\|w\|^2}{2}}\]
+\begin{equation}
+\label{eq:G_fourier}
+    p(w)=FT\big(\mathcal{K}_G\big)(w)=\left(\frac{\sigma^2}{2\pi}\right)^\frac{d}{2}e^{-\frac{\sigma^2\|w\|^2}{2}}
+\end{equation}
 Thus, in practice, in order to approximate the Gram matrix of $\mathcal{K}_G$ on a dataset $\mathcal{X}$ of size $n$, one i/~draws $m$ iid frequencies from this probability distribution, with $m$ as in Theorem~\ref{thm:RF_vs_logn}; ii/~uses these frequencies to associate to each element $x\in\mathcal{X}$ its associated random feature vector $\varphi(x)\in\mathbb{R}^m$; iii/~uses $\varphi(x)^*\varphi(x')$ as an approximation of $\kappa_G(\mathbf{x},\mathbf{x}')$ where necessary in any kernel-based learning algorithms.
 
 \section{Graphlet kernel}
@@ -156,9 +161,9 @@ where the term $\frac{1}{s}$ is introduced for normalization purposes in order f
 
 
 \subsection{Convolutional graph kernels}
-Recall that traditional kernel machines are applied to problems with vector-valued input data, where they compare different data points $x,x' \in \mathcal{R}^d$, \nt{what is $\mathcal{R}$?} often through their Euclidean distance. Based on that, these kernels cannot be used directly on (a vector representation of the) graphs: indeed, isomorphic graphs have different adjacency matrices representing the same structure. As a result it is necessary to measure distances between graphs in ways that are insensitive to isomorphism: ideally, if $\mathcal{G}_1 \cong \mathcal{G}'_1$ and $\mathcal{G}_2 \cong \mathcal{G}'_2$, then $\mathcal{K}(\mathcal{G}_1, \mathcal{G}_2)$ should be equal to, or at least very close to, $\mathcal{K}(\mathcal{G}_1', \mathcal{G}_2')$. One observes that the concept of isomorphism is critical in learning algorithms on graphs, not only because there is no known polynomial-time algorithm for testing graph isomorphism (except for graphs with specific structures), but simply testing isomorphism is also too strict for learning in a similar way to learning with equality operator \nt{not able to re-write this last sentence: I do not understand it} \citep{kriege_graph_kernels}.
+Recall that traditional kernel machines are applied to problems with vector-valued input data, where they compare different data points $x,x' \in \mathcal{R}^d$, \nt{what is $\mathcal{R}$?} often through their Euclidean distance. Based on that, these kernels cannot be used directly on (a vector representation of the) graphs: indeed, isomorphic graphs have different adjacency matrices but they represent the same structure. As a result it is necessary to measure distance between graphs in ways that are insensitive to isomorphism as well: ideally, if $\mathcal{G}_1 \cong \mathcal{G}'_1$ and $\mathcal{G}_2 \cong \mathcal{G}'_2$, then $\mathcal{K}(\mathcal{G}_1, \mathcal{G}_2)$ should be equal to, or at least very close to, $\mathcal{K}(\mathcal{G}_1', \mathcal{G}_2')$. One observes that the concept of isomorphism is critical in learning algorithms on graphs, not only because there is no known polynomial-time algorithm for testing graph isomorphism (except for graphs with specific structures), but simply testing isomorphism is also too strict for learning in a similar way to learning with equality operator \citep{kriege_graph_kernels}.
 
-Since it is simpler to define kernels on \emph{small} graphs (as testing isomorphism is computationally feasible for small graphs), most of the graph kernels in the literature belong to the family of \emph{convolution kernels}: given two graphs, the trick is to divide each into smaller subgraphs and then to pairwise compute a kernel between the resulting subgraphs.
+Since it is simpler to define kernels on \emph{small} graphs, most of the graph kernels in the literature belong to the family of \emph{convolution kernels}: given two graphs, the trick is to divide each into smaller subgraphs and then to pairwise compute a kernel between the resulted subgraphs.
 \newtheorem{definition}{Definition} 
 \begin{definition}[Convolution Kernel]
 let $\mathcal{R}=\mathcal{R}_1\times...\times \mathcal{R}_d$ denote a space of components such that a composite object $X\in \mathcal{X}$ decomposes into elements of $\mathcal{R}$. Let $R:\mathcal{R}\xrightarrow{}\mathcal{X}$ denote the mapping from components to objects, such that $R(x)=X$ iff the components $x\in \mathcal{R}$ make up the object $X\in \mathcal{X}$, and let $R^{-1}(X)=\{x\in\mathcal{R}:R(x)=X\}$. then, the R-convolution kernel is:
@@ -168,62 +173,58 @@ let $\mathcal{R}=\mathcal{R}_1\times...\times \mathcal{R}_d$ denote a space of c
 \end{equation}
 with $k_i$ is a kernel on $\mathcal{R}$ for $i\in\{1,...,d\}$.
 \end{definition}
-\nt{**I think we should re-write this definition directly in the graph context. This component/object thing is too abstract in the current flow of discussion**}
-\nt{**Also, can we use a small latin letter for the function $R$?**}
 
-Applying this definition on graphs, $R^{-1}(\mathcal{G}=(\mathcal{V},\mathcal{E}))$ includes all the components in graph $\mathcal{G}$  that we want to compare with the components $R^{-1}(\mathcal{G'}=(\mathcal{V}',\mathcal{E}'))$ in graph $\mathcal{G'}$. One example of these kernels is the node label kernel, where for two graphs $\mathcal{G}, \mathcal{G'}$, the mapping function $R$ maps the features $x_u\in \mathcal{R}$ of each node $u\in \mathcal{V}\cup \mathcal{V'}$ to the graph that $u$ is a member of. \nt{I understand this last sentence, but I think it is incomplete for the reader. Ok you have such a function, but what happens then? Explain briefly what $\kappa_{CV}$ actually does in this case, which could perhaps motivate the following choice of graphlet kernel.} Another example, which will be our main source of inspiration and will be further described in the next section, is the $k$-graphlet kernel, where $R$ here maps the subgraphs of size $k$ to the graph in which they occur.
+Applying this definition on graphs, $R^{-1}(\mathcal{G}=(\mathcal{V},\mathcal{E}))$ includes all the components in graph $\mathcal{G}$  that we want to compare with the components $R^{-1}(\mathcal{G'}=(\mathcal{V}',\mathcal{E}'))$ in graph $\mathcal{G'}$. One example of these kernels is the node label kernel, where for two graphs $\mathcal{G}, \mathcal{G'}$, the mapping function $R$ maps the features $x_u\in \mathcal{R}$ of each node $u\in \mathcal{V}\cup \mathcal{V'}$ to the graph that $u$ is a member of. Another example, which will be our main source of inspiration and will be further described in the next section, is the $k$-graphlet kernel, where $R$ here maps the subgraphs of size $k$ to the graph in which they occur.
  
-The advantage of using the convolution kernel framework with graphs is that kernels are permutation invariant, non-sensitive to  on the graphs level as long as they are permutation invariant on the components level \nt{this last sentence lacks words to be understandable}. As a drawback, the sum in Eq.~\ref{eq:conolutional_kernels} iterates over every possible pair of components. As a result, when the base kernel has high value between a component and itself while it is low between two different components, each graph becomes drastically similar to itself but distant from any other graph. Thus, a set of weights is usually added to counter-balance this problem.
+The advantage of using convolution kernel framework with graphs is that kernels are permutation invariant, non-sensitive to  on the graphs level as long as they are permutation invariant on the components level. As a drawback, the sum in Eq.~\ref{eq:conolutional_kernels} iterates over every possible pair of components. As a result, when the base kernel has high value between a component and itself while it is low between two different components, each graph becomes drastically similar to itself but distant from any other graph. Thus, a set of weights is usually added to counter-balance this problem.
 
 \subsection{Graphlet Kernel}
 \label{subsection: graphlet kernel}
 
 As mentioned above, the graphlet kernel is a special instance of convolution kernel equivalently described as follows: one enumerates all the subgraphs of size $k$ of each graph (where $k$ is small), counts them to build a histogram of their frequencies of apparition, and takes the inner product between the two histograms to obtain the final kernel. In this context, the subgraphs are called ``graphlets'', as an analogy with classical wavelets, which are individual components of more traditional signals.
 
-For a graph $\mathcal{G}=(\V,\E)$, we define the vector $f_\mathcal{G}\in \mathcal{R}^{N_k}$ \nt{you mean $\mathbb{R}^{N_k}$? + we actually don't define $\mathbf{f}_\mathcal{G}$ here: it was already defined} whose $i$-th entry equals the normalized-number of occurrences of $\mathcal{H}_i$ in $\mathcal{G}$, usually referred to as the $k$-spectrum of $\G$. In details, defining $\mathfrak{F}_\G=\{F_1,\ldots,F_s\}$ the set of \emph{all} size-$k$ subgraphs in $\G$, that is, $s=\tbinom{v}{k}$ for graphlets without repetition \nt{with this choice of $s$, this is the case \emph{with} repetition! + let's not use $s$ here as it will be a number of samples afterwards..}. We have:
+For a graph $\mathcal{G}=(\V,\E)$, we define the vector $f_\mathcal{G}\in \mathcal{R}^{N_k}$ whose $i$-th entry equals the normalized-number of occurrences of $\mathcal{H}_i$ in $\mathcal{G}$, usually referred to as the $k$-spectrum of $\G$. In details, defining $\mathfrak{F}_\G=\{F_1,\ldots,F_s\}$ the set of \emph{all} size-$k$ subgraphs in $\G$, that is, $s=\tbinom{v}{k}$ for graphlets without repetition. We have:
 \[
-\mathbf{f}_\G=\bm{\varphi}_k^{hist}(\mathfrak{F}_\G) \in\mathbb{R}^{N_k}
+f_\G=\varphi_k^{hist}(\mathfrak{F}_\G)
 \]
-\nt{Conveniently, $\bm{\varphi}_k^{\rm hist}$ is already defined: let's call it to start making connections between the different parts of the report.}
 where graphlets are considered without repetition. The graphlet kernel is then the inner product between the histograms.
 \begin{definition}[Graphlet Kernel]
-Given two graphs $\mathcal{G}$ and $\mathcal{G}'$ of size $\geq k$, the graphlet kernel $\kappa$ is defined as \citep{graphlet_kernel}:
+Given two graphs $\mathcal{G}$ and $\mathcal{G}'$ of size $\geq k$, the graphlet kernel $\mathcal{K}_\G$ is defined as \citep{graphlet_kernel}:
 \begin{equation}
 \label{eq:graphlet_kernel}
-    \kappa(\mathcal{G},\mathcal{G}')=\mathbf{f}_{\mathcal{G}}^T \mathbf{f}_{\mathcal{G}'}.
+    \mathcal{K}_g(\mathcal{G},\mathcal{G}')=f_{\mathcal{G}}^Tf_{\mathcal{G}'}.
 \end{equation}
 \end{definition}
-\nt{I dropped the sub-g in $\kappa_g$ for ease of notation}
-In this case the distance between graphs in the kernel space is just the Euclidean metric between histograms $d_\kappa({\mathcal{G}},{\mathcal{G}'}) = \|\mathbf{f}_{\mathcal{G}} - \mathbf{f}_{{\mathcal{G}'}}\|_2$. Also, from now on, unless otherwise specified, $\kappa$ will refer to this graphlet kernel. 
+In this case the distance between graphs in the kernel space is just the Euclidean metric between histograms $d_\mathcal{K}({\mathcal{G}},{\mathcal{G}'}) = \|f_{\mathcal{G}} - f_{{\mathcal{G}'}}\|_2$.
 
-\textbf{The computational cost} is a major drawback of this kernel, as computing the $k$-spectrum vector $\mathbf{f}_{\mathcal{G}}$ is very costly, even for moderate $k$: there are $\mathcal{O}\tbinom{v}{k}$ subgraphs of size $k$ in a graph of size $v$, the number of graphlets of size $k$, $N_k$, is exponential in $k$, and since graphlets are taken without repetition multiple isomorphism tests must be performed. Thus, this cost can be written as:
+\textbf{The computational cost} is a major drawback of this kernel, as computing the $k$-spectrum vector costs huge computational time even for moderate $k$: there are $O\tbinom{v}{k}$ subgraphs of size $k$ in a graph of size $v$, the list of graphlets is of size $N_k$ exponential in $k$, and since graphlets are taken without repetition multiple isomorphism tests must be performed. Thus, this cost can be written as:
 \begin{equation}
 \label{eq:cost_graphlet}
-    C_{gk}= \mathcal{O}(\tbinom{v}{k} N_k C_k)
+    C_{gk}= O(\tbinom{v}{k} N_k C_k)
 \end{equation}
-As a result, there is a trade-off between a more accurate representation of the graph (larger value of $k$) and the computational cost. However, some techniques are used in order to handle this limitation. In the next section, we focus on empirical sampling.
+As a result, there is a trade off between a more accurate representation of the graph (larger value of $k$) and the computational cost. However, some techniques are used in order to handle this limitation. In the next section, we focus on empirical sampling.
 
 \subsection{Graph sampling to approximate k-graphlet spectrum}
 \label{graph_sampling}
 %Graph sampling arises when we deal with a large-scale graph and the task is to pick a small-size sample subgraph that would be similar to the original graph with respect to some important properties.
 
-The graphlet kernel can be interpreted as follows: if one draws a subgraph randomly from $\mathcal{G}$, then one has a probability $(\mathbf{f}_\mathcal{G})_i$ of obtaining $\mathcal{H}_i$. So, it is natural to approach $\mathbf{f}_\mathcal{G}$ with an empirical histogram, built by  sampling $s$ subgraphs $\hat{\mathfrak{F}}_\G=\{\mathcal{F}_1,...,\mathcal{F}_s\} \sqsubseteq \mathcal{G}$ of size $k$, and then estimate the $k$-spectrum vector empirically: $\hat{\mathbf{f}}_\mathcal{G} =\bm{\varphi}_k^{hist}(\hat{\mathfrak{F}}_\G)= \frac{1}{s}\sum_{j=1}^s \varphi^{match}_k(F_j)$. In other words, we count the number of times $\mathcal{H}_i$ appears among the samples. The Law of Large Numbers states that $\hat{\mathbf{f}}_\G \xrightarrow[s \to \infty]{} \mathbf{f}_\mathcal{G}$ with probability $1$ \nt{**euh.. well that depends on the sampling method! For uniform random sampling yes. For the dummy sampling method that samples always $\mathcal{H}_1$, no. For the random walk sampling (even with the fly option), I believe no also.**}
+The graphlet kernel can be interpreted as follows: if one draws a subgraph randomly from $\mathcal{G}$, then one has a probability $(f_\mathcal{G})_i$ of obtaining $\mathcal{H}_i$. So, it is natural to approach $f_\mathcal{G}$ with an empirical histogram, built by  sampling $s$ subgraphs $\hat{\mathfrak{F}}_\G=\{F_1,...,F_s\} \sqsubseteq \mathcal{G}$ of size $k$, and then estimate the $k$-spectrum vector empirically: $\hat f_\mathcal{G} =\varphi_k^{hist}(\hat{\mathfrak{F}}_\G)= \frac{1}{s}\sum_{j=1}^s \varphi^{match}_k(F_j)$. In other words, we count the number of times $\mathcal{H}_i$ appears among the samples. The Law of Large Numbers states that $\varphi_k^{hist}(\hat{\mathfrak{F}}_\G) \xrightarrow[s \to \infty]{} f_\mathcal{G}$ with probability $1$.
 
-This adds a degree of freedom to the method: there are many different ways of sampling a subgraph of size $k$ from a graph \citep{graph_sampling}. A \emph{sampling method} will generically be denoted by $S_k(\mathcal{G})$. We will denote by $F \sim S_k(\G)$ a random $k$-subgraph of $\G$ sampled by $S_k$. Note that each sampling method defines \emph{a different histogram} $\mathbf{f}_\mathcal{G} = \mathbb{E}_{F \sim S_k(\G)} \bm{\varphi}^{match}_k(F)$ \nt{should be called $\mathbf{f}_{S_k(\mathcal{G})}$ probably} when $s \to \infty$ \nt{**the previous definition with the expected value does not depend on $s$}. We describe two examples that we will use in the experiments.
+This adds another degree of freedom to the method: there are many different ways of sampling a subgraph from a graph \citep{graph_sampling}. A \emph{sampling method} will be denoted by $S_k(\mathcal{G})$, it is a random variable that extracts a $k$-subgraph of $\mathcal{G}$. Note that each sampling method defines \emph{a different histogram} $f_\mathcal{G} = \mathbb{E}_{F \sim S_k(\G)} \varphi^{match}_k(F)$ when $s \to \infty$. We describe two examples that we will use in the experiments.
 \begin{itemize}
-\item \textbf{Uniform sampling}: this is the simplest sampling method. We select a subset of $k$ nodes uniformly at random among the $\tbinom{v}{k}$ possible choices, and extract the subgraph induced by these nodes. This is the sampling method that corresponds to the classical graphlet kernel \eqref{eq:graphlet_kernel} when $s \to \infty$.
+\item \textbf{Uniform sampling}: this is the simplest sampling method. We select a subset of $k$ nodes uniformly randomly among the $\tbinom{v}{k}$ possible choices, and extract the subgraph on these nodes. This is the sampling method that corresponds to the classical graphlet kernel \eqref{eq:graphlet_kernel} when $s \to \infty$.
 \item \textbf{Random walk sampling}: here we sample the subgraph node by node, we first randomly choose a node $u$ from $\V$ to be the starting node. Then and till we collect $k$ nodes, we choose the next node randomly from the current node's neighbors in $\G$, and with probability $p_{flyback}$ we go back to the starting node and repeat the same from there, or we stay at the recently chosen node.
 \end{itemize}
-The difference between the two methods is that unlike uniform sampling, random walk sampling tends \nt{**more than ``tends'', it will sample connected subgraphs no?**} to generate connected subgraphs, \emph{i.e.} there is a path of edges between any pair of the subgraph. This difference is important when we want to sample large graphs where the average number of edges incident to a node is small compared to the graph size, as uniform sampling in this case generates sparse subgraphs that don't have any edge or just few with high probability. Taking this into account, it is necessary to use random walk when possible since the frequencies of sparse graphlets is high in all the graphs and thus not discriminative to be used in a learning algorithm.
+The difference between the two methods is that unlike uniform sampling, random walk sampling tends to generate connected subgraphs, \emph{i.e.} there is a path of edges between any pair of the subgraph. This difference is important when we want to sample large graphs where the average number of edges incident to a node is small compared to the graph size, as uniform sampling in this case generates sparse subgraphs that don't have any edge or just few with high probability. Taking this into account, it is necessary to use random walk when possible since the frequencies of sparse graphlets is high in all the graphs and thus not discriminative to be used in a learning algorithm.
 
 The question here is how many samples we should consider in order to have a desired certainty in our estimation, the following answer this question for every sampling technique $S_k$ whose corresponding $\varphi_k^{hist}$ converge to $f_\G$ when the number of sample grows to infinity.
 %\newtheorem{theorem}{Theorem} 
 \begin{theorem}
-Let $f_\G$ be a probability distribution on the finite set of k-nodes graphlets  $\mathfrak{H}=\{\phlet_1,...,\phlet_{N_k}\}$, and $\mathfrak{F}=\{F_1,...,F_{s}\}$ be a set of \emph(iid) random subgraphs drawn from $f_\G$ \nt{are we doinf iid or ``any sampling technique whose corresponding $\varphi_k^{hist}$ converges to $f_\G$'' as stated above? + the subgraphs are drawn via $S_k(\G)$ not from $\mathbf{f}_\G$} . Then for a given $\epsilon>0$ and $\delta >0$ we have \citep{graphlet_kernel}:
+Let $f_\G$ be a probability distribution on the finite set of k-nodes graphlets  $\phlet=\{\phlet_1,...,\phlet_{N_k}\}$, and $\mathbf{F}=\{F_1,...,F_{s}\}$ be a set of \emph(iid) random subgraphs drawn from $f_\G$. Then for a given $\epsilon>0$ and $\delta >0$ we have \citep{graphlet_kernel}:
 \begin{equation}
 s_{min}=\left \lceil \frac{2(log(2)N_k+log(\frac{1}{\delta} ))}{\epsilon^2} \right \rceil
 \end{equation}
-samples are enough to ensure that $Pr(\| f_\G-\varphi_k^{hist}(\mathbf{F}) \|_1 \geq \epsilon )\leq\delta$, where $\lceil.\rceil$ is the ceiling function. \nt{**$\varphi_k^{hist}(\mathbf{F})$ has a name**}
+samples are enough to ensure that $Pr(\| f_\G-\varphi_k^{hist}(\mathbf{F}) \|_1 \geq \epsilon )\leq\delta$, where $\lceil.\rceil$ is the ceiling function.
 \end{theorem}
 
 \textbf{The computational cost} of approximating $k$-graphlet spectrum using graph sampling %and then averaging} the matching function $\varphi_k^{match}$, will be referred to with $\mathbf{GSA}-{\varphi_k^{match}}$, 
