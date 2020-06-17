@@ -4,9 +4,9 @@
 Graphlet kernel  is a good method to solve graph classification problem but as we have seen in chapter \ref{chapter:background}, it suffers from a high computational cost. In this chapter, we take inspiration from graph sampling and averaging to propose a family of fast graph kernels that generalizes the graphlet kernel paradigm. We show how random features can be incorporated within the new framework to get a faster and competitive algorithm in graph classification. Finally, we describe how Optical Processing Units (OPUs) can be used to eliminate some significant computational cost altogether.
 
 \section{Proposed algorithm}
-We recall from chapter \ref{chapter:background} that the computational cost of graphlet kernel is $C_{gk}= O(\tbinom{v}{k} N_k C_k)$. As an attempt to lower this cost, using graph sampling we can compute an empirical approximation of $k$-spectrum vector so the new that cost becomes $C_{gk + gs}= O(C_S s N_k C_k)$. What changed is that $\tbinom{v}{k}$ is replaced with $C_S s$, but the question is whether that is enough or not. We recall that the minimum number of samples $s \sim N_k$ required to ensure some certainty sharply increases as the graphlet size increase. It is clear then that the number of graph samples is not the only bottleneck here but also the cost to compute $\varphi_k^{match}$, denoted by $C_{\varphi_k^{match}}=O(N_k C_k)$.
+We recall from chapter \ref{chapter:background} that the computational cost of graphlet kernel is $C_{gk}= O(\tbinom{v}{k} N_k C_k)$. As an attempt to lower this cost, using graph sampling we can compute an empirical approximation of $k$-spectrum vector so the new that cost becomes $C_{gk + gs}= O(C_S s N_k C_k)$. We can see that $\tbinom{v}{k}$ is replaced with $C_S s$, and recall that the minimum number of samples $s \sim N_k$ required to ensure some certainty sharply increases as the graphlet size increase. It is clear then that the number of graph samples is not the only bottleneck here but also the cost to compute $\varphi_k^{match}$, denoted by $C_{\varphi_k^{match}}=O(N_k C_k)$.
 
-So we propose to replace $\varphi^{match}_k$ with another user-defined function $\varphi:\phlet \mapsto\R^m$ and keep everything else as it is. We obtain a family of algorithms referred to as Graph Sampling and Averaging (GSA-$\varphi$), described in Alg. \ref{alg:GSA}.
+So we propose to replace $\varphi^{match}_k$ with another user-defined function $\varphi:\phlet \mapsto\R^m$ and keep everything else as it is. We obtain a family of algorithms referred to as Graph Sampling and Averaging (GSA-$\varphi$), described in Alg. \ref{alg:GSA}, whose main user-defined methods are the samping method $S_k$ and the feature map $\varphi$.
 
 \begin{algorithm}[H]\label{alg:GSA}
 \DontPrintSemicolon
@@ -31,49 +31,57 @@ So we propose to replace $\varphi^{match}_k$ with another user-defined function 
 \caption{Graph Sampling and Averaging (GSA-$\varphi$)}
 \end{algorithm}
 
+For a set $\mathfrak{F} = \{F_1,\ldots, F_s\}$ and a feature map $\varphi$, similarly to $\bm{\varphi}^{hist}$ we define $\bm{\varphi}(\mathfrak{F}) = \frac{1}{s} \sum_i \varphi(F_i)$. The GSA-$\varphi$ algorithm computes, for each graph $\G$ in the dataset, an embedding $\bm{\varphi}(\mathfrak{F}_\G)$ where $\mathfrak{F}_\G$ is a set of $s$ subgraphs drawn $iid$ from $S_k(\G)$, then trains a classifier on it.
+
 We note that within the new paradigm, the defined $\varphi$ does not necessarily respect the isomorphism between sampled subgraphs: if $\varphi(F) = \varphi(F')$ whenever $F \cong F'$, then we are in the framework of graphlet \emph{without} repetition, otherwise we are in the other case. As we will see, choosing a randomized $\varphi$ presents both theoretical and practical advantages, however it does not respect isomorphism. Nevertheless, it is possible to apply some preprocessing function $Q$ invariant by permutation before passing it to a randomized $\varphi$, and in this case isomorphism is respected without any condition on $\varphi$. An example of such function is $Q:\R^{k\times k}\mapsto \R^k, Q(F)=Sort(Eigenvalues(\mathbf{A}_F))$, that is, the sorted eigenvalues of the adjacency matrix.
 
 \todoNK{A word on the generic computational cost of the method ? $O(C_S s C_\varphi)$, emphasizing that $C_\varphi$ is now the main focus in the rest (intuitively, trade off between computational cost and discriminative power)}
 
 \section{Using random features framework in our algorithm}
-After we presented the generic algorithm, now we combine it with random features kernels.
-Let's assume that we have a psd and shift-invariant graph kernel, as a recap, we know it can be written in the form:
+
+In the previous section, we introduced a generic family of algorithms, GSA-$\varphi$. Besides the sampling method, the performance and computational cost of the algorithm mainly depends on the choice of feature map $\varphi$: choosing $\varphi = \varphi^{match}_k$ produces the classical graphlet kernel but it is expensive to compute. In this section, we motivate the choice of $\varphi$ as kernel random features  and relate it to a new notion of metric between graphs, using the so-called \emph{Maximum Mean Discrepancy} (MMD) \citep{gretton}, a kernel metric between probability distributions.
+
+Let us recall a few notions about kernel RF (see Section \ref{sec:RF}). Assume that we have a psd (often shift-invariant) kernel on $\R^{k \times k}$, that can be written in the form:
 \begin{equation}
 \label{eq:random_features_3}
-\mathcal{K}(F,F')= \mathbb{E}_w \xi_w(F)\xi_w(F')
+\mathcal{K}(F,F')= \mathbb{E}_{w \sim p(w)} \xi_w(F)^* \xi_w(F')
 \end{equation}
-which gives that by defining:
-\begin{equation}
+for some mapping $\xi_w : \R^{k \times k} \to \mathbb{C}$ parameterized by $w$ distributed according to $p(w)$. Although this kernel technically takes (the adjacency matrix of) a graphlet as an input, we do not require it to be permutation-invariant, since it will be combined with the graph sampling process. For instance, we will see in experiments that even a simple Gaussian kernel on adjacency matrices performs well!
+
+As we have seen, the RF method defines:
+\begin{equation}\label{eq:RF}
 \varphi(F) = \frac{1}{\sqrt{m}} ( \xi_{w_j}(F) )_{j=1}^m \in \mathbb{C}^m,~~~ m\in \mathbb{N}
 \end{equation}
-we can write:
+and we can write:
 \[
 \mathcal{K}(F,F')\approx \varphi(F)^*\varphi(F')
 \]
-In this point and based on such kernel, we define another one, called \emph{mean kernel} $\K_{mk}$, with presenting its corresponding metric, called \emph{Maximum Mean Discrepancy (MMD)}. Next, we show with the aid of concentration inequalities how using the random features map $\varphi$ of $\K$ in  our algorithm $GSA-\varphi$ will lead to an approximation of $\K_{mk}$ concentrated around its true value with high probability.
 
-The mean kernel methodology allows to \emph{lift} a kernel from a domain $\phlet$ to a kernel on \emph{probability distributions} on $\phlet$. Given a base kernel $\K$ and two probability distribution $\mathcal{P},\mathcal{Q}$, it is defined as:
+Now, how does the embedding computed by GSA-$\varphi$ relates to the base kernel $\mathcal{K}$? To examine that, in the following we define another kernel, called the \emph{mean kernel} $\K_{mk}$ \citep{gretton}, with its corresponding metric called the \emph{Maximum Mean Discrepancy (MMD)}. Next, we show with the aid of concentration inequalities how using the random features map $\varphi$ of $\K$ in our algorithm GSA-$\varphi$ will lead to an approximation of $\K_{mk}$ concentrated around its true value with high probability.
+
+The mean kernel methodology allows to \emph{lift} a kernel from a domain $\phlet$ to a kernel on \emph{probability distributions} on $\phlet$. Given a base kernel $\K$ on $\phlet$ and two probability distribution $\mathcal{P},\mathcal{Q}$, it is defined as:
 \begin{equation}
 \label{eq:mean_kernel}
 \mathcal{K}_{mk}(\mathcal{P},\mathcal{Q}) = \mathbb{E}_{x \sim \mathcal{P}, y \sim \mathcal{Q}} \mathcal{K}(x,y)
 \end{equation}
-In other words, the mean kernel is just the expectation of the base kernel with respect to each term. Mean kernel is associated to an Euclidean metric which is referred to with the  \emph{Maximum Mean Discrepancy (MMD)}, and is defined as:
+In other words, the mean kernel is just the expectation of the base kernel with respect to each term. The metric associated to the mean kernel is usually referred to as the \emph{Maximum Mean Discrepancy (MMD)} in the literature \citep{gretton}, and is defined as:
 \begin{equation}\label{eq:MMD}
 MMD(\mathcal{P},\mathcal{Q}) = \sqrt{\mathcal{K}_{mk}(\mathcal{P},\mathcal{P}) + \mathcal{K}_{mk}(\mathcal{Q},\mathcal{Q}) - 2\mathcal{K}_{mk}(\mathcal{P},\mathcal{Q})}
 \end{equation}
 It should be noticed here that $\mathcal{K}_{mk}(\mathcal{P},\mathcal{P}) = \mathbb{E}_{x \sim \mathcal{P}, x' \sim \mathcal{P}} \mathcal{K}(x,x') \neq \mathbb{E}_{x \sim \mathcal{P}} \mathcal{K}(x,x)$.
 
-\textbf{The link between the mean kernel and graphs} can be easily constructed, since considering a random sampling method $S_k$, the pair $(S_k , \G)$  introduces a probability distribution on the set of size-$k$ graphlets $\phlet$. Thus, for two graphs $\G,\G'$ , the mean kernel can be reformulated to:
+\textbf{The link between the mean kernel and graph sampling} can be easily constructed, since considering a random sampling method $S_k$, the pair $(S_k , \G)$  introduces a probability distribution $f_\G= \mathbb{E}_{F \sim S_k(\G)} \varphi^{match}_k(F)$ on the set of size-$k$ graphlets $\phlet$. Thus, for two graphs $\G,\G'$ , the mean kernel between these distributions, denoted by $\mathcal{K}_{mk}(\G,\G')=\mathcal{K}_{mk}(f_\G,f_{\G'})$ for simplicity, can be reformulated as:
 \begin{equation}
 \label{eq:mean_kernel_graphs}
-\mathcal{K}_{mk}(\G,\G')= \mathbb{E}_{F \sim S_k(\G), F' \sim S_k(\G')} \mathcal{K}(F,F')
+\mathcal{K}_{mk}(\G,\G') = \mathbb{E}_{F \sim S_k(\G), F' \sim S_k(\G')} \mathcal{K}(F,F')
 \end{equation}
-A special case is to  consider the uniform sampler, which satisfies $Pr(S_k(\G)=\phlet_i)=(f_\G)_i$, where the mean kernel is reduced to:
+Remark that the mean kernel also reduces to:
 \[
-\mathcal{K}_{mk}(f_\G,f_\G')=\sum_{i,j}^{N_k}(f_\G)_i(f_{\G'})_j\mathcal{K}(\phlet_i,\phlet_j) 
+\mathcal{K}_{mk}(\G,\G')=\sum_{i,j}^{N_k}(f_\G)_i(f_{\G'})_j\mathcal{K}(\phlet_i,\phlet_j) 
 \]
+We denote by $MMD(\G,\G')$ the corresponding MMD, which is a new notion of distance between graphs that generalizes the graphlet kernel metric.
 
-Now to integrate random features with the mean kernel, we combine the decomposition of the base kernel $\mathcal{K}$ in Eq. \ref{eq:random_features_3} with Eq.\ref{eq:mean_kernel_graphs} to get:
+Let us now integrate random features with the mean kernel, assuming \eqref{eq:random_features_3} and \eqref{eq:RF}, and show how GSA-$\varphi$ relates to the MMD we have just defined. We combine the decomposition of the base kernel $\mathcal{K}$ in Eq. \eqref{eq:random_features_3} with Eq. \eqref{eq:mean_kernel_graphs} to get:
 \begin{equation}
     \label{eq:mk_rf}
     \mathcal{K}_{mk}(\G,\G')= \mathbb{E}_{F \sim S_k(\G), F' \sim S_k(\G')} \mathbb{E}_w \xi_w(F)\xi_w(F')
@@ -85,7 +93,7 @@ MMD(\G,\G')^2 = \mathbb{E}_{\omega} \Big( | \mathbb{E}_{S_k(\G)} \xi_\omega(F) -
 \xi_\omega(F') |^2 \Big)
 \end{equation}
 
-Until now, what we have in Eq. \ref{eq:mk_rf} is the true value of the mean kernel, where the expectations there implies that we should consider infinite number of both graph samples and random features. However, what we really want is to approximate this value using our algorithm $GSA-\varphi$, which includes  using the  map $\varphi$ of $\mathcal{K}$ and a finite number of \emph{iid} samples with $S_k$. First let's consider only a finite number $s$ of samples: $\F_\G=\{F_1, \ldots, F_s\}$ and $\F_{\G'}=\{F'_1, \ldots, F'_s\}$. Then we have: 
+Until now, what we have in Eq. \ref{eq:mk_rf} is the true value of the mean kernel, where the expectations there implies that we should consider infinite number of both graph samples and random features. However, what we really want is to approximate this value using our algorithm GSA-$\varphi$, which includes  using the finite-dimensional map $\varphi$ and a finite number of \emph{iid} samples drawn with $S_k$. First let's consider only a finite number $s$ of samples: $\F_\G=\{F_1, \ldots, F_s\}$ and $\F_{\G'}=\{F'_1, \ldots, F'_s\}$. Then we have: 
 \begin{equation}
 \label{eq:MK_samples}
 \mathcal{K}_{mk}(\G,\G') \approx \frac{1}{s^2} \sum_{i,j=1}^s \mathbb{E}_w \xi_w(F_i)\xi_w(F'_j)
@@ -93,35 +101,36 @@ Until now, what we have in Eq. \ref{eq:mk_rf} is the true value of the mean kern
 \[
 MMD(\G,\G')^2 \approx \frac{1}{s^2}\mathbb{E}_{\omega} ( | \xi_\omega(F) -\xi_\omega(F') |^2 )
 \]
-No we advance another step and consider a finite number $s$ of \emph(iid) samples and a feature map $\varphi$ with finite number $m$ of random features, so the formula of our final approximation is:
+No we consider both a finite number $s$ of \emph(iid) samples, and a feature map $\varphi$ with finite number $m$ of random features defined as \eqref{eq:RF}, so the formula of our final approximation is:
 \begin{equation}
 \label{eq:mean_kernel_RF}
-\mathcal{K}_{mk}(\G,\G') \approx \frac{1}{s^2} \sum_{i,j=1}^s \varphi(F_i)^*\varphi(F_j')=\Big(\frac{1}{s}\sum_{i=1}^s\varphi(F_i)\Big)^*~\Big(\frac{1}{s}\sum_{i=1}^s\varphi(F_i')\Big)
+\mathcal{K}_{mk}(\G,\G') \approx \frac{1}{s^2} \sum_{i,j=1}^s \varphi(F_i)^*\varphi(F_j')=\Big(\frac{1}{s}\sum_{i=1}^s\varphi(F_i)\Big)^*~\Big(\frac{1}{s}\sum_{i=1}^s\varphi(F_i')\Big) = \bm{\varphi}(\mathfrak{F}_{\G})^* \bm{\varphi}(\mathfrak{F}_{\G'})
 \end{equation}
 \[
-MMD(\G,\G')^2 \approx  \| \frac{1}{s}\sum_{i=1}^s\varphi(F_i) -\frac{1}{s}\sum_{i=1}^s\varphi(F_i') \|_2^2 
+MMD(\G,\G')^2 \approx  \| \bm{\varphi}(\mathfrak{F}_{\G}) - \bm{\varphi}(\mathfrak{F}_{\G'}) \|_2^2 
 \]
+Indeed, we just proved that, when using random features, GSA-$\varphi$ theoretically represents an unbiased estimation of the mean kernel $\mathcal{K}_{mk}$. The corresponding MMD is then the key to the performance of the algorithm: if the graphs are well-separated by this metric, then a machine learning algorithm will be able to classify them.
 
-Indeed, we just proved that based on the assumption on the base kernel $\mathcal{K}$ in Eq. \ref{eq:random_features_3}, $GSA-\varphi$ theoretically represents an unbiased estimation of the mean kernal $\mathcal{K}_{mk}$. Now, we have two issues to discuss: how is this estimation concentrated around its expected value $\mathcal{K}_{mk}$, and what is the computational cost of $GSA-\varphi$ in this case. While the first question can be addressed for any kernel $\mathcal{K}$, the second one is really case-dependent as it is mainly related to the computational cost of computing the term $\varphi(F_i)$ in Eq. \ref{eq:mean_kernel_RF} which differs from one $\mathcal{K}$ to another. We start answering the first question.
-
+Now, we have two issues to discuss: how is this estimation concentrates around its expected value $\mathcal{K}_{mk}$, and what is the computational cost of GSA-$\varphi$ in this case. While the first question can be addressed for any kernel $\mathcal{K}$, the second one is really case-dependent as it is mainly related to the computational cost of computing the term $\varphi(F_i)$ in Eq. \eqref{eq:mean_kernel_RF} which differs from one $\varphi$ to another \todoNK{I would define the generic cost $C_\varphi$ in the previous section and keep the discussion focused on concrete examples of RF here (Gaussian, gaussian with eigenvalues...)}. We start answering the first question.
 
 \begin{theorem}
 \label{theorem:concentration}
-Let $\G$ and $\G'$ be two graphs, $\{F_i\}_{i=1}^{s}$ (resp. $\{F_i'\}_{i=1}^{s}$) be $iid$ size-k graphlet samples drawn from $\G$ (resp. $\G'$). We have that $\forall \epsilon >0$:
+Let $\G$ and $\G'$ be two graphs, $\{F_i\}_{i=1}^{s}$ (resp. $\{F_i'\}_{i=1}^{s}$) be $iid$ size-k graphlet samples drawn from $S_k(\G)$ (resp. $S_k(\G')$). Assume a kernel of the form \eqref{eq:random_features_3} and a random feature map \eqref{eq:RF}. Assume that $\abs{\xi_w(F)} \leq 1$ for any $w,F$.
+
+We have that, for all $\delta>0$, with probability at least $1-\delta$:
 \begin{align*}
-    Pr\Big(\Big | \mathcal{K}_{mk}(\G,\G') - \| \frac{1}{s} \sum_i \varphi(F_i) - \frac{1}{s} \sum_i \varphi(F'_i)\|\Big | \geq
-    \epsilon\Big)\leq e^{-\frac{(\epsilon\sqrt{s}-2)^2}{4}}
+ \Big|\|\varphi(\mathfrak{F}_\G) - \varphi(\mathfrak{F}_{\G'})\|^2 - MMD(\G,\G')^2 \Big| \leq \frac{4 \sqrt{\log (6/\delta)}}{\sqrt{m}} + \frac{8\left(1+\sqrt{2\log(3/\delta)}\right)}{\sqrt{{s}}}
 \end{align*}
 \end{theorem}
-this tells that the estimation converges to its expected value exponentially in $\sqrt{s}$, which is a good support to the proposed algorithm. However the proof of this theorem is provided in section \ref{section:proof}.
+this tells that the Euclidean distance between embedding computed by GSA-$\varphi$ converges to the MMD in $O(1/\sqrt{m} + 1/\sqrt{s})$. The proof of this theorem is provided in section \ref{section:proof}.
 
-To calculate \textbf{the computational cost of $GSA-\varphi$}, we considered three cases of $\varphi$, hence $\mathcal{K}$, in both theoretical and practical sides: Gaussian random features applied on the adjacency matrix, Gaussian random features applied on the Eigenvalues of the adjacency matrix , and finally the optical random features of OPUs. The case of OPU random features is presented in section \ref{section:OPU}.\newline
+To calculate \textbf{the computational cost of $GSA-\varphi$}, we considered three cases of $\varphi$ in our experiments, hence $\mathcal{K}$, in both theoretical and practical sides: Gaussian random features applied on the adjacency matrix, Gaussian random features applied on the sorted Eigenvalues of the adjacency matrix , and finally the optical random features of OPUs. The case of OPU random features is presented in section \ref{section:OPU}.\newline
 \todome{
 here am supposed after few words to reach the point:
 $C_{\varphi_{Gs}}=O(mk^2)$ for the adjacency matrix
 and 
 $C_{\varphi_{Gs}}=O(mk^2+C_{Eigen_extraction})$ for the adjacency matrix}
-
+\todoNK{you can use the theorem above to say that $m$ should be of the order of $s$ (since the error rate is the same in $m$ and $s$), which is high. Hence the huge gain with the OPU.}
 
 
 \section{Accelerate the algorithm with OPUs random features}
@@ -181,95 +190,100 @@ The DMD (digital micromirror device) used in OPU's is a binary amplitude modulat
 \label{section:proof}
 
 \begin{proof}
-Here, we prove theorem \ref{theorem:concentration}, where We decompose the proof in two steps.
-we first assume that:
-\begin{equation}
-\label{eq:z_assumption}
-    0\leq z_\omega(F)\leq 1, \forall \omega \sim  \Lambda
-\end{equation}
-\paragraph{Step 1: infinite $s$, finite $m$ (number of random features).} Based on our assumption on $z_\omega$ in \eqref{eq:z_assumption}, it is a straight forward result of Hoeffding's inequality that  $d(G, G')^2$ is close to $\frac{1}{m} \sum_{j=1} | \mathbb{E}_{F \sim f_G} z_{\omega_j}(F) - \mathbb{E}_{F' \sim f_{G'}} z_{\omega_j}(F') |^2 = \| \mathbb{E}_{F \sim f_G} z(F) - \mathbb{E}_{F' \sim f_{G'}} z(F')\|^2$.  
+Here, we prove theorem \ref{theorem:concentration}. We decompose the proof in two steps.
+
+\paragraph{Step 1: infinite $s$, finite $m$ (number of random features).} Based on our assumption $|\xi_w|\leq 1$, it is a straightforward result of Hoeffding's inequality that  $MMD(\G, \G')^2$ is close to $\frac{1}{m} \sum_{j=1} | \mathbb{E}_{F \sim S_k(\G)} \xi_{w_j}(F) - \mathbb{E}_{F' \sim S_k(\G')}} \xi_{w_j}(F') |^2 = | \mathbb{E}_{F \sim S_k(\G)} \xi_{w_j}(F) - \mathbb{E}_{F' \sim S_k(\G')}} \xi_{w_j}(F') |^2$. We recall Hoeffding's inequality below.
 \begin{lemma}[Hoeffding's inequality] 
 Let $(x_1,\ldots, x_m)$ be independent random variables such that the variable $x_i$ is strictly bounded by the interval $[a_i , b_i]$, and let $\overline{X}=\frac{1}{m}\Sigma_{i=1}^{m}x_i$ then we have:
 \begin{equation}
 \label{eq:Hoeffding}
-    Pr(|\mathbb{E}\overline{X}-\overline{X}|\geq \epsilon)\leq 2~ exp (-\frac{2m^2\epsilon^2}{\Sigma_{i=1}^m(b_i-a_i)^2)})
+    \mathbb{P}(|\mathbb{E}\overline{X}-\overline{X}|\geq \epsilon)\leq 2~ \exp \left(-\frac{2m^2\epsilon^2}{\Sigma_{i=1}^m(b_i-a_i)^2)} \right)
 \end{equation}
-
 \end{lemma}
 %\begin
-In our case, and for a finite number of random features $(m)$ we have the variables $x_j=| \mathbb{E}_{F \sim f_G} z_{\omega_j}(F) - \mathbb{E}_{F' \sim f_{G'}} z_{\omega_j}(F') |^2 $ are independent and bounded by the interval $[0,1]$ too, thus it is an easy result to see that:
-\begin{equation}
-    Pr(\Big|\frac{1}{m} \sum_{j=1}^m | \mathbb{E}_{F \sim f_G} z_{\omega_j}(F) - \mathbb{E}_{F' \sim f_{G'}} z_{\omega_j}(F') |^2 - \mathbb{E}_{\omega}  | \mathbb{E}_P z_\omega(x) - \mathbb{E}_Q z_\omega(x) |^2 \Big| \geq \epsilon) \leq 2~ e^{ -2m\epsilon^2}
+In our case, we define the variables $x_j=| \mathbb{E}_{F \sim S_k(\G)} \xi_{w_j}(F) - \mathbb{E}_{F' \sim S_k(\G')}} \xi_{w_j}(F') |^2$. They are independent, have expectation $MMD(\G,\G')^2$, and are bounded by the interval $[0,4]$, thus we have:
+\begin{equation*}
+    \mathbb{P}\left(\Big|\frac{1}{m} \sum_{j=1}^m | \mathbb{E}_{F \sim S_k(\G)} \xi_{w_j}(F) - \mathbb{E}_{F' \sim S_k(\G')}} \xi_{w_j}(F') |^2 - MMD(\G,\G')^2 \Big| \geq \epsilon\right) \leq 2~ e^{ -2m\epsilon^2/16}
+\end{equation*}
+Or, in other words, with probability $1-\delta$,
+\begin{equation}\label{eq:step1}
+\Big|\frac{1}{m} \sum_{j=1}^m | \mathbb{E}_{F \sim S_k(\G)} \xi_{w_j}(F) - \mathbb{E}_{F' \sim S_k(\G')} \xi_{w_j}(F') |^2 - MMD(\G,\G')^2 \Big| \leq \frac{4 \sqrt{\log (2/\delta)}}{\sqrt{m}}
 \end{equation}
 
-\paragraph{Step 2: finite ${s}$ and $m$.} We show that for any \emph{fixed} set of random features $\omega_j$, we have $\| \mathbb{E}_{F \sim f_G} z(F) - \mathbb{E}_{F' \sim f_{G'}} z(F')\|$ close to $\| \frac{1}{{s}} \sum_i z(F_i) - \frac{1}{{s}} \sum_i z(F'_i)\|$.  \newline
-Let us consider a fixed set of random variables $\{\omega_j\}_{j \in \{1,\ldots, m\}}$ drawn independently from $\Lambda$, thus the random features map of a graph F equals: $z(F) = \frac{1}{\sqrt{m}}\left[z_{\omega_j}(F)\right]_{j=1}^m$.\newline
-For every graph G , let $F_1,\ldots, F_{s}$ be ${s}$ random subgraphs drawn independently from G, we clearly have: 
+\paragraph{Step 2: finite ${s}$ and $m$.} We show that for any \emph{fixed} set of random features $w_j$, we have $\| \mathbb{E}_{F \sim S_k(\G)} \varphi(F) - \mathbb{E}_{F' \sim S_k(\G')} \varphi(F')\|$ close to $\| \frac{1}{{s}} \sum_i \varphi(F_i) - \frac{1}{{s}} \sum_i \varphi(F'_i)\|$. 
+%Let us consider a fixed set of random variables $\{\omega_j\}_{j \in \{1,\ldots, m\}}$ drawn independently from $\Lambda$, thus the random features map of a graph F equals: $z(F) = \frac{1}{\sqrt{m}}\left[z_{\omega_j}(F)\right]_{j=1}^m$.\newline
+By definition of $F_1,\ldots, F_{s}$ random subgraphs drawn independently from $S_k(\G)$, we clearly have: 
 \begin{equation}
 \label{eq:subsample}
-    \mathbb{E}_{F \sim f_G} z(F)= \mathbb{E} (~\frac{1}{{s}} \sum_i z(F_i)~)
+    \mathbb{E}_{F \sim S_k(\G)} \varphi(F)= \mathbb{E} (~\frac{1}{{s}} \sum_i \varphi(F_i)~)
 \end{equation} 
-What should be noticed now to be used later is that $\forall F\sim f_G, z(F)$ is in a ball $\mathcal{H}$ of radius $M=\frac{\sqrt{m}}{\sqrt{m}}=1$.
+Moreover by our assumptions $\varphi(F)$ is in a ball of radius $M=\frac{\sqrt{m}}{\sqrt{m}}=1$. We the apply the following vector version of Hoeffding's inequality.
 \begin{lemma}
 \label{lemma:vector_hoeffding}
-let $X=\{x_1,\ldots,x_{s}\}$ be $iid$ random variables in a ball $\mathcal{H}$ of radius $M$ centered around the origin in a Hilbert space. Denote their average by $\overline{X}=\frac{1}{{s}}\sum_{i=1}^{s}x_i$. Then for any $\delta>0$, with probability at lest $1-\delta$, 
+let $X=\{x_1,\ldots,x_{s}\}$ be $iid$ random variables in a ball of radius $M$ centered around the origin in a Hilbert space $\mathcal{H}$. Denote their average by $\overline{X}=\frac{1}{{s}}\sum_{i=1}^{s}x_i$. Then for any $\delta>0$, with probability at lest $1-\delta$, 
 \begin{equation}
 \label{eq:vector_hoeffding0}
-  \| \overline{X}-\mathbb{E}\overline{X}\|\leq \frac{M}{\sqrt{{s}}}(1+\sqrt{2~log\frac{1}{\delta}}
+  \| \overline{X}-\mathbb{E}\overline{X}\|_\mathcal{H} \leq \frac{M}{\sqrt{{s}}}\left(1+\sqrt{2\log\frac{1}{\delta}}\right)
 \end{equation}
 \end{lemma}
 \begin{proof}
-Defining the function $f(x)= \| \overline{X}-\mathbb{E}\overline{X}\|$, and $\widetilde{X}={x_1,\ldots,\widetilde{x}_i,\ldots,x_{s}}$ to be a copy of $X$ with the ith element replaced by an arbitrary element of $\mathcal{H}$, we can prove using the triangle inequality:
+Although this lemma is known in the literature, we reproduce its proof for completeness. Defining the function $f(x)= \| \overline{X}-\mathbb{E}\overline{X}\|$, and $\widetilde{X}={x_1,\ldots,\widetilde{x}_i,\ldots,x_{s}}$ to be a copy of $X$ with the ith element replaced by an arbitrary element of $\mathcal{H}$, we can prove using the triangle inequality:
 \begin{equation}
     |f(X)-f(\widetilde{X})|=\Big|\| \overline{X}-\mathbb{E}\overline{X} \|-\|\overline{\widetilde{X}} - \mathbb{E}\overline{X}  \| \Big|\leq \| \overline{X} - \overline{\widetilde{X}}\|\leq
     \frac{\|x_i - \widetilde{x_i} \|}{{s}}\leq
     \frac{2M}{{s}}
 \end{equation}
-Therefor, $f(X)$ is insensitive to the ith component of $X,~ \forall i \in \{1,\ldots,{s}\}$ which is an important requirement to apply McDiarmid's inequality on $f$. \newline
+Therefore, $f(X)$ is insensitive to the ith component of $X,~ \forall i \in \{1,\ldots,{s}\}$ which suggests applying McDiarmid's inequality on $f$.
+
 To bound the expectation of $f$, we use the familiar identity about the variance of the average of $iid$ random variables:
 \begin{equation}
 \mathbb{E}\|\overline{X}-\mathbb{E}\overline{X}\|^2=\frac{1}{n}(\mathbb{E}\|x\|^2-\|\mathbb{E}x\|^2 ) 
 \end{equation}
 Also:
 \[ \mathbb{E}f(X)\leq\sqrt{\mathbb{E}f^2(X)}=\sqrt{\mathbb{E}\|\overline{X}-\mathbb{E}\overline{X}\|^2}\leq \frac{M}{\sqrt{{s}}}\]
-This bound for the expectation of $f$ and McDiamid's inequality give: 
+This bound for the expectation of $f$ and McDiarmid's inequality give: 
 \begin{equation}
 \label{eq:vector_hoeffding1}
-    Pr_x \Big [ f(X)-\frac{M}{\sqrt{{s}}}\geq \epsilon \Big ]\leq
-    Pr_x \Big [ f(X)-\mathbb{E}f(X)\geq \epsilon \Big ]\leq
-    exp\Big( -\frac{{s}\epsilon^2}{2M^2}\Big)
+    \mathbb{P}_x \Big [ f(X)-\frac{M}{\sqrt{{s}}}\geq \epsilon \Big ]\leq
+    \mathbb{P}_x \Big [ f(X)-\mathbb{E}f(X)\geq \epsilon \Big ]\leq
+    \exp\Big( -\frac{{s}\epsilon^2}{2M^2}\Big)
 \end{equation}
 Which is equivalent to \eqref{eq:vector_hoeffding0} by setting $\delta=exp( -\frac{{s}\epsilon^2}{2M^2})$ and solving for $\epsilon$.
 \end{proof}
-Now back to Eq. \eqref{eq:subsample} and its corresponding assumptions that we made, we can directly apply lemma \ref{lemma:vector_hoeffding} (and more especially Eq.\eqref{eq:vector_hoeffding1}) to get that:
+Now back to Eq. \eqref{eq:subsample} and its corresponding assumptions that we made, we can directly apply lemma \ref{lemma:vector_hoeffding} (and more especially Eq.\eqref{eq:vector_hoeffding1}) to get that with probability $1-\delta$:
 \begin{equation}
     \label{eq:fixed_w}
-    Pr(\|\mathbb{E}_{F \sim f_G} z(F)-~\frac{1}{n} \sum_i z(F_i)~\|\geq \frac{1}{\sqrt{n}}+\epsilon)\leq
-    e^{-\frac{n\epsilon^2}{2}}
+    \|\mathbb{E}_{F \sim S_k(\G)} \varphi(F)-~\frac{1}{s} \sum_i \varphi(F_i)~\|\geq \frac{1}{\sqrt{{s}}}\left(1+\sqrt{2\log\frac{1}{\delta}}\right)
 \end{equation}
-Now applying the triangle inequality again yields:
+Now, by a union bound and triangle inequality: with probability $1-2\delta$,
 \begin{align*}
-    \Big | \| \mathbb{E}_{F \sim f_G} z(F) - \mathbb{E}_{F' \sim f_{G'}} z(F')\| - \| \frac{1}{{s}} \sum_i z(F_i) - \frac{1}{{s}} \sum_i z(F'_i)\|\Big | \leq  \\
-   \| (\mathbb{E}_{F \sim f_G} z(F) -  \frac{1}{{s}} \sum_i z(F_i) )- (\mathbb{E}_{F' \sim f_{G'}} z(F') - \frac{1}{{s}} \sum_i z(F'_i))\|\leq \\
-    \| \mathbb{E}_{F \sim f_G} z(F) -  \frac{1}{{s}} \sum_i z(F_i) \|+ \|\mathbb{E}_{F' \sim f_{G'}} z(F') - \frac{1}{{s}} \sum_i z(F'_i)\|
+    \Big | \| \mathbb{E}_{F \sim S_k(\G)} \varphi(F)& - \mathbb{E}_{F' \sim S_k(\G')} \varphi(F')\| - \| \frac{1}{{s}} \sum_i \varphi(F_i) - \frac{1}{{s}} \sum_i \varphi(F'_i)\|\Big | \\
+    &\leq  \| \mathbb{E}_{F \sim S_k(\G)} \varphi(F) -  \frac{1}{{s}} \sum_i \varphi(F_i) \| + \|\mathbb{E}_{F' \sim S_k(\G')} \varphi(F') - \frac{1}{{s}} \sum_i \varphi(F'_i)\| \\
+    &\leq \frac{2}{\sqrt{{s}}}\left(1+\sqrt{2\log\frac{1}{\delta}}\right)
 \end{align*}
-Thus, since the two variables $\| \mathbb{E}_{F \sim f_G} z(F) -  \frac{1}{{s}} \sum_i z(F_i) \|$ and $\|\mathbb{E}_{F' \sim f_{G'}} z(F') - \frac{1}{{s}} \sum_i z(F'_i)\|$ are independent (as a direct result of our aforementioned assumption of independent random sampling), $\forall \epsilon>0$ we have:
-\begin{align*}
-    Pr( \| \mathbb{E}_{F \sim f_G} z(F) -  \frac{1}{{s}} \sum_i z(F_i) \| \geq \frac{1}{\sqrt{{s}}}+\frac{\epsilon}{2}, \|\mathbb{E}_{F' \sim f_{G'}} z(F') - \frac{1}{{s}} \sum_i z(F'_i)\|\geq\frac{1}{\sqrt{{s}}}+\frac{\epsilon}{2})=\\
-    Pr( \| \mathbb{E}_{F \sim f_G} z(F) -  \frac{1}{{s}} \sum_i z(F_i) \| \geq \frac{1}{\sqrt{{s}}}+\frac{\epsilon}{2})~Pr( \|\mathbb{E}_{F' \sim f_{G'}} z(F') - \frac{1}{{s}} \sum_i z(F'_i)\|\geq\frac{1}{\sqrt{{s}}}+\frac{\epsilon}{2})\leq 
-    e^{-\frac{{s}\epsilon^2}{4}}
-\end{align*}
-finally, we get as a straight result from above:
-\begin{align*}
-    Pr(\Big | \| \mathbb{E}_{F \sim f_G} z(F) - \mathbb{E}_{F' \sim f_{G'}} z(F')\| - \| \frac{1}{{s}} \sum_i z(F_i) - \frac{1}{{s}} \sum_i z(F'_i)\|\Big | \geq
-    \frac{2}{\sqrt{{s}}}+\epsilon)\leq e^{-\frac{n\epsilon^2}{4}}
-\end{align*}
-And that is true for any fixed set of random variables  $\{\omega_j\}_{j \in \{1,\ldots, m\}}$ drawn independently from $\Lambda$.
-Since it is valid for any fixed set of random features, it is also valid with \emph{joint} probability on random features and samples, by the \emph{law of total probability}. So we can write:
-\begin{align*}
-    Pr(\Big | \mathbb{E}_{\omega} \Big( | \mathbb{E}_{f_G} z_\omega(F) - \mathbb{E}_{f_{G'}} z_\omega(F') |^2 \Big) - \| \frac{1}{s} \sum_i z(F_i) - \frac{1}{s} \sum_i z(F'_i)\|\Big | \geq
-    \frac{2}{\sqrt{s}}+\epsilon)\leq e^{-\frac{s\epsilon^2}{4}}
-\end{align*}
+Moreover, since $\| \mathbb{E}_{F \sim S_k(\G)} \varphi(F)- \mathbb{E}_{F' \sim S_k(\G')} \varphi(F')\| + \| \frac{1}{{s}} \sum_i \varphi(F_i) - \frac{1}{{s}} \sum_i \varphi(F'_i)\| \leq 4$, with the same probability:
+\begin{equation}\label{eq:step2}
+    \Big | \| \mathbb{E}_{F \sim S_k(\G)} \varphi(F) - \mathbb{E}_{F' \sim S_k(\G')} \varphi(F')\|^2 - \| \frac{1}{{s}} \sum_i \varphi(F_i) - \frac{1}{{s}} \sum_i \varphi(F'_i)\|^2\Big | \leq \frac{8}{\sqrt{{s}}}\left(1+\sqrt{2\log\frac{1}{\delta}}\right)
+\end{equation}
+%Thus, since the two variables $\| \mathbb{E}_{F \sim f_G} z(F) -  \frac{1}{{s}} \sum_i z(F_i) \|$ and $\|\mathbb{E}_{F' \sim f_{G'}} z(F') - \frac{1}{{s}} \sum_i z(F'_i)\|$ are independent (as a direct result of our aforementioned assumption of independent random sampling), $\forall \epsilon>0$ we have:
+%\begin{align*}
+%    Pr( \| \mathbb{E}_{F \sim f_G} z(F) -  \frac{1}{{s}} \sum_i z(F_i) \| \geq \frac{1}{\sqrt{{s}}}+\frac{\epsilon}{2}, \|\mathbb{E}_{F' \sim f_{G'}} z(F') - \frac{1}{{s}} \sum_i z(F'_i)\|\geq\frac{1}{\sqrt{{s}}}+\frac{\epsilon}{2})=\\
+%    Pr( \| \mathbb{E}_{F \sim f_G} z(F) -  \frac{1}{{s}} \sum_i z(F_i) \| \geq \frac{1}{\sqrt{{s}}}+\frac{\epsilon}{2})~Pr( \|\mathbb{E}_{F' \sim f_{G'}} z(F') - \frac{1}{{s}} \sum_i z(F'_i)\|\geq\frac{1}{\sqrt{{s}}}+\frac{\epsilon}{2})\leq 
+%    e^{-\frac{{s}\epsilon^2}{4}}
+%\end{align*}
+%finally, we get as a straight result from above:
+%\begin{align*}
+%    Pr(\Big | \| \mathbb{E}_{F \sim f_G} z(F) - \mathbb{E}_{F' \sim f_{G'}} z(F')\| - \| \frac{1}{{s}} \sum_i z(F_i) - \frac{1}{{s}} \sum_i z(F'_i)\|\Big | \geq
+%    \frac{2}{\sqrt{{s}}}+\epsilon)\leq e^{-\frac{n\epsilon^2}{4}}
+%\end{align*}
+%This is true for any fixed set of random variables  $\{w_j\}_{j \in \{1,\ldots, m\}}$ drawn independently from $p(w)$.
+Since it is valid for any fixed set of random features, it is also valid with \emph{joint} probability on random features and samples, by the law of total probability.
+
+Finally, combining \eqref{eq:step1}, \eqref{eq:step2}, a union bound and a triangular inequality, we have: with probability $1-3\delta$,
+\begin{equation}
+\Big|\|\varphi(\mathfrak{F}_\G) - \varphi(\mathfrak{F}_{\G'})\|^2 - MMD(\G,\G')^2 \Big| \leq \frac{4 \sqrt{\log (2/\delta)}}{\sqrt{m}} + \frac{8}{\sqrt{{s}}}\left(1+\sqrt{2\log\frac{1}{\delta}}\right)
+\end{equation}
+which concludes the proof.
 
 \end{proof}
 
