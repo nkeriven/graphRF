@@ -124,6 +124,7 @@ We have that, for all $\delta>0$, with probability at least $1-\delta$:
 \end{theorem}
 this tells that the Euclidean distance between embedding computed by GSA-$\varphi$ converges to the MMD in $O(1/\sqrt{m} + 1/\sqrt{s})$. The proof of this theorem is provided in section \ref{section:proof}.
 
+<<<<<<< HEAD
 To calculate \textbf{the computational cost of $GSA-\varphi$}, we considered three cases of $\varphi$ in our experiments, hence $\mathcal{K}$, in both theoretical and practical sides: Gaussian random features applied on the adjacency matrix, Gaussian random features applied on the sorted Eigenvalues of the adjacency matrix , and finally the optical random features of OPUs. The case of OPU random features is presented in section \ref{section:OPU}.\newline
 \todome{
 here am supposed after few words to reach the point:
@@ -131,18 +132,32 @@ $C_{\varphi_{Gs}}=O(mk^2)$ for the adjacency matrix
 and 
 $C_{\varphi_{Gs}}=O(mk^2+C_{Eigen_extraction})$ for the adjacency matrix}
 \todoNK{you can use the theorem above to say that $m$ should be of the order of $s$ (since the error rate is the same in $m$ and $s$), which is high. Hence the huge gain with the OPU.}
+=======
+To calculate \textbf{the computational cost of $GSA-\varphi$}, we considered three cases of $\varphi$, hence $\mathcal{K}$, in both theoretical and practical sides: Gaussian random features applied on the adjacency matrix, Gaussian random features applied on the Eigenvalues of the adjacency matrix , and finally the optical random features of OPUs. The case of OPU random features is presented in section \ref{section:OPU}.\newline
+For a flattened version of an adjacency matrix $\mathbf{A}_{flat}$ of a subgraph $F$, we recall that the Gaussian kernel stated in Eq. \ref{eq:Guassian_kernel} can be approximated by the inner product of the following random features map:
+\[
+\varphi(\mathbf{A}_{flat}) = \frac{1}{\sqrt{m}} ( \sqrt{2}cos(w_j^T\mathbf{A}_{flat}+b) )_{j=1}^m \in \mathbb{C}^m
+\]
+where $w_j\in\R^{k^2}$ drawn from the Gaussian distribution in Eq. \ref{eq:G_fourier}. Hence, The computational cost needed in this case for each subgraph to compute its $\varphi(\mathbf{A}_{flat})$ is $O(mk^2)$ . Which is the cost of matrix multiplication supposing that we have a fast method to evaluate the $cos$ function. Finally, the processing cost per graph $\G$ is: $C_{Gs}=O(smk^2)$.
+
+Gaussian random features applied on the Eigenvalues of the adjacency matrix is similar to the one applied on the adjacency matrix, the difference is that instead of passing the adjacency matrix as an input, we pass a vector of its Eigenvalue $\boldsymbol{\lambda}\in\R^k$. So what changes per subgraph process is the input dimension and the cost of Eigenvalues extraction, which is $O(k^3)$. In a similar way, we can write: $C_{Gs+Eig}=O(s(mk+k^3))$.
+
+>>>>>>> 212a4937ba12b07559998ab673b99f81e8f360f4
 
 
-\section{Accelerate the algorithm with OPUs random features}
+\section{Fast $GSA-\varphi$ with optical random features}
 \label{section:OPU}
-Random projections is one of the important techniques in machine learning and in signal processing. However, traditional random projection methods need a large memory to store the corresponding random matrix $W$ and a huge computational time to project the input data points $x$, i.e. to compute $Wx$. Optical processing units (OPU's) is the developed technology developed to solve the previous two drawbacks, where an OPU complete random projections at the speed of light without the need to store any random matrix. In general, Random projections are the result of two procedures where the first one is the linear-random projections and the second one is non-linear mapping.
+Optical processing units (OPUs) are physical units developed to apply optical random features projections in light-speed. In this section and before introducing $GSA-\varphi$ in its ultimate and fastest form $GSA-\varphi_{OPU}$, we explain what optical random features projection is. We start by presenting the mathematical model of these projections $\varphi_{OPU}$, next we explain how OPUs can perform such projections in light-speed from hardware point of view. Finally, we merge OPUs' random features with our proposed algorithm and compare the corresponding computational cost with previously mentioned methods.
+
+\subsection{Optical random features model}
+Random projections is one of the important techniques in machine learning and in signal processing. However, traditional random projection methods need a large memory to store the corresponding random matrix $\mathbf{W}$ and a huge computational time to project the input data points $\mathbf{x}$, i.e. to compute $\mathbf{Wx}$. Optical processing units (OPU's) is the technology developed to solve the previous two drawbacks: where an OPU complete random projections at the speed of light without the need to store any random matrix. In general, Random projections are the result of two procedures: the first one is the linear-random projections and the second one is non-linear mapping.
 Mathematically speaking, OPU's perform the following operation \citep{saade_opu}:
 \begin{equation}
 \label{OPU_equation}
-\mathbf{y}=|\mathbf{Wx+b}|;~\mathbf{W}\in \mathbb{R}^{m\times d},\mathbf{b}\in \mathbb{R}^m, \mathbf{x}\in \mathbb{R}^d
+\mathbf{\varphi}_{OPU}(\mathbf{x})=|\mathbf{Wx+b}|^2 ;~\mathbf{W}\in \mathbb{R}^{m\times d},\mathbf{b}\in \mathbb{R}^m, \mathbf{x}\in \mathbb{R}^d
 \end{equation}
-Where $b$ is a bias vector, $X$ is an input point, $m$ is the number of random features and $d$ is the input space dimension. Also, $W$ is a random i.i.d complex matrix with Gaussian real and imaginary parts and $\phi$ is the non-linear mapping function.\newline
-In the limit where the number of random features $m\xrightarrow{}\infty$, it can be proven by the concentration of the measure that the inner product between the projected data points $(\mathbf{y}\in \mathbb{R}^m)$ in the new feature space tends to a kernel function that depends only on the input points in the original feature space $(\mathbf{x}\in \mathbb{R}^d)$
+Where $\mathbf{b}$ is a bias vector, $\mathbf{x}$ is an input point, $m$ is the number of random features, $d$ is the input space dimension and the amplitude function $|.|$ is taken element wise in $\mathbf{\varphi}_{OPU}(\mathbf{x})$. The matrix $\mathbf{W}$ is a random \emph{iid} complex matrix with Gaussian real and imaginary parts.\newline
+In the limit where the number of random features $m\xrightarrow{}\infty$, it can be proven by the concentration of the measure that the inner product between the projected data points $(\mathbf{\varphi}_{OPU}(\mathbf{x}\in \mathbb{R}^m)$ in the new feature space tends to a kernel function that depends only on the input points in the original feature space $(\mathbf{x}\in \mathbb{R}^d)$
 
 \subsection{OPU structure and functionality}
 Eq.~\ref{OPU_equation} still imply that an OPU need to store and multiply by the random projection matrix. But in an OPU, a heterogeneous material, as a paper or any white translucid material, is used to scatter incident light in a very complex way. The behavior of the scattering process is considered random because of the extremely high complexity. One can argue that light scattering is a linear, deterministic, and reproducible phenomenon, but what can be said here is that the unpredictable behavior of the process makes it effectively a random process. That is why these materials are called opaque since all information embedded within the incident light is seemingly lost during the propagation through the material \citep{saade_opu}. An example used to demonstrate and justify the resulted randomness is a cube of edge length $100\mu m$, such cube can include $\approx 10^7$ paint nanoparticles, all the positions and shape of these particles must be known in order to predict its effect on light. Propagation through such a layer can be seen as a random walk because of frequent scattering with the nanoparticles, where light explores the whole volume and undergoes tens of thousands of such scattering steps before coming out from the other side in a few picoseconds.\newline
@@ -162,37 +177,59 @@ When the incident light is coherent, it promotes complex interference patterns, 
 These speckles don't only characterize the propagation medium but also the incident light, and this can be modeled by $y=Wx$, 
 where $y$ and $x$ are the vector amplitudes between a set of spatial modes at the output and at the input of the medium respectively. In OPUs, the transmission matrix $W$ of the propagation medium can be approximately considered as a Gaussian i.i.d matrix, it was also shown that even without $W$ being known, but it is guaranteed to be stable as long as the propagation medium is stable as a paint layer for instance \citep{saade_opu}.  So if we use a spatial light modulator and a laser to send an appropriate set of illuminations to the propagation medium, we can acquire the output intensity $|y|^2$ with a CCD or CMOS camera, and that is the principle concept behind OPU's functionality as seen in Fig~ \ref{fig_opu}.\newline 
 The DMD (digital micromirror device) used in OPU's is a binary amplitude modulator consisting of an array of micro-mirrors, Each mirror can be lit or not, thus it can represent  a binary value. In order to represent grey values, each value is encoded on a square sub-array ($4\times 4$ for example) in the DMD, where the number of lit mirrors reflects the desired level of grey. DMD reflects the data and send the reflected light through the disordered medium, then a snapshot of the resulting random projection is acquired using a standard camera. all that is completed in a very high speed compared to the traditional random features techniques. 
-\section{The final form of $GSA-\varphi_{OPU}$ with OPUs' random features}
-\todome{I will the next pseudo code, it is not final}
+\subsection{Fast $GSA-\varphi_{OPU}$ algorithm with complexity discussion}
+After what we presented about OPUs and optical random features projections, we can efficiently deploy $\varphi_{OPU}$ random feature map in $GSA-\varphi$ framework. The resulted pseudo code is presented below and we refer to the resulted algorithm with $GSA-\varphi_{OPU}$. \newline\newline
 \begin{algorithm}[H]
 \DontPrintSemicolon
   \KwInput{2-Classes labelled graph dataset $\mathcal{X}=(\G_i,y_i)_{i=1,\ldots,n}$}
   \KwOutput{Trained model to classify graphs}
-  \tools{Graph random sampler $S_k$, Optical Processing Unit (OPU), linear classifier (ex. SVM) }\\
+  \tools{Graph random sampler $S_k$, optical processing unit (OPU), linear classifier (ex. SVM) }\\
   \Hyp{k:graphlet size, $s$:\#graphlet samples per graph}\\
   %\KwData{Testing set $x$}
   %$\sum_{i=1}^{\infty} := 0$ \tcp*{this is a comment}
   %\tcc{}
   \Algo{\\}
-  Random initialization of SVM weights\\
+  Random initialization of the classifier weights\\
   \For{$\G_i$ in $\mathcal{X}$}{
-  $\varphi_i=0$\\
+  $\boldsymbol{\varphi}_{OPU}(i)=0$\\
   \For{$j=1:s$}{
   $F_{i,j}\gets S_k(\G_i)$\\
-  $\varphi_i\gets \varphi_i +\frac{1}{s}\varphi(F_{i,j})$
+  $\mathbf{A}\gets adjacency\_matrix(F_{i,j})$\\
+  $\boldsymbol{\varphi}_{OPU}(i)\gets \boldsymbol{\varphi}_{OPU}(i) +\frac{1}{s}\boldsymbol{\varphi}_{OPU}(F_{i,j})$
   }
   }
-  $\mathcal{D}_{\varphi_{OPU}}\gets (\varphi_i,Y_i)_{i=1,\ldots, n}$\\
+  $\mathcal{D}_{\varphi_{OPU}}\gets (\boldsymbol{\varphi}_{OPU}(i),y_i)_{i=1,\ldots, n}$\\
   Train the linear classifier on the new vector-valued dataset $\mathcal{D}_{\varphi_{OPU}}$
 \caption{GSA-$\varphi_{OPU}$}
 \end{algorithm}
+
+\textbf{The computational cost} of this innovative version $GSA-\varphi_{OPU}$, and more specifically of computing $\boldsymbol{\varphi}_{OPU}(\mathbf{A})$, is $O(1)$ in both the number of random features and the graphlet size. One can reasonably argue that an OPU has its limits, as the DMD mirror array ,where the input $\mathbf{A}$ is encrypted, has a limited dimensions \emph(width $\times$ length). Moreover, the camera used to acquire the light intensity in an OPU has a limited number of pixels thus it introduces a limit on the maximum number of random features. However, our argument is that when we respect these limits, which are usually large ones, the computational cost is a constant in both $m$ and $k$. To better illustrate the advantage of $GSA-\varphi_{OPU}$ over other discussed methods in this work, we show a comparison between them with respect to the computational time per graph $\G$:
+\begin{itemize}
+    \item Graphlet kernel: $C_{gk}= O(\tbinom{v}{k} N_k C_k)$
+    \item Graphlet kernel with sampling: $ C_{gk + gs}= O(C_s s N_k C_k)$
+    \item Gaussian features $GSA_{\varphi_{Gs}}$: $C_{Gs}=O(smk^2)$
+    \item Gaussian features  $GSA_{\varphi_{Gs}}$ with Eigenvalue preprocessing: $C_{Gs+Eig}=O(s(mk+k^3))$
+    \item $GSA_{\varphi_{OPU}}$:  $C_{OPU}=O(1)$
+\end{itemize}
+
 \section{$GSA-\varphi$ concentration inequality proof}
 \label{section:proof}
 
 \begin{proof}
+<<<<<<< HEAD
 Here, we prove theorem \ref{theorem:concentration}. We decompose the proof in two steps.
 
 \paragraph{Step 1: infinite $s$, finite $m$ (number of random features).} Based on our assumption $|\xi_w|\leq 1$, it is a straightforward result of Hoeffding's inequality that  $MMD(\G, \G')^2$ is close to $\frac{1}{m} \sum_{j=1} | \mathbb{E}_{F \sim S_k(\G)} \xi_{w_j}(F) - \mathbb{E}_{F' \sim S_k(\G')}} \xi_{w_j}(F') |^2 = | \mathbb{E}_{F \sim S_k(\G)} \xi_{w_j}(F) - \mathbb{E}_{F' \sim S_k(\G')}} \xi_{w_j}(F') |^2$. We recall Hoeffding's inequality below.
+=======
+Here, we prove theorem \ref{theorem:concentration}, where We decompose the proof in two steps.
+we first assume that:
+\begin{equation}
+\label{eq:z_assumption}
+    0\leq z_\omega(F)\leq 1, \forall \omega \sim  \Lambda
+\end{equation}
+This is a reasonable assumption from what we have seen in random Fourier features maps referred to in Eq. \ref{eq:Fourier_xi}.
+\paragraph{Step 1: infinite $s$, finite $m$ (number of random features).} Based on our assumption on $z_\omega$ in \eqref{eq:z_assumption}, it is a straight forward result of Hoeffding's inequality that  $d(G, G')^2$ is close to $\frac{1}{m} \sum_{j=1} | \mathbb{E}_{F \sim f_G} z_{\omega_j}(F) - \mathbb{E}_{F' \sim f_{G'}} z_{\omega_j}(F') |^2 = \| \mathbb{E}_{F \sim f_G} z(F) - \mathbb{E}_{F' \sim f_{G'}} z(F')\|^2$.  
+>>>>>>> 212a4937ba12b07559998ab673b99f81e8f360f4
 \begin{lemma}[Hoeffding's inequality] 
 Let $(x_1,\ldots, x_m)$ be independent random variables such that the variable $x_i$ is strictly bounded by the interval $[a_i , b_i]$, and let $\overline{X}=\frac{1}{m}\Sigma_{i=1}^{m}x_i$ then we have:
 \begin{equation}
