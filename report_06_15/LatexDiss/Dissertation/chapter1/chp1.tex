@@ -242,11 +242,11 @@ The question here is how many samples we should consider in order to have a desi
 %\newtheorem{theorem}{Theorem} 
 \begin{theorem}[\citep{graphlet_kernel}]
 	\label{thm:norm1}
-	Let $\mathbf{f}_\G$ be the $k$-spectrum of a graph $\mathcal{G}$. Let $\hat{\mathfrak{F}}^{\rm u}_\G=\{F_1,...,F_{s}\}$ be a collection of $s$ iid random subgraphs of size $k$ uniformly drawn from $\mathcal{G}$ and $\hat{\mathbf{f}}^{\rm u}_G$ the associated estimation of $\mathbf{f}_G$ as defined in Eq.~\eqref{eq:fhat_unif}. Then, for a given $\epsilon>0$ and $\delta >0$, one only needs:
+	Let $\mathbf{f}_\G$ be the $k$-spectrum of a graph $\mathcal{G}$. Let $\hat{\mathfrak{F}}^{\rm u}_\G=\{F_1,...,F_{s}\}$ be a collection of $s$ iid random subgraphs of size $k$ uniformly drawn from $\mathcal{G}$ and $\hat{\mathbf{f}}^{\rm u}_\G$ the associated estimation of $\mathbf{f}_\G$ as defined in Eq.~\eqref{eq:fhat_unif}. Then, for a given $\epsilon>0$ and $\delta >0$, one only needs:
 	\begin{equation}
 	s_{min}=\left \lceil \frac{2(N_k\log(2)+\log(\frac{1}{\delta} ))}{\epsilon^2} \right \rceil
 	\end{equation}
-	samples to ensure that $Pr(\| \mathbf{f}_\G-\hat{\mathbf{f}}^{\rm u}_G \|_1 \geq \epsilon )\leq\delta$, where $\lceil.\rceil$ is the ceiling function.
+	samples to ensure that $Pr(\| \mathbf{f}_\G-\hat{\mathbf{f}}^{\rm u}_\mathcal{G} \|_1 \geq \epsilon )\leq\delta$, where $\lceil.\rceil$ is the ceiling function.
 \end{theorem}
 \nt{add comment?}
 
