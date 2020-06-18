@@ -129,7 +129,7 @@ We have that, for all $\delta>0$, with probability at least $1-\delta$:
  \Big|\|\varphi(\mathfrak{F}_\G) - \varphi(\mathfrak{F}_{\G'})\|^2 - MMD(\G,\G')^2 \Big| \leq \frac{4 \sqrt{\log (6/\delta)}}{\sqrt{m}} + \frac{8\left(1+\sqrt{2\log(3/\delta)}\right)}{\sqrt{{s}}}
 \end{align*}
 \end{theorem}
-This theorem means that the Euclidean distance between the embeddings computed by GSA-$\varphi$ converges to the MMD in $\mathcal{O}(1/\sqrt{m} + 1/\sqrt{s})$. This suggests choosing $m$ of the order of $s$. The proof of this theorem is provided in section \ref{section:proof}.
+This theorem means that the Euclidean distance between the embeddings of two graphs $\G$ and $\G'$ computed by GSA-$\varphi$ converges to the MMD between $\G$ and $\G'$ in $\mathcal{O}(1/\sqrt{m} + 1/\sqrt{s})$. This suggests choosing $m$ of the order of $s$. The proof of this theorem is provided in section \ref{section:proof}.
 
 %<<<<<<< HEAD
 %To calculate \textbf{the computational cost of $GSA-\varphi$}, we considered three cases of $\varphi$ in our experiments, hence $\mathcal{K}$, in both theoretical and practical sides: Gaussian random features applied on the adjacency matrix, Gaussian random features applied on the sorted Eigenvalues of the adjacency matrix , and finally the optical random features of OPUs. The case of OPU random features is presented in section \ref{section:OPU}.\newline
@@ -143,13 +143,15 @@ This theorem means that the Euclidean distance between the embeddings computed b
 As we have seen, the computational cost of GSA-$\varphi$ is $\mathcal{O}(C_S s C_\varphi)$ and mainly depends on $C_\varphi$. We consider three examples of possible random maps $\varphi$, from both a theoretical and a practical side:
 
 \begin{itemize}
-\item \textbf{Gaussian random features applied on the adjacency matrix.} For a flattened version of an adjacency matrix $\mathbf{A}_{flat}$ of a subgraph $F$, we recall that the Gaussian kernel stated in Eq. \ref{eq:Guassian_kernel} can be approximated by the inner product of the following random features map:
+\item \textbf{Gaussian random features applied on the adjacency matrix.} Let us write $\mathbf{a}_\mathcal{F}\in\mathbb{R}^{k^2}$ the flattened (vectorized) version of the adjacency matrix $\mathbf{A}_\mathcal{F}\in\mathbb{R}^{k\times k}$ of a subgraph $\mathcal{F}$ of size $k$. We recall that the Gaussian kernel stated in Eq. \ref{eq:Guassian_kernel} can be approximated by the inner product of the following random feature map (here in its real-valued version):
 \[
-\varphi(\mathbf{A}_{flat}) = \frac{1}{\sqrt{m}} ( \sqrt{2}cos(w_j^T\mathbf{A}_{flat}+b_j) )_{j=1}^m \in \mathbb{C}^m
+\varphi(\mathcal{F}) = \frac{1}{\sqrt{m}} \left( \sqrt{2} \cos(\mathbf{w}_j^T\mathbf{a}_\mathcal{F}+b_j) \right)_{j=1}^m \in \mathbb{R}^m
 \]
-where $w_j\in\R^{k^2}$ drawn from the Gaussian distribution in Eq. \ref{eq:G_fourier} and $b_j$ are uniform bias terms. Hence, The computational cost $C_\varphi$ in this case is $O(mk^2)$, which is the cost of the vector-matrix multiplication.
-\item \textbf{Gaussian random features on the sorted eigenvalues of the adjacency matrix.} Gaussian random features applied on the Eigenvalues of the adjacency matrix is similar to the one applied on the adjacency matrix, the difference is that instead of passing the adjacency matrix as an input, we pass a vector of its Eigenvalue $\boldsymbol{\lambda}\in\R^k$. So what changes per subgraph process is the input dimension and the cost of Eigenvalues extraction, which is $O(k^3)$. The sorting in $O(k \log k)$ has negligible cost. In a similar way, we obtain: $C_{\varphi}=O(mk+k^3)$.
-\item \textbf{Optical random features.} Both methods above are still computationally intensive: according to Theorem \ref{theorem:concentration}, $m$ should be of the order of $s$, which in the previous chapter we have taken to be as $N_k$. However, recent methods can be used to reduce the computational cost of random features. In the next section, we describe the use of innovative optical hardware that can perform instantaneous computation.
+where the frequencies $\mathbf{w}_j\in\R^{k^2}$ are drawn from the Gaussian distribution in Eq. \ref{eq:G_fourier} and $b_j$ are scalars drawn uniformly in $[0, 2\pi]$. Hence, The computational cost $C_\varphi$ in this case is $\mathcal{O}(mk^2)$.
+
+\item \textbf{Gaussian random features on the sorted eigenvalues of the adjacency matrix.} Gaussian random features applied on the eigenvalues of the adjacency matrix is similar to the one applied on the adjacency matrix, the difference is that instead of passing the vectorized adjacency matrix as an input, we pass the  vector of its sorted eigenvalues $\bm{\lambda}\in\R^k$. What changes per subgraph is the input dimension and the cost of the eigendecomposition, which is $O(k^3)$. Similarly, using the Gaussian distribution in dimension $k$ (instead of $k^2$ previously) this time to sample $m$ frequencies, one obtains a cost $C_{\varphi}=O(mk+k^3)$.
+
+\item \textbf{Optical random features.} Both methods above are still computationally intensive: according to Theorem \ref{theorem:concentration}, $m$ should be of the order of $s$, which Theorem~\ref{thm:norm1} suggests to choose proportional to $N_k$. However, recent methods can be used to reduce the computational cost of random features. In the next section, we describe the use of innovative optical hardware that can perform instantaneous computation.
 \end{itemize}
 
 
@@ -190,41 +192,42 @@ These speckles do not only characterize the propagation medium but also the inci
 where $y$ and $x$ are the vector amplitudes between a set of spatial modes at the output and at the input of the medium respectively. In OPUs, the transmission matrix $W$ of the propagation medium can be approximately considered to be a Gaussian i.i.d matrix. Although it is not explicitely known, it is guaranteed to be stable as long as the propagation medium is stable \citep{saade_opu}.  So using a spatial light modulator and a laser to send an appropriate set of illuminations to the propagation medium, we can acquire the output intensity $|y|^2$ with a CCD or CMOS camera, and that is the principle concept behind OPU's functionality as seen in Fig~ \ref{fig_opu}. To encode a given signal within the incident light, a OPU uses a DMD (digital micromirror device). It is a binary amplitude modulator consisting of an array of micro-mirrors. Each mirror can be activated or not, and thus represent a binary value. %In order to represent grey values, each value is encoded on a square sub-array ($4\times 4$ for example) in the DMD, where the number of lit mirrors reflects the desired level of grey. 
 So, generally, a given signal $x$ must be encoded under the form of a binary vector before being passed to the OPU, however we remark that in our case, adjacency matrices of graphlets are already binary, which results in even more speed-up. %The DMD reflects the data and send the reflected light through the disordered medium, then a snapshot of the resulting random projection is acquired using a standard camera.
 
-\subsection{Fast $GSA-\varphi_{OPU}$ algorithm with complexity discussion}
-After what we presented about OPUs and optical random features projections, we can efficiently deploy $\varphi_{OPU}$ random feature map in $GSA-\varphi$ framework. The resulted pseudo code is presented below and we refer to the resulted algorithm with $GSA-\varphi_{OPU}$. \newline\newline
-\begin{algorithm}[H]
-\DontPrintSemicolon
-  \KwInput{2-Classes labelled graph dataset $\mathcal{X}=(\G_i,y_i)_{i=1,\ldots,n}$}
-  \KwOutput{Trained model to classify graphs}
-  \tools{Graph random sampler $S_k$, optical processing unit (OPU), linear classifier (ex. SVM) }\\
-  \Hyp{k:graphlet size, $s$:\#graphlet samples per graph}\\
-  %\KwData{Testing set $x$}
-  %$\sum_{i=1}^{\infty} := 0$ \tcp*{this is a comment}
-  %\tcc{}
-  \Algo{\\}
-  Random initialization of the classifier weights\\
-  \For{$\G_i$ in $\mathcal{X}$}{
-  $\boldsymbol{\varphi}_{OPU}(i)=0$\\
-  \For{$j=1:s$}{
-  $F_{i,j}\gets S_k(\G_i)$\\
-  $\mathbf{A}\gets adjacency\_matrix(F_{i,j})$\\
-  $\boldsymbol{\varphi}_{OPU}(i)\gets \boldsymbol{\varphi}_{OPU}(i) +\frac{1}{s}\boldsymbol{\varphi}_{OPU}(F_{i,j})$
-  }
-  }
-  $\mathcal{D}_{\varphi_{OPU}}\gets (\boldsymbol{\varphi}_{OPU}(i),y_i)_{i=1,\ldots, n}$\\
-  Train the linear classifier on the new vector-valued dataset $\mathcal{D}_{\varphi_{OPU}}$
-\caption{GSA-$\varphi_{OPU}$}
-\end{algorithm}
-\todoNK{remove this algorithm}
+\subsection{Fast $GSA-\varphi_{OPU}$ algorithm}
+One can efficiently deploy the random feature map $\varphi_{OPU}$ in the GSA-$\varphi$ framework, yielding the GSA-$\varphi_{OPU}$ algorithm : it is Algorithm~\ref{alg:GSA} where one uses the random projection $\varphi_{OPU}$ of Eq.~\eqref{OPU_equation} on the vectorized adjacency matrices of each sampled graphlet $F$.
+%\begin{algorithm}[H]
+%\DontPrintSemicolon
+%  \KwInput{2-Classes labelled graph dataset $\mathcal{X}=(\G_i,y_i)_{i=1,\ldots,n}$}
+%  \KwOutput{Trained model to classify graphs}
+%  \tools{Graph random sampler $S_k$, optical processing unit (OPU), linear classifier (ex. SVM) }\\
+%  \Hyp{k:graphlet size, $s$:\#graphlet samples per graph}\\
+%  \Algo{\\}
+%  Random initialization of the classifier weights\\
+%  \For{$\G_i$ in $\mathcal{X}$}{
+%  $\boldsymbol{\varphi}_{OPU}(i)=0$\\
+%  \For{$j=1:s$}{
+%  $F_{i,j}\gets S_k(\G_i)$\\
+%  $\mathbf{A}\gets adjacency\_matrix(F_{i,j})$\\
+%  $\boldsymbol{\varphi}_{OPU}(i)\gets \boldsymbol{\varphi}_{OPU}(i) +\frac{1}{s}\boldsymbol{\varphi}_{OPU}(F_{i,j})$
+%  }
+%  }
+%  $\mathcal{D}_{\varphi_{OPU}}\gets (\boldsymbol{\varphi}_{OPU}(i),y_i)_{i=1,\ldots, n}$\\
+%  Train the linear classifier on the new vector-valued dataset $\mathcal{D}_{\varphi_{OPU}}$
+%\caption{GSA-$\varphi_{OPU}$}
+%\end{algorithm}
+%\todoNK{remove this algorithm}
 
-As mentioned above, \textbf{the computational cost} of $\varphi_{OPU}$ is $O(1)$ in both the number of random features and the graphlet size. One can reasonably argue that an OPU has its limits, as the DMD mirror array, where the input $\mathbf{A}$ is encrypted, has a limited dimensions \emph(width $\times$ length). Moreover, the camera used to acquire the light intensity in an OPU has a limited number of pixels thus it introduces a limit on the maximum number of random features. However, within these limits, which are usually large ones, the computational cost is a constant in both $m$ and $k$. To better illustrate the advantage of $GSA-\varphi_{OPU}$ over other discussed methods in this work, we show a comparison between them with respect to the computational time per graph $\G$:
-\begin{itemize}
-    \item Graphlet kernel: $C_{gk}= O(\tbinom{v}{k} N_k C_k)$
-    \item Graphlet kernel with sampling: $ C_{gk + gs}= O(C_S s N_k C_k)$
-    \item Gaussian features $GSA_{\varphi_{Gs}}$: $C_{Gs}=O(C_S smk^2)$
-    \item Gaussian features  $GSA_{\varphi_{Gs}}$ with Eigenvalue preprocessing: $C_{Gs+Eig}=O(C_S s(mk+k^3))$
-    \item $GSA_{\varphi_{OPU}}$:  $C_{OPU}=O(C_S s)$
-\end{itemize}
+As mentioned above, the computational cost of $\varphi_{OPU}$ is $\mathcal{O}(1)$, thus independent of both the number of random features and the graphlet size. One can reasonably argue that an OPU has its limits, as the DMD mirror array, where the input $\mathbf{A}$ is encrypted, has a limited dimensions \emph(width $\times$ length). Moreover, the camera used to acquire the light intensity in an OPU has a limited number of pixels thus it introduces a limit on the maximum number of random features. However, within these limits, which are usually large ones, the computational cost is a constant in both $m$ and $k$. 
+
+%To better illustrate the advantage of $GSA-\varphi_{OPU}$ over other discussed methods in this work, we show a table comparing the various theoretical computational times in Table~\ref{table:comp_time}. 
+
+%between them with respect to the computational time per graph $\G$:
+%\begin{itemize}
+%    \item Graphlet kernel: $C_{gk}= O(\tbinom{v}{k} N_k C_k)$
+%    \item Graphlet kernel with sampling: $ C_{gk + gs}= O(C_S s N_k C_k)$
+%    \item Gaussian features $GSA_{\varphi_{Gs}}$: $C_{Gs}=O(C_S smk^2)$
+%    \item Gaussian features  $GSA_{\varphi_{Gs}}$ with Eigenvalue preprocessing: $C_{Gs+Eig}=O(C_S s(mk+k^3))$
+%    \item $GSA_{\varphi_{OPU}}$:  $C_{OPU}=O(C_S s)$
+%\end{itemize}
 
 The complexities of the different mappings $\varphi$ examined in this work are summarized in Table \ref{tab:cost}.
 
@@ -234,15 +237,16 @@ The complexities of the different mappings $\varphi$ examined in this work are s
 \hline
 \multicolumn{2}{|c|}{Graphlet kernel} & \multicolumn{2}{|c|}{$O(\tbinom{v}{k} N_k C^{\cong}_k)$} \\ \hline \hline
 %
-\multirow{4}{*}{GSA-$\varphi$ with:} & Matching func. $\varphi^{match}_k$ & \multirow{4}{*}{$O(C_S s C_\varphi)$ with $C_\varphi$: } & $O(N_k C^{\cong}_k)$ \\
+\multirow{4}{*}{GSA-$\varphi$ with:} & Matching func. $\varphi^{match}_k$ & \multirow{4}{*}{$O(C_S s C_\varphi)$ with $C_\varphi=$ } & $O(N_k C^{\cong}_k)$ \\
 & Gaussian RF & & $O(m k^2)$ \\ 
 & Gaussian RF on Eig. & & $O(m k + k^3)$ \\ 
 & OPU  & & $O(1)$ \\ \hline
 \end{tabular}
 \caption{Complexities of the different mappings used in GSA-$\varphi$, for a global cost in $O(C_S s C_ \varphi)$.}
+\label{tab:cost}
 \end{table}
 
-\section{$GSA-\varphi$ concentration inequality proof}
+\section{GSA-$\varphi$ concentration inequality proof}
 \label{section:proof}
 
 \begin{proof}
