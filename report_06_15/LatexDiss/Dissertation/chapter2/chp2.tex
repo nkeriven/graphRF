@@ -1,112 +1,114 @@
 \chapter{Fast graph kernel classifier based on optical random features }
 \label{chapter:fast_algorithm}
 \newtheorem{lemma}{Lemma} 
-Graphlet kernel  is a good method to solve graph classification problem but as we have seen in chapter \ref{chapter:background}, it suffers from a high computational cost. In this chapter, we take inspiration from graph sampling and averaging to propose a family of fast graph kernels that generalizes the graphlet kernel paradigm. We show how random features can be incorporated within the new framework to get a faster and competitive algorithm in graph classification. Finally, we describe how Optical Processing Units (OPUs) can be used to eliminate some significant computational cost altogether.
+The graphlet kernel  is a good method to solve the graph classification problem but as we have seen in chapter \ref{chapter:background}, it suffers from a high computational cost. In this chapter, we take inspiration from graph sampling and averaging to propose a family of fast graph kernels that generalizes the graphlet kernel paradigm. We show how random features can be incorporated within the new framework to get a faster and competitive algorithm in graph classification. Finally, we describe how Optical Processing Units (OPUs) can be used to eliminate some significant computational cost altogether.
 
 \section{Proposed algorithm}
-We recall from chapter \ref{chapter:background} that the computational cost of graphlet kernel is $C_{gk}= O(\tbinom{v}{k} N_k C_k)$. As an attempt to lower this cost, using graph sampling we can compute an empirical approximation of $k$-spectrum vector so the new that cost becomes $C_{gk + gs}= O(C_S s N_k C_k)$. We can see that $\tbinom{v}{k}$ is replaced with $C_S s$, and recall that the minimum number of samples $s \sim N_k$ required to ensure some certainty sharply increases as the graphlet size increase. It is clear then that the number of graph samples is not the only bottleneck here but also the cost to compute $\varphi_k^{match}$, denoted by $C_{\varphi_k^{match}}=O(N_k C_k)$.
+We recall from chapter \ref{chapter:background} that the computational cost of computing the $k$-spectrum $\mathbf{f}_\G$ of a graph $\G$, which is the building block of the graphlet kernel method, is $C_{gk}= O(\tbinom{v}{k} N_k C_k^{\cong})$. As an attempt to lower this cost, using random graph sampling, we can compute an approximation of the $k$-spectrum vector in time $C_{gk + gs}= O(C_S s N_k C_k^{\cong})$. We can see that $\tbinom{v}{k}$ is replaced with $C_S s$, and recall that the number of samples $s$  should scale as $N_k$ in order to ensure a reasonable estimation of $\mathbf{f}_\G$. It is clear then that to further decrease this cost, one needs to work on the time to apply $\varphi_k^{match}$ to a given graphlet, denoted by $C_{\varphi_k^{match}}=O(N_k C_k^{\cong})$.
 
-So we propose to replace $\varphi^{match}_k$ with another user-defined function $\varphi:\phlet \mapsto\R^m$ and keep everything else as it is. We obtain a family of algorithms referred to as Graph Sampling and Averaging (GSA-$\varphi$), described in Alg. \ref{alg:GSA}, whose main user-defined methods are the samping method $S_k$ and the feature map $\varphi$.
+To this end, we propose to replace $\varphi^{match}_k$ with another user-defined function $\varphi:\mathfrak{H} \mapsto\R^m$ and keep everything else as it is. We obtain a family of algorithms referred to as Graph Sampling and Averaging (GSA-$\varphi$), described in Alg.~\ref{alg:GSA}, whose main user-defined methods are the samping method $S_k$ and the feature map $\varphi$.
 
-\begin{algorithm}[H]\label{alg:GSA}
+\begin{algorithm}[t]
+	\label{alg:GSA}
 \DontPrintSemicolon
   \KwInput{2-Classes labelled graph dataset $\mathcal{X}=(\G_i,y_i)_{i=1,\ldots,n}$}
   \KwOutput{Trained model to classify graphs}
   \tools{Graph random sampler $S_k$, a function $\varphi$, linear classifier (ex. SVM) }\\
-  \Hyp{k:graphlet size, $s$:\#graphlet samples per graph}\\
+  \Hyp{k: graphlet size, $s$: number of graphlet samples per graph}\\
   %\KwData{Testing set $x$}
   %$\sum_{i=1}^{\infty} := 0$ \tcp*{this is a comment}
   %\tcc{}
   \Algo{\\}
-  Random initialization of SVM weights\\
+  Random initialization of the SVM weights\\
   \For{$\G_i$ in $\mathcal{X}$}{
-  $\varphi_i=0$\\
+  $\bm{\varphi}_i=\mathbf{0}$ (null vector of size $m$) \nt{I'd rather go for $\mathbf{z}_i$ rather than $\bm{\varphi}_i$: it'd be clearer}\\
   \For{$j=1:s$}{
   $F_{i,j}\gets S_k(\G_i)$\\
-  $\varphi_i\gets \varphi_i +\frac{1}{s}\varphi(F_{i,j})$
+  $\bm{\varphi}_i\gets \bm{\varphi}_i +\frac{1}{s}\varphi(F_{i,j})$
   }
   }
-  $\mathcal{D}_{\varphi}\gets (\varphi_i,Y_i)_{i=1,\ldots, n}$\\
+  $\mathcal{D}_{\varphi}\gets (\bm{\varphi}_i,y_i)_{i=1,\ldots, n}$\\
   Train the linear classifier on the new vector-valued dataset $\mathcal{D}_{\varphi}$
 \caption{Graph Sampling and Averaging (GSA-$\varphi$)}
 \end{algorithm}
 
-For a set $\mathfrak{F} = \{F_1,\ldots, F_s\}$ and a feature map $\varphi$, similarly to ${\varphi}^{hist}$ we define ${\varphi}(\mathfrak{F}) = \frac{1}{s} \sum_i \varphi(F_i)$. The GSA-$\varphi$ algorithm computes, for each graph $\G$ in the dataset, an embedding ${\varphi}(\mathfrak{F}_\G)$ where $\mathfrak{F}_\G$ is a set of $s$ subgraphs drawn $iid$ from $S_k(\G)$, then trains a classifier on it.
+For a set $\mathfrak{F} = \{F_1,\ldots, F_s\}$ and a feature map $\varphi$, similarly to ${\varphi}^{hist}$ we define ${\varphi}(\mathfrak{F}) = \frac{1}{s} \sum_{F\in\mathfrak{F}} \varphi(F)$. The GSA-$\varphi$ algorithm computes, for each graph $\G$ in the dataset, an embedding ${\varphi}(\mathfrak{F}_\G)$ where $\mathfrak{F}_\G$ is a set of $s$ subgraphs drawn $iid$ from $S_k(\G)$, then trains a classifier on it.
 
-We note that within the new paradigm, the defined $\varphi$ does not necessarily respect the isomorphism between sampled subgraphs: if $\varphi(F) = \varphi(F')$ whenever $F \cong F'$, then we are in the framework of graphlet \emph{without} repetition, otherwise we are in the other case. As we will see, choosing a randomized $\varphi$ presents both theoretical and practical advantages, however it does not respect isomorphism. Nevertheless, it is possible to apply some preprocessing function $Q$ invariant by permutation before passing it to a randomized $\varphi$, and in this case isomorphism is respected without any condition on $\varphi$. An example of such function is $Q:\R^{k\times k}\mapsto \R^k, Q(F)=Sort(Eigenvalues(\mathbf{A}_F))$, that is, the sorted eigenvalues of the adjacency matrix.
+We note that within this new paradigm, the defined $\varphi$ does not necessarily respect the isomorphism between sampled subgraphs: if $\varphi(F) = \varphi(F')$ whenever $F \cong F'$, then we are in the framework of graphlet \emph{without} repetition, otherwise we are in the other case. As we will see, choosing a randomized $\varphi$ presents both theoretical and practical advantages, however it does not respect isomorphism. Nevertheless, it is possible to apply some preprocessing function $Q$ invariant to permutation before passing it to a randomized $\varphi$, and in this case isomorphism is respected without any condition on $\varphi$. An example of such function is $Q:\R^{k\times k}\mapsto \R^k, Q(F)=Sort(Eigenvalues(\mathbf{A}_F))$, that is, the sorted eigenvalues of the adjacency matrix. \nt{that statement is not exactly correct. Some pairs of graphs, called co-spectral, are different --even considering $\cong$-- even though they have the same eigenvalues.}
 
-If we denote by $C_\varphi$ the cost of computing once $\varphi$, the global computation cost of GSA-$\varphi$ is:
+If we denote by $C_\varphi$ the cost of computing $\varphi(\mathcal{F})$ for a given graphlet $\mathcal{F}$, the global computation cost of GSA-$\varphi$ (without the last line of the algorithm corresponding to training) is:
 \begin{equation}
-C_{GSA-\varphi} = O(C_S s C_\varphi)
+C_{GSA-\varphi} = \mathcal{O}(C_S s C_\varphi)
 \end{equation}
-As we have seen $C_{\varphi^{match}_k}$ allows to compute the full histogram but is computationally expensive: intuitively, there is a trade-off between distriminative power of $\varphi$ and cost. In this, work, we propose to select $\varphi$ as kernel random features, in particular computed by efficient optical processors.
+As we have seen, $C_{\varphi^{match}_k}$ allows to compute the full histogram but is computationally expensive: intuitively, there is a trade-off between the discriminative power of $\varphi$ and its cost. In this work, we propose to select $\varphi$ as a simple random embedding, motivated by the fact that optical processors are very efficient for those operations. 
 
-\section{Using random features framework in our algorithm}
+\section{Using random features in our algorithm}
 
 In the previous section, we introduced a generic family of algorithms, GSA-$\varphi$. Besides the sampling method, the performance and computational cost of the algorithm mainly depends on the choice of feature map $\varphi$. In this section, we motivate the choice of $\varphi$ as kernel random features  and relate it to a new notion of metric between graphs, using the so-called \emph{Maximum Mean Discrepancy} (MMD) \citep{gretton}, a kernel metric between probability distributions.
 
-Let us recall a few notions about kernel RF (see Section \ref{sec:RF}). Assume that we have a psd (often shift-invariant) kernel on $\R^{k \times k}$, that can be written in the form:
+Let us recall a few notions about random features (RFs, see Section~\ref{sec:RF}). Let us assume that we have a psd (often shift-invariant \nt{shift invariant? how do you define this on $\R^{k \times k}$?}) kernel on $\R^{k \times k}$, that can be written in the form:
 \begin{equation}
 \label{eq:random_features_3}
-\mathcal{K}(F,F')= \mathbb{E}_{w \sim p(w)} \xi_w(F)^* \xi_w(F')
+\K(\mathcal{F},\mathcal{F}')= \mathbb{E}_{\mathbf{w} \sim p}~ \xi_\mathbf{w}(\mathcal{F})^* \xi_\mathbf{w}(\mathcal{F}')
 \end{equation}
-for some mapping $\xi_w : \R^{k \times k} \to \mathbb{C}$ parameterized by $w$ distributed according to $p(w)$. Although this kernel technically takes (the adjacency matrix of) a graphlet as an input, we do not require it to be permutation-invariant, since it will be combined with the graph sampling process. For instance, we will see in experiments that even a simple Gaussian kernel on adjacency matrices performs well!
+for some mapping $\xi_\mathbf{w} : \R^{k \times k} \to \mathbb{C}$ parameterized by $\mathbf{w}$ distributed according to $p(\mathbf{w})$. We use the notation $\K$ to refer to this kernel defined between graphlets of size $k$, that is different from the graphlet kernel $\kappa$ as previously seen. Note also that we abuse notations: by $\xi_\mathbf{w}(\mathcal{F})$ we in fact mean $\xi_\mathbf{w}(\mathbf{A}_\mathcal{F})$ where $\mathbf{A}_\mathcal{F}$ is the $k\times k$ adjacency matrix associated to graphlet $\mathcal{F}$. 
 
-As we have seen, the RF method defines:
+Although $\K$ technically takes the adjacency matrices of two graphlets as an input, we do not require it to be permutation-invariant, since it will be combined with the graph sampling process. \nt{I do not see how this is an argument. I would remove this paragraph.} For instance, we will see in experiments that even a simple Gaussian kernel on adjacency matrices performs well!
+
+As we have seen, the RF method samples independently $m$ frequencies from $p(\mathbf{w})$ and defines the associated embedding in dimension $m$:
 \begin{equation}\label{eq:RF}
-\varphi(F) = \frac{1}{\sqrt{m}} ( \xi_{w_j}(F) )_{j=1}^m \in \mathbb{C}^m,~~~ m\in \mathbb{N}
+\varphi(\mathcal{F}) = \frac{1}{\sqrt{m}} ( \xi_{\mathbf{w}_j}(F) )_{j=1}^m \in \mathbb{C}^m,
 \end{equation}
-and we can write:
+yielding:
 \[
-\mathcal{K}(F,F')\approx \varphi(F)^*\varphi(F')
+\K(\mathcal{F},\mathcal{F}')\approx \varphi(\mathcal{F})^*\varphi(\mathcal{F}')
 \]
 
-Now, how does the embedding computed by GSA-$\varphi$ relates to the base kernel $\mathcal{K}$? To examine that, in the following we define another kernel, called the \emph{mean kernel} $\K_{mk}$ \citep{gretton}, with its corresponding metric called the \emph{Maximum Mean Discrepancy (MMD)}. Next, we show with the aid of concentration inequalities how using the random features map $\varphi$ of $\K$ in our algorithm GSA-$\varphi$ will lead to an approximation of $\K_{mk}$ concentrated around its true value with high probability.
+Now, how does the embedding computed by GSA-$\varphi$ relate to a kernel between two \emph{graphs} $\G$ and $\G'$? To examine that, in the following we define another kernel, called the \emph{mean kernel} $\kappa_{mk}$ \citep{gretton}, with its corresponding metric called the \emph{Maximum Mean Discrepancy (MMD)}. Next, we show with the aid of concentration inequalities how using the random features map $\varphi$ of $\K$ in our algorithm GSA-$\varphi$ will lead to an approximation of $\kappa_{mk}$ concentrated around its true value with high probability.
 
-The mean kernel methodology allows to \emph{lift} a kernel from a domain $\phlet$ to a kernel on \emph{probability distributions} on $\phlet$. Given a base kernel $\K$ on $\phlet$ and two probability distribution $\mathcal{P},\mathcal{Q}$, it is defined as:
+The mean kernel methodology allows to \emph{lift} a kernel from a domain $\mathfrak{H}$ to a kernel on \emph{probability distributions} on $\mathfrak{H}$. Given a kernel $\K$ defined between elements of  $\mathfrak{H}$, its associated mean kernel between two probability distributions $\mathcal{P},\mathcal{Q}$ defined on $\mathfrak{H}$ is defined as:
 \begin{equation}
 \label{eq:mean_kernel}
-\mathcal{K}_{mk}(\mathcal{P},\mathcal{Q}) = \mathbb{E}_{x \sim \mathcal{P}, y \sim \mathcal{Q}} \mathcal{K}(x,y)
+\K_{mk}(\mathcal{P},\mathcal{Q}) = \mathbb{E}_{F \sim \mathcal{P}, F' \sim \mathcal{Q}}~ \mathcal{K}(F,F')
 \end{equation}
-In other words, the mean kernel is just the expectation of the base kernel with respect to each term. The metric associated to the mean kernel is usually referred to as the \emph{Maximum Mean Discrepancy (MMD)} in the literature \citep{gretton}, and is defined as:
+In other words, the mean kernel is just the expectation of the kernel $\K$ with respect to each term. The metric associated to the mean kernel is usually referred to as the \emph{Maximum Mean Discrepancy (MMD)} in the literature \citep{gretton}, and is defined as:
 \begin{equation}\label{eq:MMD}
-MMD(\mathcal{P},\mathcal{Q}) = \sqrt{\mathcal{K}_{mk}(\mathcal{P},\mathcal{P}) + \mathcal{K}_{mk}(\mathcal{Q},\mathcal{Q}) - 2\mathcal{K}_{mk}(\mathcal{P},\mathcal{Q})}
+MMD(\mathcal{P},\mathcal{Q}) = \sqrt{\K_{mk}(\mathcal{P},\mathcal{P}) + \K_{mk}(\mathcal{Q},\mathcal{Q}) - 2\K_{mk}(\mathcal{P},\mathcal{Q})}
 \end{equation}
 The main property of the MMD is that, for so-called \emph{characteristic} kernels, it is a true metric on distributions, in the sense that $MMD(\mathcal{P}, \mathcal{Q}) = 0$ if and only if $\mathcal{P} = \mathcal{Q}$. Most usual kernels, like the Gaussian kernel, are characteristic.
 %It should be noticed here that $\mathcal{K}_{mk}(\mathcal{P},\mathcal{P}) = \mathbb{E}_{x \sim \mathcal{P}, x' \sim \mathcal{P}} \mathcal{K}(x,x') \neq \mathbb{E}_{x \sim \mathcal{P}} \mathcal{K}(x,x)$.
 
-\textbf{The link between the mean kernel and graph sampling} can be easily constructed, since considering a random sampling method $S_k$, the pair $(S_k , \G)$  introduces a probability distribution $f_\G= \mathbb{E}_{F \sim S_k(\G)} \varphi^{match}_k(F)$ on the set of size-$k$ graphlets $\phlet$. Thus, for two graphs $\G,\G'$ , the mean kernel between these distributions, denoted by $\mathcal{K}_{mk}(\G,\G')=\mathcal{K}_{mk}(f_\G,f_{\G'})$ for simplicity, can be reformulated as:
+\textbf{The link between the mean kernel and graph sampling} can be easily constructed, since considering a random sampling method $S_k$, the pair $(S_k , \G)$  introduces a probability distribution $\mathbf{f}_{S_k(\G)}= \mathbb{E}_{F \sim S_k(\G)} ~\varphi^{match}_k(F)$ on the set of size-$k$ graphlets $\mathfrak{H}$. Thus, for two graphs $\G$ and $\G'$, the mean kernel between these distributions, denoted by $\K_{mk}(\G,\G')=\K_{mk}(\mathbf{f}_{S_k(\G)},\mathbf{f}_{S_k(\G')})$ for simplicity, can be reformulated as:
 \begin{equation}
 \label{eq:mean_kernel_graphs}
-\mathcal{K}_{mk}(\G,\G') = \mathbb{E}_{F \sim S_k(\G), F' \sim S_k(\G')} \mathcal{K}(F,F')
+\K_{mk}(\G,\G') = \mathbb{E}_{F \sim S_k(\G), F' \sim S_k(\G')} ~\K(F,F')
 \end{equation}
 Remark that the mean kernel also reduces to:
 \[
-\mathcal{K}_{mk}(\G,\G')=\sum_{i,j}^{N_k}(f_\G)_i(f_{\G'})_j\mathcal{K}(\phlet_i,\phlet_j) 
+\mathcal{K}_{mk}(\G,\G')=\sum_{i,j}^{N_k}(\mathbf{f}_{S_k(\G)})_i(\mathbf{f}_{S_k(\G')})_j~\mathcal{K}(\phlet_i,\phlet_j) 
 \]
 We denote by $MMD(\G,\G')$ the corresponding MMD, which is a new notion of distance between graphs that generalizes the graphlet kernel metric.
 
 Let us now integrate random features with the mean kernel, assuming \eqref{eq:random_features_3} and \eqref{eq:RF}, and show how GSA-$\varphi$ relates to the MMD we have just defined. We combine the decomposition of the base kernel $\mathcal{K}$ in Eq. \eqref{eq:random_features_3} with Eq. \eqref{eq:mean_kernel_graphs} to get:
 \begin{equation}
     \label{eq:mk_rf}
-    \mathcal{K}_{mk}(\G,\G')= \mathbb{E}_{F \sim S_k(\G), F' \sim S_k(\G')} \mathbb{E}_w \xi_w(F)\xi_w(F')
+    \mathcal{K}_{mk}(\G,\G')= \mathbb{E}_{F \sim S_k(\G), F' \sim S_k(\G')}~ \mathbb{E}_\mathbf{w} \left[\xi_\mathbf{w}(F)^*\xi_\mathbf{w}(F')\right]
 \end{equation}
 The corresponding MMD metric in this case is:
 \begin{equation}
 \label{eq:MMD-RF}
-MMD(\G,\G')^2 = \mathbb{E}_{\omega} \Big( | \mathbb{E}_{S_k(\G)} \xi_\omega(F) - \mathbb{E}_{S_k(\G')} \
-\xi_\omega(F') |^2 \Big)
+MMD(\G,\G')^2 = \mathbb{E}_{\mathbf{w}} \Big( \left| \mathbb{E}_{S_k(\G)} \xi_\mathbf{w}(F) - \mathbb{E}_{S_k(\G')} \xi_\mathbf{w}(F') \right|^2 \Big)
 \end{equation}
 
-Until now, what we have in Eq. \ref{eq:mk_rf} is the true value of the mean kernel, where the expectations there implies that we should consider infinite number of both graph samples and random features. However, what we really want is to approximate this value using our algorithm GSA-$\varphi$, which includes  using the finite-dimensional map $\varphi$ and a finite number of \emph{iid} samples drawn with $S_k$. First let's consider only a finite number $s$ of samples: $\F_\G=\{F_1, \ldots, F_s\}$ and $\F_{\G'}=\{F'_1, \ldots, F'_s\}$. Then we have: 
+Until now, what we have in Eq. \ref{eq:mk_rf} is the true value of the mean kernel, where the expectations there implies that we should consider infinite number of both graph samples and random features. However, what we really want is to approximate this value using our algorithm GSA-$\varphi$, which includes  using the finite-dimensional map $\varphi$ and a finite number of \emph{iid} samples drawn with $S_k$. First let's consider only a finite number $s$ of samples: $\F_\G=\{F_1, \ldots, F_s\}$ and $\F_{\G'}=\{F'_1, \ldots, F'_s\}$. One obtains: 
 \begin{equation}
 \label{eq:MK_samples}
-\mathcal{K}_{mk}(\G,\G') \approx \frac{1}{s^2} \sum_{i,j=1}^s \mathbb{E}_w \xi_w(F_i)\xi_w(F'_j)
+\mathcal{K}_{mk}(\G,\G') \approx \frac{1}{s^2} \sum_{i,j=1}^s \mathbb{E}_\mathbf{w} \xi_\mathbf{w}(F_i)\xi_\mathbf{w}(F'_j)
 \end{equation}
 \[
-MMD(\G,\G')^2 \approx \frac{1}{s^2}\mathbb{E}_{\omega} ( | \xi_\omega(F) -\xi_\omega(F') |^2 )
+MMD(\G,\G')^2 \approx \frac{1}{s^2}\mathbb{E}_\mathbf{w} \left( \left|\sum_{F\in\mathfrak{F}} \xi_\mathbf{w}(F) - \sum_{F'\in\mathfrak{F}'} \xi_\mathbf{w}(F') \right|^2 \right)
 \]
-No we consider both a finite number $s$ of \emph(iid) samples, and a feature map $\varphi$ with finite number $m$ of random features defined as \eqref{eq:RF}, so the formula of our final approximation is:
+Now let us consider both a finite number $s$ of (iid) samples, and a feature map $\varphi$ with finite number $m$ of random features defined as \eqref{eq:RF}, yielding the formula of our final approximation:
 \begin{equation}
 \label{eq:mean_kernel_RF}
 \mathcal{K}_{mk}(\G,\G') \approx \frac{1}{s^2} \sum_{i,j=1}^s \varphi(F_i)^*\varphi(F_j')=\Big(\frac{1}{s}\sum_{i=1}^s\varphi(F_i)\Big)^*~\Big(\frac{1}{s}\sum_{i=1}^s\varphi(F_i')\Big) = {\varphi}(\mathfrak{F}_{\G})^* {\varphi}(\mathfrak{F}_{\G'})
@@ -114,20 +116,20 @@ No we consider both a finite number $s$ of \emph(iid) samples, and a feature map
 \[
 MMD(\G,\G')^2 \approx  \| {\varphi}(\mathfrak{F}_{\G}) - {\varphi}(\mathfrak{F}_{\G'}) \|_2^2 
 \]
-Indeed, we just proved that, when using random features, GSA-$\varphi$ theoretically represents an unbiased estimation of the mean kernel $\mathcal{K}_{mk}$. The corresponding MMD is then the key to the performance of the algorithm: if the graphs are well-separated by this metric, then a machine learning algorithm will be able to classify them.
+This proves that, when using random features, GSA-$\varphi$ theoretically represents an unbiased estimation of the mean kernel $\mathcal{K}_{mk}$. The corresponding MMD is then the key to the performance of the algorithm: if the graphs are well-separated by this metric, then a machine learning algorithm will be able to classify them.
 %
 %Now, we have two issues to discuss: how is this estimation concentrates around its expected value $\mathcal{K}_{mk}$, and what is the computational cost of GSA-$\varphi$ in this case. While the first question can be addressed for any kernel $\mathcal{K}$, the second one is really case-dependent as it is mainly related to the computational cost of computing the term $\varphi(F_i)$ in Eq. \eqref{eq:mean_kernel_RF} which differs from one $\varphi$ to another. We start answering the first question.
 Let us now prove a more detailed concentration bound.
 \begin{theorem}
 \label{theorem:concentration}
-Let $\G$ and $\G'$ be two graphs, $\{F_i\}_{i=1}^{s}$ (resp. $\{F_i'\}_{i=1}^{s}$) be $iid$ size-k graphlet samples drawn from $S_k(\G)$ (resp. $S_k(\G')$). Assume a kernel of the form \eqref{eq:random_features_3} and a random feature map \eqref{eq:RF}. Assume that $|\xi_w(F)| \leq 1$ for any $w,F$.
+Let $\G$ and $\G'$ be two graphs, $\{F_i\}_{i=1}^{s}$ (resp. $\{F_i'\}_{i=1}^{s}$) be $iid$ size-k graphlet samples drawn from $S_k(\G)$ (resp. $S_k(\G')$). Assume a kernel of the form \eqref{eq:random_features_3} and a random feature map \eqref{eq:RF}. Assume that $|\xi_\mathbf{w}(F)| \leq 1$ for any $\mathbf{w},F$.
 
 We have that, for all $\delta>0$, with probability at least $1-\delta$:
 \begin{align*}
  \Big|\|\varphi(\mathfrak{F}_\G) - \varphi(\mathfrak{F}_{\G'})\|^2 - MMD(\G,\G')^2 \Big| \leq \frac{4 \sqrt{\log (6/\delta)}}{\sqrt{m}} + \frac{8\left(1+\sqrt{2\log(3/\delta)}\right)}{\sqrt{{s}}}
 \end{align*}
 \end{theorem}
-this tells that the Euclidean distance between embedding computed by GSA-$\varphi$ converges to the MMD in $O(1/\sqrt{m} + 1/\sqrt{s})$. This suggests choosing $m$ of the order of $s$. The proof of this theorem is provided in section \ref{section:proof}.
+This theorem means that the Euclidean distance between the embeddings computed by GSA-$\varphi$ converges to the MMD in $\mathcal{O}(1/\sqrt{m} + 1/\sqrt{s})$. This suggests choosing $m$ of the order of $s$. The proof of this theorem is provided in section \ref{section:proof}.
 
 %<<<<<<< HEAD
 %To calculate \textbf{the computational cost of $GSA-\varphi$}, we considered three cases of $\varphi$ in our experiments, hence $\mathcal{K}$, in both theoretical and practical sides: Gaussian random features applied on the adjacency matrix, Gaussian random features applied on the sorted Eigenvalues of the adjacency matrix , and finally the optical random features of OPUs. The case of OPU random features is presented in section \ref{section:OPU}.\newline
@@ -138,7 +140,7 @@ this tells that the Euclidean distance between embedding computed by GSA-$\varph
 %$C_{\varphi_{Gs}}=O(mk^2+C_{Eigen_extraction})$ for the adjacency matrix}
 %\todoNK{you can use the theorem above to say that $m$ should be of the order of $s$ (since the error rate is the same in $m$ and $s$), which is high. Hence the huge gain with the OPU.}
 %=======
-As we have seen, \textbf{the computational cost of $GSA-\varphi$}, in $O(C_S s C_\varphi)$ mainly depends on $C_\varphi$. For random feature, we consider three cases of $\varphi$, in both theoretical and practical sides:
+As we have seen, the computational cost of GSA-$\varphi$ is $\mathcal{O}(C_S s C_\varphi)$ and mainly depends on $C_\varphi$. We consider three examples of possible random maps $\varphi$, from both a theoretical and a practical side:
 
 \begin{itemize}
 \item \textbf{Gaussian random features applied on the adjacency matrix.} For a flattened version of an adjacency matrix $\mathbf{A}_{flat}$ of a subgraph $F$, we recall that the Gaussian kernel stated in Eq. \ref{eq:Guassian_kernel} can be approximated by the inner product of the following random features map:
