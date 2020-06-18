@@ -1,12 +1,16 @@
 \chapter{Fast graph kernel classifier based on optical random features }
 \label{chapter:fast_algorithm}
 \newtheorem{lemma}{Lemma} 
-The graphlet kernel $\K$ is a good method to solve the graph classification problem but as we have seen in chapter \ref{chapter:background}, it suffers from a high computational cost. In this chapter, we take inspiration from graph sampling and averaging to propose a family of fast graph kernels that generalizes the graphlet kernel paradigm. We show how random features can be incorporated within the new framework to get a faster and competitive algorithm in graph classification. Finally, we describe how Optical Processing Units (OPUs) can be used to eliminate some significant computational cost altogether.
+The graphlet kernel $\K$ is a good method to solve the graph classification problem but as we have seen in chapter \ref{chapter:background}, it suffers from a high computational cost. In this chapter, we take inspiration from it to propose a family of fast graph kernels that generalizes the graphlet kernel paradigm. We show how random features can be incorporated within the new framework to get a faster and competitive algorithm in graph classification. Finally, we describe how Optical Processing Units (OPUs) can be used to eliminate some significant computational cost altogether.
 
 \section{Proposed algorithm}
 We recall from chapter \ref{chapter:background} that the computational cost of computing the $k$-spectrum $\mathbf{f}_\G$ of a graph $\G$, which is the building block of the graphlet kernel method, is $C_{gk}= O(\tbinom{v}{k} N_k C_k^{\cong})$. As an attempt to lower this cost, using random graph sampling, we can compute an approximation of the $k$-spectrum vector in time $C_{gk + gs}= O(C_S s N_k C_k^{\cong})$. We can see that $\tbinom{v}{k}$ is replaced with $C_S s$, and recall that the number of samples $s$  should scale as $N_k$ in order to ensure a reasonable estimation of $\mathbf{f}_\G$. It is clear then that to further decrease this cost, one needs to work on the time to apply $\varphi_k^{match}$ to a given graphlet, denoted by $C_{\varphi_k^{match}}=O(N_k C_k^{\cong})$.
 
 To this end, we propose to replace $\varphi^{match}_k$ with another user-defined function $\varphi:\mathfrak{H} \mapsto\R^m$ and keep everything else as it is. We obtain a family of algorithms referred to as Graph Sampling and Averaging (GSA-$\varphi$), described in Alg.~\ref{alg:GSA}, whose main user-defined methods are the samping method $S_k$ and the feature map $\varphi$.
+
+For a set $\mathfrak{F} = \{F_1,\ldots, F_s\}$ and a feature map $\varphi$, similarly to ${\varphi}^{hist}$ we define ${\varphi}(\mathfrak{F}) = \frac{1}{s} \sum_{F\in\mathfrak{F}} \varphi(F)$. The GSA-$\varphi$ algorithm computes, for each graph $\G$ in the dataset, an embedding ${\varphi}(\mathfrak{F}_\G)$ where $\mathfrak{F}_\G$ is a set of $s$ subgraphs drawn $iid$ from $S_k(\G)$, then trains a classifier on it.
+
+Importantly, note that Algorithm GSA-$\varphi$ with the choices $\varphi\leftarrow\varphi^{match}_k$ and uniform sampling for $S_k$ boils down to computing the graphlet kernel $\K$ detailed in the previous chapter. Any other choice leads to something else, that might not even be an approximation of $\K$, but that still hopefully captures relevant information from the graphs in the dataset $\mathcal{X}$ enabling efficient and high-performance classification. In this sense, GSA-$\varphi$ is a generalization of the graphlet kernel method. 
 
 \begin{algorithm}[t]
 	\label{alg:GSA}
@@ -21,20 +25,18 @@ To this end, we propose to replace $\varphi^{match}_k$ with another user-defined
   \Algo{\\}
   Random initialization of the SVM weights\\
   \For{$\G_i$ in $\mathcal{X}$}{
-  $\bm{\varphi}_i=\mathbf{0}$ (null vector of size $m$) \nt{I'd rather go for $\mathbf{z}_i$ rather than $\bm{\varphi}_i$: it'd be clearer}\\
+  $\mathbf{z}_i=\mathbf{0}$ (null vector of size $m$) \\
   \For{$j=1:s$}{
   $F_{i,j}\gets S_k(\G_i)$\\
-  $\bm{\varphi}_i\gets \bm{\varphi}_i +\frac{1}{s}\varphi(F_{i,j})$
+  $\mathbf{z}_i\gets \mathbf{z}_i +\frac{1}{s}\varphi(F_{i,j})$
   }
   }
-  $\mathcal{D}_{\varphi}\gets (\bm{\varphi}_i,y_i)_{i=1,\ldots, n}$\\
+  $\mathcal{D}_{\varphi}\gets (\mathbf{z}_i,y_i)_{i=1,\ldots, n}$\\
   Train the linear classifier on the new vector-valued dataset $\mathcal{D}_{\varphi}$
 \caption{Graph Sampling and Averaging (GSA-$\varphi$)}
 \end{algorithm}
 
-For a set $\mathfrak{F} = \{F_1,\ldots, F_s\}$ and a feature map $\varphi$, similarly to ${\varphi}^{hist}$ we define ${\varphi}(\mathfrak{F}) = \frac{1}{s} \sum_{F\in\mathfrak{F}} \varphi(F)$. The GSA-$\varphi$ algorithm computes, for each graph $\G$ in the dataset, an embedding ${\varphi}(\mathfrak{F}_\G)$ where $\mathfrak{F}_\G$ is a set of $s$ subgraphs drawn $iid$ from $S_k(\G)$, then trains a classifier on it.
-
-We note that within this new paradigm, the defined $\varphi$ does not necessarily respect the isomorphism between sampled subgraphs: if $\varphi(F) = \varphi(F')$ whenever $F \cong F'$, then we are in the framework of graphlet \emph{without} repetition, otherwise we are in the other case. As we will see, choosing a randomized $\varphi$ presents both theoretical and practical advantages, however it does not respect isomorphism. Nevertheless, it is possible to apply some preprocessing function $Q$ invariant to permutation before passing it to a randomized $\varphi$, and in this case isomorphism is respected without any condition on $\varphi$. An example of such function is $Q:\R^{k\times k}\mapsto \R^k, Q(F)=Sort(Eigenvalues(\mathbf{A}_F))$, that is, the sorted eigenvalues of the adjacency matrix. \nt{that statement is not exactly correct. Some pairs of graphs, called co-spectral, are different --even considering $\cong$-- even though they have the same eigenvalues.}
+We note that within this new paradigm, the defined $\varphi$ does not necessarily respect the isomorphism between sampled subgraphs: if $\varphi(F) = \varphi(F')$ whenever $F \cong F'$, then we are in the framework of graphlet \emph{without} repetition, otherwise we are in the other case. As we will see, choosing a randomized $\varphi$ presents both theoretical and practical advantages, however it does not respect isomorphism. Nevertheless, it is possible to apply some preprocessing function $Q$ invariant to permutation before passing it to a randomized $\varphi$, and which case isomorphism is respected without any condition on $\varphi$. An example of such function is $Q:\R^{k\times k}\mapsto \R^k, Q(F)=Sort(Eigenvalues(\mathbf{A}_F))$, that is, the sorted eigenvalues of the adjacency matrix. In fact, this is not exactly true as there are pairs of graphs, called co-spectral graphs, that are not isomorphic but that have the same ordered spectrum (otherwise, testing isomorphism would actually be reduced to two diagonalization and would thus be solvable in polynomial time). However, such pairs are rare and $Q$ is a possible proxy one could use to obtain a pojection that partially takes into account isomorphism.
 
 If we denote by $C_\varphi$ the cost of computing $\varphi(\mathcal{F})$ for a given graphlet $\mathcal{F}$, the global computation cost of GSA-$\varphi$ (without the last line of the algorithm corresponding to training) is:
 \begin{equation}
@@ -53,7 +55,7 @@ Let us recall a few notions about random features (RFs, see Section~\ref{sec:RF}
 \end{equation}
 for some mapping $\xi_\mathbf{w} : \R^{k \times k} \to \mathbb{C}$ parameterized by $\mathbf{w}$ distributed according to $p(\mathbf{w})$. Note that we abuse notations: by $\xi_\mathbf{w}(\mathcal{F})$ we in fact mean $\xi_\mathbf{w}(\mathbf{A}_\mathcal{F})$ where $\mathbf{A}_\mathcal{F}$ is the $k\times k$ adjacency matrix associated to graphlet $\mathcal{F}$. 
 
-Although $\kappa$ technically takes the adjacency matrices of two graphlets as an input, we do not require it to be permutation-invariant, since it will be combined with the graph sampling process. \nt{I do not see how this is an argument. I would remove this paragraph.} For instance, we will see in experiments that even a simple Gaussian kernel on adjacency matrices performs well!
+Although $\kappa$ technically takes the adjacency matrices of two graphlets as an input, we do not require it to be permutation-invariant, since it will be combined with the graph sampling process. For instance, we will see in experiments that even a simple Gaussian kernel on adjacency matrices performs well!
 
 As we have seen, the RF method samples independently $m$ frequencies from $p(\mathbf{w})$ and defines the associated embedding in dimension $m$:
 \begin{equation}\label{eq:RF}
