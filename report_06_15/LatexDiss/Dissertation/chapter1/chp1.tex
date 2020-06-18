@@ -162,14 +162,14 @@ In the case of graphlets \emph{without repetition}, $\varphi_k^{match}$ is defin
 \[
 \varphi_k^{match}(\mathcal{F}) = \left[ 1_{(\mathcal{F} \cong \phlet_i)}\right]_{i=1}^{N_k} \in \{0,1\}^{N_k}
 \]
-which means that $\varphi_k^{match}$ puts a $1$ in the coordinate $i$ if $F\cong \phlet_i$, and $0$ otherwise. The cost global cost of applying $\varphi^{match}_k$ to any graph $\mathcal{F}$ is now $\mathcal{O}(N_k C^{\cong}_k)$, with an isomorphic test cost $C^{\cong}_k$ exponential in $k$ thus much larger than $k^2$, although for a $N_k$ smaller than the case with repetition.  
+which means that $\varphi_k^{match}$ puts a $1$ in the coordinate $i$ if $F\cong \phlet_i$, and $0$ otherwise. The cost of applying $\varphi^{match}_k$ to any graph $\mathcal{F}$ is now $\mathcal{O}(N_k C^{\cong}_k)$, with an isomorphic test cost $C^{\cong}_k$ exponential in $k$ thus much larger than $k^2$, although for a $N_k$ smaller than the case with repetition.  
 
-Let $\mathfrak{F}$ be any collection of size-$k$ graphs. We define the function $\varphi_k^{hist}$ which counts, for each graphlet $\phlet_i$ in $\mathfrak{H}$, how many matches it has in $\mathfrak{F}$. This definition exists for both versions of $\varphi_k^{match}$, and reads:
+Let $\mathfrak{F}$ be any collection of size-$k$ graphs and let $|\mathfrak{F}|$ be its cardinal. We define the function $\varphi_k^{hist}$ which counts, for each graphlet $\phlet_i$ in $\mathfrak{H}$, how many matches it has in $\mathfrak{F}$. This definition exists for both versions of $\varphi_k^{match}$, and reads:
 \begin{align}
 	\label{eq:def:phi_hist}
-	\varphi_k^{hist}(\mathfrak{F})=\frac{1}{s}\sum_{\mathcal{F}\in\mathfrak{F}} \varphi_k^{match} (\mathcal{F}) \in \R^{N_k}
+	\varphi_k^{hist}(\mathfrak{F})=\frac{1}{|\mathfrak{F}|}\sum_{\mathcal{F}\in\mathfrak{F}} \varphi_k^{match} (\mathcal{F}) \in \R^{N_k}
 \end{align}
-where the term $\frac{1}{s}$ is introduced for normalization purposes: in order for  $\varphi_k^{hist}(\mathfrak{F})$ to sum to 1. %With this definition and when $s$ is sufficiently large, $\varphi_k^{hist}(\mathbf{F}_\G)$ can be seen as the vector whose $i_{th}$ entry has the frequency of graphlet $\phlet_i$ in the graph $\G$.
+where the term $\frac{1}{|\mathfrak{F}|}$ is for normalization purposes (in order for  $\varphi_k^{hist}(\mathfrak{F})$ to sum to 1). %With this definition and when $s$ is sufficiently large, $\varphi_k^{hist}(\mathbf{F}_\G)$ can be seen as the vector whose $i_{th}$ entry has the frequency of graphlet $\phlet_i$ in the graph $\G$.
 
 
 \subsection{Convolutional graph kernels}
@@ -198,11 +198,11 @@ The advantage of using the convolution kernel framework with graphs is that kern
 
 As mentioned above, the graphlet kernel is a special instance of convolution kernel equivalently described as follows: one enumerates all the subgraphs of size $k$ of each graph (where $k$ is small), counts them to build a histogram of their frequencies of apparition, and takes the inner product between the two histograms to obtain the final kernel. In this context, the subgraphs are called ``graphlets'', as an analogy with classical wavelets, which are individual components of more traditional signals.
 
-For a graph $\mathcal{G}=(\V,\E)$, denote by $\mathfrak{F}_\G=\{\mathcal{F}_1,\mathcal{F}_2,\ldots,\}$ the exhaustive collection of \emph{all} size-$k$ subgraphs existing in $\G$: $\mathfrak{F}_\G$ thus has $\tbinom{v}{k}$ elements. Let us define the $k$-spectrum of $\G$: the vector $\mathbf{f}_\G$ of size $N_k$ obtained when applying the function $\varphi_k^{hist}$ as defined in Eq.~\eqref{eq:def:phi_hist} to  $\mathfrak{F}_\G$:
+For a graph $\mathcal{G}=(\V,\E)$, denote by $\mathfrak{F}_\G=\{\mathcal{F}_1,\mathcal{F}_2,\ldots,\}$ the exhaustive collection of \emph{all} size-$k$ subgraphs existing in $\G$: $\mathfrak{F}_\G$ has thus  $\tbinom{v}{k}$ elements. Let us define the $k$-spectrum of $\G$: the vector $\mathbf{f}_\G$ of size $N_k$ obtained when applying the function $\varphi_k^{hist}$ as defined in Eq.~\eqref{eq:def:phi_hist} to  $\mathfrak{F}_\G$:
 \[
 \mathbf{f}_\G=\varphi_k^{hist}(\mathfrak{F}_\G) \in\mathbb{R}^{N_k}
 \]
-In words, the $i$-th of $\mathbf{f}_\G$ equals the frequency of appearance of graphlet $\mathcal{H}_i$ in $\mathcal{G}$. Classically, the graphlets are considered without repetition. We will sometimes refer to $\mathbf{f}_\G$ simply as the histogram of $\G$. 
+In words, the $i$-th entry of $\mathbf{f}_\G$ equals the frequency of appearance of graphlet $\mathcal{H}_i$ in $\mathcal{G}$. Classically, the graphlets are considered without repetition. We will sometimes refer to $\mathbf{f}_\G$ simply as the histogram of $\G$. 
 
 The graphlet kernel between two graphs is the inner product between their histograms:
 \begin{definition}[Graphlet Kernel]
@@ -217,7 +217,7 @@ In this case the distance between graphs in the kernel space is just the Euclide
 The computational cost is a major drawback of this kernel, as computing the $k$-spectrum vector $\mathbf{f}_{\mathcal{G}}$ of any graph $\G$ is very costly, even for moderate $k$: the sum of Eq.~\eqref{eq:def:phi_hist} is over $\mathfrak{F}_\G$, thus over $\tbinom{v}{k}$ elements; and since graphlets are taken without repetition isomorphism tests have to be performed. Thus, the total cost for computing $\mathbf{f}_{\mathcal{G}}$ can be written as:
 \begin{equation}
 \label{eq:cost_graphlet}
-C_{gk}= \mathcal{O}(\tbinom{v}{k} N_k C^{\cong}_k).
+C_{gk}= \mathcal{O}\left(\tbinom{v}{k} N_k C^{\cong}_k\right).
 \end{equation}
 As a result, there is a trade-off between a more accurate representation of the graph (larger value of $k$) and the computational cost. However, one can take advantage of some techniques in order to handle this limitation. In the next section, we focus on random sampling.
 
@@ -226,42 +226,52 @@ As a result, there is a trade-off between a more accurate representation of the 
 %Graph sampling arises when we deal with a large-scale graph and the task is to pick a small-size sample subgraph that would be similar to the original graph with respect to some important properties.
 
 The graphlet kernel can be interpreted as follows: if one draws a subgraph uniformly at random from $\mathcal{G}$, then one has a probability $(\mathbf{f}_\mathcal{G})_i$ of obtaining $\mathcal{H}_i$, \emph{i.e.}:
-$$\mathbf{f}_\mathcal{G} = \mathbb{E}_{F \sim {\rm unif}} ~\varphi^{match}_k(F)$$
+\begin{align}
+	\label{eq:histo_unif}
+	\mathbf{f}_\mathcal{G} = \mathbb{E}_{F \sim {\rm unif}} ~\varphi^{match}_k(F)
+\end{align}
 where $\mathbb{E}_{F \sim {\rm unif}}$ stands for the expectation over the subgraphs $F$ of size $k$ drawn uniformly at random. Note that we use the notation $F$, instead of $\mathcal{F}$, when the subgraph it refers to is a random variable. 
 
 It is thus natural to approach $\mathbf{f}_\mathcal{G}$ with a sample average, built by i/~first uniformly sampling at random $s$ subgraphs of size $k$ from $\G$ to form the collection 
-$$\hat{\mathfrak{F}}^{\rm u}_\G=\{F_1,...,F_s\}$$
+$$\hat{\mathfrak{F}}_\G=\{F_1,...,F_s\}$$
 and ii/~then estimate the $k$-spectrum vector from these random samples:
 \begin{align}
 	\label{eq:fhat_unif}
-	\hat{\mathbf{f}}_\mathcal{G}^{\rm u} = \varphi_k^{hist}(\hat{\mathfrak{F}}^{\rm u}_\G)= \frac{1}{s}\sum_{F\in\hat{\mathfrak{F}}^{\rm u}_\G} \varphi^{match}_k(F).
+	\hat{\mathbf{f}}_\mathcal{G} = \varphi_k^{hist}(\hat{\mathfrak{F}}_\G)= \frac{1}{s}\sum_{F\in\hat{\mathfrak{F}}_\G} \varphi^{match}_k(F).
 \end{align}
-In words, the $i$-th entry of $\hat{\mathbf{f}}^{\rm u}_\mathcal{G}$ counts the number of times $\mathcal{H}_i$ appears among the samples. 
-The law of large numbers states that $\hat{\mathbf{f}}^{\rm u}_\G \xrightarrow[s \to \infty]{} \mathbf{f}_\mathcal{G}$ with probability $1$.
-The question here is how many samples we should consider in order to have a desired certainty in our estimation. In other words: how fast is the concentration of $\hat{\mathbf{f}}^{\rm u}_\G$ around $\mathbf{f}_\G$? The following theorem answers this question:% for every sampling technique $S_k$ whose corresponding $\varphi_k^{hist}$ converge to $f_\G$ when the number of sample grows to infinity.
+In words, the $i$-th entry of $\hat{\mathbf{f}}_\mathcal{G}$ counts the number of times $\mathcal{H}_i$ appears among the samples. 
+The law of large numbers states that $\hat{\mathbf{f}}_\G \xrightarrow[s \to \infty]{} \mathbf{f}_\mathcal{G}$ with probability $1$.
+The question here is how many samples we should consider in order to have a desired certainty in our estimation. In other words: how fast is the concentration of $\hat{\mathbf{f}}_\G$ around $\mathbf{f}_\G$? The following theorem answers this question:% for every sampling technique $S_k$ whose corresponding $\varphi_k^{hist}$ converge to $f_\G$ when the number of sample grows to infinity.
 %\newtheorem{theorem}{Theorem} 
 \begin{theorem}[\citep{graphlet_kernel}]
 	\label{thm:norm1}
-	Let $\mathbf{f}_\G$ be the $k$-spectrum of a graph $\mathcal{G}$. Let $\hat{\mathfrak{F}}^{\rm u}_\G=\{F_1,...,F_{s}\}$ be a collection of $s$ iid random subgraphs of size $k$ uniformly drawn from $\mathcal{G}$ and $\hat{\mathbf{f}}^{\rm u}_\G$ the associated estimation of $\mathbf{f}_\G$ as defined in Eq.~\eqref{eq:fhat_unif}. Then, for a given $\epsilon>0$ and $\delta >0$, one only needs:
+	Let $\mathbf{f}_\G$ be the $k$-spectrum of a graph $\mathcal{G}$. Let $\hat{\mathfrak{F}}_\G=\{F_1,...,F_{s}\}$ be a collection of $s$ iid random subgraphs of size $k$ uniformly drawn from $\mathcal{G}$ and $\hat{\mathbf{f}}_\G$ the associated estimation of $\mathbf{f}_\G$ as defined in Eq.~\eqref{eq:fhat_unif}. Then, for a given $\epsilon>0$ and $\delta >0$, one only needs:
 	\begin{equation}
 	s_{min}=\left \lceil \frac{2(N_k\log(2)+\log(\frac{1}{\delta} ))}{\epsilon^2} \right \rceil
 	\end{equation}
-	samples to ensure that $Pr(\| \mathbf{f}_\G-\hat{\mathbf{f}}^{\rm u}_\mathcal{G} \|_1 \geq \epsilon )\leq\delta$, where $\lceil.\rceil$ is the ceiling function.
+	samples to ensure that $Pr(\| \mathbf{f}_\G-\hat{\mathbf{f}}_\mathcal{G} \|_1 \geq \epsilon )\leq\delta$, where $\lceil.\rceil$ is the ceiling function.
 \end{theorem}
 \nt{add comment?}
 
-\noindent\textbf{Other random sampling techniques.} In fact, many other random sampling techniques can be used to sample subgraphs from all the possible ones \citep{graph_sampling}: uniform sampling is only one such possibility. A \emph{sampling method} will generically be denoted by $S_k$. We will denote by $F \sim S_k(\G)$ a random subgraph of size $k$ of $\G$ sampled by $S_k$. Note that each sampling method defines a potentially \emph{different histogram}\footnote{We use generically the notation $\mathbf{f}_\G$ for histograms. The underlying sampling method should be clear from context.} $\mathbf{f}_\G = \mathbb{E}_{F \sim S_k(\G)} \varphi^{match}_k(F)$, that can in turn be estimated with a sample average as in the previous uniform case. These different histograms capture different kinds of information from the graph $\G$ and may all potentially be used to solve graph learning problems. We describe two examples that we will use in the experiments.
+\noindent\textbf{Generalisation to other random sampling techniques.} As we have seen, and as is made clear by Eq.~\eqref{eq:histo_unif}, the $k$-spectrum of $\G$ is associated in a sense to uniform random sampling of subgraphs. 
+
+Now, one may consider the generalisation of this $k$-spectrum to other random sampling procedures. Denote by $S_k$ a generic random procedure sampling size-$k$ subgraphs of $\mathcal{G}$. One defines the graphlet histogram \emph{associated to $S_k$} as (if $S_k$ is the uniform sampling, then $\mathbf{f}_{S_k(\G)}$ is in fact $\mathbf{f}_\G$):
+$$\mathbf{f}_{S_k(\G)} = \mathbb{E}_{F \sim S_k(\G)}~ \varphi^{match}_k(F).$$
+Again, in order to estimate this histogram, a sample average is natural: i/~first sample $s$ subgraphs independently via $S_k(\G)$ to form a collection $\hat{\mathfrak{F}}_\G=\{F_1,...,F_s\}$;
+ii/~and then estimate $\mathbf{f}_{S_k(\G)}$ with $\hat{\mathbf{f}}_{S_k(\mathcal{G})} = \varphi_k^{hist}(\hat{\mathfrak{F}}_\G)= \frac{1}{s}\sum_{F\in\hat{\mathfrak{F}}_\G} \varphi^{match}_k(F)$. 
+
+These different histograms capture different kinds of information from the graph $\G$ and may all potentially be used to solve graph learning problems. In practice, in our experiments, we have considered two types of sampling procedure $S_k$:
 \begin{itemize}
 	\item \textbf{Uniform sampling} is the simplest sampling method. We select a subset of $k$ nodes uniformly at random among the $\tbinom{v}{k}$ possible choices, and extract the subgraph induced by these nodes. As we have seen, this is the sampling method that converges to the classical $k$-spectrum (and thus the classical graphlet kernel) \eqref{eq:graphlet_kernel} as $s \to \infty$.
 	\item \textbf{Random walk sampling}: here we sample the subgraph node by node, we first randomly choose a node $u$ from $\V$ to be the starting node. Then, and until we collect $k$ nodes, we choose the next node randomly from the current node's neighbors in $\G$, and with probability $p_{flyback}$ we go back to the starting node and repeat the same from there, or we stay at the recently chosen node.
 \end{itemize}
-The difference between the two methods is that unlike uniform sampling, random walk sampling generates  connected subgraphs, \emph{i.e.} there is a path of edges between any pair of the subgraph. This difference is important when we want to sample large graphs where the average degree is small, as uniform sampling in this case generates sparse subgraphs that don't have any edge or just few with high probability. Taking this into account, it is necessary to use random walk when possible since the frequencies of sparse graphlets is high in all the graphs and thus not discriminative to be used in a learning algorithm. \nt{*this last paragraph could be a bit clearer*}
+The difference between the two methods is that unlike uniform sampling, random walk sampling generates  connected subgraphs, \emph{i.e.} there is a path of edges between any pair of nodes. This difference is important when we want to sample large graphs where the average degree is small, as uniform sampling in this case generates sparse subgraphs that don't have any edge or just few with high probability (and thus fails to capture relevant information unless $s$ is very large). Random walk sampling, in this case, is more efficient to capture relevant information even for small values of $s$.
 
 \noindent\textbf{Impact of graphlet random sampling on the computational cost. }
-The computational cost of approximating the $k$-graphlet spectrum of a given graph $\mathcal{G}$ via graph sampling includes the cost of sampling a single subgraph with the process $S_k$, denoted by $C_S$, iterating over all $s$ sampled subgraphs $F_j\sqsubseteq \G$, then applying $\varphi^{match}_k$ as before. So the computational cost of this method is:
+The computational cost of approximating the $k$-graphlet spectrum of a given graph $\mathcal{G}$ via graph sampling includes the cost of sampling a single subgraph with the process $S_k$, denoted by $C_S$, iterating over all $s$ sampled subgraphs $F_j\sqsubseteq \G$, then applying $\varphi^{match}_k$ as before. So the computational cost of this method is, when considering graphlets without repetition\footnote{if one considers graphlets with repetition, then one should replace $C^{\cong}_k$ by $k^2$ in the equation.}:
 \begin{equation}
 \label{eq:cost_graphlet_sampling}
-C_{gk + gs}= \mathcal{O}\left(s C_S N_k C^{\cong}_k\right)
+C_{gk + gs}= \mathcal{O}\left(s C_S N_k C^{\cong}_k\right).
 \end{equation}
 In the case of uniform sampling, $C_S$ is negligible, $s$ should be set proportional to $N_k$ according to Theorem~\ref{thm:norm1}, such that the total cost of computing a reasonable estimation of $\mathbf{f}_\G$ is $\mathcal{O}\left(N_k^2 C^{\cong}_k\right)$, which is an improvement over the cost of the exact computation of Eq.~\eqref{eq:cost_graphlet}. 
 
