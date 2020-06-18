@@ -206,13 +206,13 @@ In words, the $i$-th entry of $\mathbf{f}_\G$ equals the frequency of appearance
 
 The graphlet kernel between two graphs is the inner product between their histograms:
 \begin{definition}[Graphlet Kernel]
-	Given two graphs $\mathcal{G}$ and $\mathcal{G}'$ of size $\geq k$, the graphlet kernel $\kappa$ is defined as \citep{graphlet_kernel}:
+	Given two graphs $\mathcal{G}$ and $\mathcal{G}'$ of size $\geq k$, the graphlet kernel $\K$ is defined as \citep{graphlet_kernel}:
 	\begin{equation}
 	\label{eq:graphlet_kernel}
-	\kappa(\mathcal{G},\mathcal{G}')=\mathbf{f}_{\mathcal{G}}^T \mathbf{f}_{\mathcal{G}'}.
+	\K(\mathcal{G},\mathcal{G}')=\mathbf{f}_{\mathcal{G}}^T \mathbf{f}_{\mathcal{G}'}.
 	\end{equation}
 \end{definition}
-In this case the distance between graphs in the kernel space is just the Euclidean metric between histograms $d_\kappa({\mathcal{G}},{\mathcal{G}'}) = \|\mathbf{f}_{\mathcal{G}} - \mathbf{f}_{{\mathcal{G}'}}\|_2$. Also, from now on, unless otherwise specified, $\kappa$ will refer to this graphlet kernel. 
+In this case the distance between graphs in the kernel space is just the Euclidean metric between histograms $d_\K({\mathcal{G}},{\mathcal{G}'}) = \|\mathbf{f}_{\mathcal{G}} - \mathbf{f}_{{\mathcal{G}'}}\|_2$. 
 
 The computational cost is a major drawback of this kernel, as computing the $k$-spectrum vector $\mathbf{f}_{\mathcal{G}}$ of any graph $\G$ is very costly, even for moderate $k$: the sum of Eq.~\eqref{eq:def:phi_hist} is over $\mathfrak{F}_\G$, thus over $\tbinom{v}{k}$ elements; and since graphlets are taken without repetition isomorphism tests have to be performed. Thus, the total cost for computing $\mathbf{f}_{\mathcal{G}}$ can be written as:
 \begin{equation}
@@ -225,7 +225,7 @@ As a result, there is a trade-off between a more accurate representation of the 
 \label{graph_sampling}
 %Graph sampling arises when we deal with a large-scale graph and the task is to pick a small-size sample subgraph that would be similar to the original graph with respect to some important properties.
 
-The graphlet kernel can be interpreted as follows: if one draws a subgraph uniformly at random from $\mathcal{G}$, then one has a probability $(\mathbf{f}_\mathcal{G})_i$ of obtaining $\mathcal{H}_i$, \emph{i.e.}:
+A graph's $k$-spectrum can be interpreted as follows: if one draws a subgraph uniformly at random from $\mathcal{G}$, then one has a probability $(\mathbf{f}_\mathcal{G})_i$ of obtaining $\mathcal{H}_i$, \emph{i.e.}:
 \begin{align}
 	\label{eq:histo_unif}
 	\mathbf{f}_\mathcal{G} = \mathbb{E}_{F \sim {\rm unif}} ~\varphi^{match}_k(F)
