@@ -48,16 +48,38 @@ Let us quickly visualize what are the histograms $\mathbf{f}_\G$ of graphlets th
 \end{figure}
 
 As expected, empirical uniform sampling provides a good approximation of exhaustive enumeration, and changing the sampling technique modify the histogram. Moreover, we ordered the graphlets such that the more disconnected graphlets are on the left and the connected graphlets on the right, and as expected random walk sampling tends to produce more connected graphlets than uniform sampling. In all the  following experiments we consider uniform sampling technique as our sampler and the adjacency matrix of a graphlet as an input, unless otherwise is mentioned.
-\section{Choice of feature map $\varphi$}
-In this section, we examine how the choice of $\varphi$ affects the performance and computation time of GSA-$\varphi$.
+\section{Choice of feature map $\varphi$ }
+\label{section:choice}
+In this section, we examine how the choice of $\varphi$ affects the performance and computation time of GSA-$\varphi$. Then we benchmark GSA-$\varphi_{OPU}$ against graphlet kernel. Finally, we plot the empirical computational time taken by each. 
+
+\textbf{The choice of $\varphi$}: in this experiment we compare different random feature maps $\varphi$ in our algorithm. For this experiment we have the following parameters:  inter-class similarity: $r=1.1$, graphlet size: $k=6$, samples number $s=2000$. Another parameter here is the bandwidth parameter of the Gaussian kernel: $\sigma=0.1$.
+
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{figs/phi_comparison.pdf}
-\caption[comparison between different choices of $\varphi$]{comparison between different choices of $\varphi$}
+\caption[Comparison between different $\varphi$ maps in $GSA-\varphi$]{Comparison between different $\varphi$ maps in $GSA-\varphi$:$\varphi_{OPU}$, $\varphi_{Gs}$, $\varphi_{Gs+Eigen}$. Fixed parameters: $r=1.1$, $k=6$,  $s=2000$, and $\sigma=0.1$. we plot the test accuracy related to each $\varphi$ as a function of $m$.}
 %Source:
 \label{fig:phi_comparison}
 \end{figure}
+Preserving the same settings of the parameters and the dataset, we applied $GSA-\varphi_{OPU}$, $GSA-\varphi_{Gs}$ and $GSA-\varphi_{Gs+Eigen}$. Then we plotted the the test accuracies as a  function of the number of random features $m$, as shown in Fig. \ref{fig:phi_comparison}.
 
+From these results, we can say that $GSA-\varphi_{OPU}$ performs the best with the same experiments. What is unusual is the behavior of $GSA-\varphi_{Gs+Eigen}$, where we can see the instability in the curve and that it doesn't converge to any kernel as the number of random features increases. One possible justification is that the Eigenvalues of the adjacency matrix don't include a lot of information about the graph.
+
+\textbf{\boldsymbol{$GSA-\varphi_{OPU}$} Vs. graphlet kernel} :
+Here we compare between the performance of $GSA-\varphi_{OPU}$ and the graphlet kernel with graph sampling, note we don't consider exhaustive enumeration for the graphlet kernel here. where unlike  $GSA-\varphi_{OPU}$, the  case of \emph{graph without repetition} is to be respected by the graphlet kernel.
+We have the following parameters: number of random features: $m=5000$, graphlet size:$k$=5, and number of samples: $s=2000$ (for both algorithms). We run both experiments while we vary the value of inter-class similarity parameter $r$, and we plot the test accuracy in Fig. \ref{fig:gk_vs_opu}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.5]{figs/gk_vs_opu.pdf}
+\caption[graphlet kernel Vs $GSA-\varphi_{OPU}$  ]{graphlet kernel Vs $GSA-\varphi_{OPU}$   }
+%Source:
+\label{fig:gk_vs_opu}
+\end{figure}
+So we see with the same limited number of samples,  $GSA-\varphi_{OPU}$ clearly outperforms the graphlet kernel, thus it outperforms the traditional graphlet kernel if both algorithms consider exhaustive enumeration of graphlets. 
+
+\textbf{Computational time of different methods}
+The same aforementioned experiments in this section are repeated with multi cases of the graphlet size $k$. This is done to check how the computational time required by each grows in $k$. results are shown in Fig. \ref{fig:computational_comparison}.
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.5]{figs/computational_comp.pdf}
@@ -65,6 +87,7 @@ In this section, we examine how the choice of $\varphi$ affects the performance 
 %Source:
 \label{fig:computational_comparison}
 \end{figure}
+We should point out here that there is a huge overhead of time between the point of time we run our optimizer code on the OPUs server and the point when the OPU start working. This is a technical issue reported by LightOn company's technical team.  Therefore,  This overhead should be measured and subtracted from $GSA-\varphi_{OPU}$ execution time. . However, this issue doesn't introduce any drawback to our fastest algorithm $GSA-\varphi_{OPU}$, since the main point to be noticed here is that its computational time is not a function of the input dimensionality $k^2$. While it is exponential for graphlet kernel, and polynomial for $GSA-\varphi_{Gs}$ and $GSA-\varphi_{Gs+Eigen}$. So the message of this section is that indeed $GSA-\varphi_{OPU}$ is an innovative and efficient algorithm with truly light-weight computational cost.
 
 
 
