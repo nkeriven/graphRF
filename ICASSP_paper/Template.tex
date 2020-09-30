@@ -1,6 +1,7 @@
 % Template for ICASSP-2020 paper; to be used with:
 %          spconf.sty  - ICASSP/ICIP LaTeX style file, and
 %          IEEEbib.bst - IEEE bibliography style file.
+%
 % --------------------------------------------------------------------------
 \documentclass{article}
 \usepackage{spconf,amsmath,graphicx}
@@ -58,8 +59,8 @@
 \maketitle
 %
 \begin{abstract}
-Graph Classification is the problem of mapping graphs to the class they belong to. The graphlet kernel is a classical method in graph classification. However, it suffers from high computation cost due to the isomorphism test. We propose a generic algorithm that mainly replaces the isomorphism test with a user-defined mapping. 
-This algorithm computes a feature vector for each graph. More importantly, we incorporate  \emph{optical processing units (OPUs)} technology by choosing the optical random features map. We show that OPUs perform such mapping in light-speed. We prove theoretically that using the OPU is effective in graph classification. We conduct the necessary experiments to empirically show the expected high performance.
+Graph Classification is the problem of mapping graphs to the classes they belong to. The graphlet kernel is a classical method in graph classification. However, it suffers from high computation cost due to the isomorphism test it includes. We propose a generic algorithm that mainly replaces the isomorphism test with a user-defined mapping. 
+This algorithm computes a feature vector for each graph. More importantly, we incorporate  \emph{optical processing units (OPUs)} technology by choosing the optical random features map. We show that OPUs complete  such mapping in \emph{ light-speed}. Besides, We prove theoretically that using the OPU is effective in graph classification. Finally, we support this with  the necessary experiments.
 
 \end{abstract}
 %
@@ -69,46 +70,47 @@ Optical random features, Graph kernels
 %
 \section{Introduction}
 \label{sec:intro}
-Graph structures are used to model a set of objects and their interactions. In biology for instance,  proteins can be modeled as graphs where amino acids are nodes and the chemical links between them are edges \cite{protein_application}. In social networks, each post thread is modeled with a graph whose nodes are users, where an edge between two nodes exists if one replied to the other's comment on that thread \cite{graph_soc_net}.  
+Graph structures are used to model a set of objects and their interactions. In biology for instance,  proteins can be modeled as graphs where amino acids are nodes and the chemical links between them are edges \cite{protein_application}. In social networks, each post thread is modeled with a graph whose nodes are users, where an edge between two nodes exists if one replies to the other's comment on that thread \cite{graph_soc_net}.  
 
-Having \emph{a priori} known graph classes, the graph classification task is to predict the class of a given graph. In biology,  proteins are to be classified to enzymes and to non-enzymes \cite{protein_application}, as in the D\&D dataset. In Social networks, one task is to discriminate between discussion-based and question/answer-based threads \cite{class_Reddit}, as in Reddit-Binary dataset.
+Having \emph{a priori} known graph classes, the graph classification task is to predict the class of any given graph. In biology,  proteins are to be classified to enzymes and to non-enzymes \cite{protein_application}, as in the D\&D dataset. In social networks, one task is to discriminate between discussion-based and question/answer-based threads \cite{class_Reddit}, as in Reddit-Binary dataset.
 
-In some cases, nodes and edges may have extra features that can be used along with the graph structure to classify graphs. It has been shown that node features are important to have high performance \cite{node_features}. Here, we focus on the sightly harder case where one has only access to the graph structure.
+In addition to the graph structure, nodes and edges may have extra features that can be used in classifying graphs. It has been shown that node features are important to have high performance \cite{node_features}. Here, we focus on the slightly harder case where one has only access to the graph structure.
 
-We place ourselves in the context of \emph{supervised learning}, where we have access to a set of pre-labeled graphs $(\mathcal{X}=\{\G_1,\ldots,\G_n\}, \mathcal{Y}=\{y_1,\ldots,y_n\})$. Each graph $\G_i$ is a \emph{a priori} known to belong to the class with label $y_i$. The graph classification problem is: given this prior information, design an algorithm that, given in input a new graph, outputs the label of the class to which it belongs.  \BlankLine
+Moreover, we place ourselves in the context of \emph{supervised learning}, where we have access to a set of pre-labeled graphs $(\mathcal{X}=\{\G_1,\ldots,\G_n\}, \mathcal{Y}=\{y_1,\ldots,y_n\})$. Each graph $\G_i$ is a \emph{a priori} known to belong to the class with label $y_i$. The graph classification problem is: given this prior information, design an algorithm that, given in input a new graph, outputs the label of the class to which it belongs.  \BlankLine
 
 \noindent \textbf{Related work}
-Structure-based graph classification has been tackled using many algorithms. Frequent sub-graph based algorithms, gSpan method \cite{frequent_subgraphs} for instance, perform a prohibitive-cost analysis on the graph dataset $\mathcal{X}$ to catch the frequent and discriminative sub-graphs, then use them as features. Graph kernel-based algorithms \cite{kriege_graph_kernels} compute fixed representation for graphs by defining the kernel as a similarity function between graphs. One example is \emph{the graphlet kernel}, which is an efficient method in the literature but is prone to high computation cost \cite{graphlet_kernel}.
-Moreover, graph convolutional networks (GCNs) are common in graph classification. Recently, a particular model called GIN (Graph Isomorphism Network) was developed and provided high performance classification \cite{GCN_powerful}. \BlankLine
+Structure-based graph classification has been tackled using many algorithms. Frequent subgraphs based algorithms, gSpan method \cite{frequent_subgraphs} for instance, perform a prohibitive-cost analysis on the graph dataset $\mathcal{X}$ to catch the frequent and discriminative subgraphs, then use them as features. Graph kernel-based algorithms \cite{kriege_graph_kernels} compute fixed representation for graphs by defining the kernel as a similarity function between graphs. One example is \emph{the graphlet kernel}, which is an efficient method in the literature but is prone to high computation cost \cite{graphlet_kernel}.
+Graph convolutional networks (GCNs) are used to solve graph classification too. Recently, a particular model called GIN (Graph Isomorphism Network) was developed and provided high performance classification \cite{GCN_powerful}. \BlankLine
 
-\noindent\textbf{Contribution:} Random features are an computationally efficient method to approximate kernel functions, which satisfy some conditions \cite{RF_1}. Optical Processing Units (OPUs) is a recently developed hardware that computes optical random features in light speed. On the other hand, the graphlet kernel represents a graph by how many times graphs of a smaller size occur in it. This kernel includes the isomorphism test in the counting process which makes it computationally expensive. Can we leverage OPUs computations to reduce the computational complexity of a combinatorial problem like the graphlet kernel ? We show, empirically and theoretically, that yes we can do that to obtain fast and efficient graph representation. 
+\noindent\textbf{Contribution:} Random features are an computationally efficient method to approximate kernel functions which satisfy some conditions \cite{RF_1}. Optical Processing Units (OPUs) is a recently developed hardware that computes optical random features in light speed. On the other hand, the graphlet kernel represents a graph by how many times graphs of a smaller size occur in it. This kernel includes the isomorphism test in the counting process which makes it computationally expensive. Can we leverage OPUs computations to reduce the computational complexity of a combinatorial problem like the graphlet kernel ? We show, empirically and theoretically, that yes we can do that to obtain fast and efficient graph classifier. 
 
 \section{Background}
 \label{sec:background}
 \subsection{The graphlet kernel}\label{sec:graphlet_kernel}
-Let $\mathfrak{H}=\{\phlet_1,..., \phlet_{N_k}\}$ be the set of all possible non-isomorphic graphs, also called graphlets, of size $k$, where two graphs are said to be isomorphic ($\G\cong \G')$ if they represent the same structure \cite{isomorphism}. We define the matching function $\varphi_k^{match}(\mathcal{F}) = \left[ 1_{(\mathcal{F} \cong \phlet_i)}\right]_{i=1}^{N_k} \in \{0,1\}^{N_k}$, where $1_\Omega$ is the indicator function. In words, $\match$ is a Boolean vector of dimension $N_k$ which has a 1 in the coordinate $i$ if $\mathcal{F}\cong \phlet_i$, and $0$ otherwise. 
+First, we present the concepts necessary to define the graphlet kernel. We represent a graph  of size $v$ by the adjacency matrix $\mathbf{A}\in \mathbb{R}^{v\times v}$,  which has $a_{i,j} =1$ if there is an edge between nodes $\{i,j\}$ and $0$ otherwise. Two graphs are said to be isomorphic ($\G\cong \G')$ iff we can permute the nodes' labels of one such that their adjacency matrices are equal \cite{isomorphism}. 
 
-Denote $\mathfrak{F}_\G=\{\mathcal{F}_1,\mathcal{F}_2,\ldots,\}$ the collection of all size-k sub-graphs existing in a graph $\G$. We assign each graph with the following representation, called k-spectrum, vector:
-\[
-\mathbf{f}_\mathcal{G}=\frac{1}{|\mathfrak{F}_\mathcal{G}|}\sum_{\mathcal{F}\in\mathfrak{F}_\mathcal{G}} \match (\mathcal{F}) 
-\]
-so that for two graphs $\G,\G'$, the graphlet kernel is defined by the inner product $\bld{f}_\G^T\bld{f}_{\G'}$. The graphlet kernel is used in kernel machine classifiers and  performs well especially with sufficiently large value of $k$ \cite{graphlet_kernel}. However, in each graph $\G$ of size $v$, there are $\binom{v}{k}$ size-k sub-graphs. Thus the computation cost to compute $\bld{f}_\G$ is $ C_{gk}= \mathcal{O}\left(\tbinom{v}{k} N_k C^{\cong}_k\right)$, where $C^{\cong}_k$ is the cost of the isomorphism test between two graphs of size $k$. This cost is expensive due to: i/ $\binom{v}{k}$ explodes as $v$ or $k$ increase, ii/ $N_k$ is exponential in $k$, iii/ yet there is no known method to test isomorphism in polynomial time of $k$ \cite{isomorphism_np}. 
+We denote by  $\mathfrak{H}=\{\phlet_1,..., \phlet_{N_k}\}$  the set of all non-isomorphic graphs, also called graphlets, of size $k$. We define the matching function $\varphi_k^{match}(\mathcal{F}) = \left[ 1_{(\mathcal{F} \cong \phlet_i)}\right]_{i=1}^{N_k} \in \{0,1\}^{N_k}$, where $1_\Omega$ is the indicator function. In words, $\match(\mathcal{F})$ is a Boolean vector of dimension $N_k$ which has a 1 in the coordinate $i$ if $\mathcal{F}\cong \phlet_i$, and $0$ otherwise. 
+Let $\mathfrak{F}_\G=\{\mathcal{F}_1,\mathcal{F}_2,\ldots,\}$ be the set of subgraphs induced by all size-k subsets of nodes  in a graph $\G$. We assign each graph with the following representation vector, called k-spectrum:
+\begin{equation}
+\mathbf{f}_\mathcal{G}=\frac{1}{|\mathfrak{F}_\mathcal{G}|}\sum_{\mathcal{F}\in\mathfrak{F}_\mathcal{G}} \match (\mathcal{F}) \in \R ^{N_k}
+\end{equation}
+For two graphs $\G,\G'$, the graphlet kernel is defined by the inner product $\bld{f}_\G^T\bld{f}_{\G'}$. The graphlet kernel performs well especially with a sufficiently large value of $k$ \cite{graphlet_kernel}. However, in each graph $\G$ of size $v$, the computation cost to compute $\bld{f}_\G$ is $ C_{gk}= \mathcal{O}\left(\tbinom{v}{k} N_k C^{\cong}_k\right)$, where $C^{\cong}_k$ is the cost of the isomorphism test between two graphs of size $k$. This cost is expensive due to: i/ $\binom{v}{k}$ explodes as $v$ or $k$ increase, ii/ $N_k$ is exponential in $k$, iii/ yet there is no known method to test isomorphism in polynomial time of $k$ \cite{isomorphism_np}. 
 
-Usually, uniform graph sampling is used to accelerate the graphlet kernel, where sampling a size-k sub-graph means: first we randomly at uniform choose $k$ nodes from the graph, then we consider every edge that connects any pair of them to form the sub-graph. 
+Usually, uniform graphlet sampling is used to accelerate the graphlet kernel \cite{graphlet_kernel}, where sampling a size-k subgraph means: first we uniformly at random choose $k$ nodes from the graph, then we sample the subgraph induced by those  nodes. This yields that each sample follow a uniform distribution over $\mathfrak{F}_\G$.
 
 Knowing this, the $k$-spectrum $\bld{f}_\G$ can be interpreted as follows: if one samples a subgraph from $\mathcal{G}$, then one has a probability $(\bld{f}_\G)_i$ of obtaining $\phlet_i$, \emph{i.e.}: $	\label{eq:histo_unif}
 	\mathbf{f}_\mathcal{G} = \mathbb{E}_{F \sim {\rm unif}} ~\varphi^{match}_k(F)$. 
 	It is thus natural to approach $\mathbf{f}_\mathcal{G}$ with a sample average, where by sampling $s$ subgraphs of size $k$ to form the collection 
-$\mathfrak{F}_\G=\{F_1,...,F_s\}$, the estimator:
+$\hat{\mathfrak{F}}_\G=\{F_1,...,F_s\}$, the estimator:
 \begin{align}
 	\label{eq:fhat_unif}
 	\hat{\mathbf{f}}_\mathcal{G} =\frac{1}{s}\sum_{F\in\hat{\mathfrak{F}}_\G} \varphi^{match}_k(F).
 \end{align}
 verifies by the law of large numbers that $\hat{\mathbf{f}}_\G \xrightarrow[s \to \infty]{} \mathbf{f}_\mathcal{G}$ with probability $1$.
 
-The computation cost per graph of the approximated graphlet kernel is $C_{gk + gs}= \mathcal{O}\left(s C_S N_k C^{\cong}_k\right)$, where $C_s$ is the cost of sampling one subgraph. Although the term $\binom{v}{k}$ doesn't exist as a term in this cost, still for a specific certainty in estimating $\bld{f}_\G$, the required number of samples $s$ must be proportional to $N_k$ \cite{graphlet_kernel}. So this version is still expensive especially when $k$ is large. 
+The computation cost per graph of the  graphlet kernel with graph sampling is $C_{gk + gs}= \mathcal{O}\left(s C_S N_k C^{\cong}_k\right)$, where $C_S$ is the cost of sampling one subgraph. Although the term $\binom{v}{k}$ doesn't exist  in this cost, still for a specific certainty in estimating $\bld{f}_\G$, the required number of samples $s$ must be proportional to $N_k$ \cite{graphlet_kernel}. So this version is still expensive especially when $k$ is large. 
 
-Although what follows is technically not related to the graphlet kernel as defined here,  it could be considered related in some literature. There exist many different sampling techniques $S_k$, each follows a specific random process in sampling the $k$ nodes from a graph $\G$. As a result, subgraphs sampled with a technique different from the uniform sampling will have a different histogram $\bld{f}_{\G,S_k}$ than the one defined by $\bld{f}_\G$ \cite{leskovec2006sampling}. One such technique is the random walk (RW) sampler, that tends to sample a subgraph in which there is a path of edges between any two nodes. Therefore, RW subgraphs are more informative than the uniform ones, since the uniform sampler, with high probability, generates sparse subgraphs that don't have any information about the graph structure. 
+In fact, there exist many different sampling techniques $S_k$, each follows a specific random process in sampling the $k$ nodes from a graph $\G$. As a result, subgraphs sampled with a technique different from the uniform sampling will have a different histogram $\bld{f}_{\G,S_k}$ than the one defined by $\bld{f}_\G$ \cite{leskovec2006sampling}. Such sampling technique is the random walk (RW) sampler. Unlike uniform sampling, RW tends to sample connected  subgraphs, which are more informative about the graph structure. 
 
 
 \iffalse
@@ -148,9 +150,9 @@ such that $\varphi(\mathbf{x})^*\varphi(\mathbf{x}')=\frac{1}{m} \sum_{j=1}^m \x
 \label{sec:algo}
 \begin{algorithm}[h]
 \DontPrintSemicolon
-  \KwInput{labelled graph dataset $\mathcal{X}=(\G_i,y_i)_{i=1,\ldots,n}$}
-  \tools{Graph random sampler $S_k$, a function $\varphi$, linear classifier (ex. SVM) }\\
-  \Hyp{k: graphlet size, $s$: number of graphlet samples per graph}, $m$: features number\\
+  \KwInput{labeled graph dataset $\mathcal{X}=(\G_i,y_i)_{i=1,\ldots,n}$}
+  \tools{Graphlet sampler $S_k$, a function $\varphi$, linear classifier (ex. SVM) }\\
+  \Hyp{k: graphlet size, $s$: number of graphlet samples per graph}, $m$: \emph{number of random features}\\
   \KwOutput{Trained model to classify graphs}
   
   %\KwData{Testing set $x$}
@@ -170,54 +172,57 @@ such that $\varphi(\mathbf{x})^*\varphi(\mathbf{x}')=\frac{1}{m} \sum_{j=1}^m \x
 \caption{GSA-$\varphi$ generic algorithm}
 \end{algorithm}
 
- We propose to replace $\match$ with a user-defined map $\varphi$, and to replace the uniform sampler with a user-chosen one like RW sampler. The function $\varphi$ here maps each subgraph to a new $m$-dimensional space $\mathbb{R}^m$. We refer to this framework as \emph{Graph Sampling and Averaging $GSA-\varphi$}. 
+ We propose to replace $\match$ with a user-defined map $\varphi$, and to replace the uniform sampler with a user-chosen one like the RW sampler.  This makes it possible to deploy the OPU technology with this algorithm. We refer to this framework as \emph{graphlet sampling and Averaging $GSA-\varphi$}, and its cost per graph for a specific $\varphi$ is $C_{GSA-\varphi}= \mathcal{O}\left(s C_S C_{\varphi}\right)$, where $C_{\varphi}$ is the cost of applying $\varphi$ on one graphlet. 
 
-Note that choosing $\varphi = \match$ and $S_k$ as the uniform sampler, GSA-$\match$ turns out to be the approximated graphlet kernel. We see next that choosing  $\varphi$ as random maps is both fast and efficient in graph classification.
+The function $\varphi$ here maps each subgraph to an $m$-dimensional space $\mathbb{R}^m$. Note that choosing $\varphi = \match$ and $S_k$ as the uniform sampler, GSA-$\match$ turns out to be the  graphlet kernel with graphlet sampling.  We see next that choosing  $\varphi$ as random maps is both fast and efficient.
 
 \subsection{Efficiency of kernel random features with $GSA-\varphi$} 
 \label{sec:MMD}
-A kernel $\kappa$ associated to a random features (RF) decomposition is a positive definite function of two inputs in $\R^d$ that can be decomposed  as follows   \cite{rahimi2008random}:
+A kernel $\kappa$ associated to a random features (RF) decomposition is a positive definite function of two inputs that can be decomposed  as follows   \cite{rahimi2008random}:
 \begin{equation}
 \label{eq:RF_decomposition}
-\kappa(\mathbf{x},\mathbf{x}')=E_{\mathbf{w}\sim p}[ \xi_\mathbf{w}(\mathbf{x}) \xi_\mathbf{w}(\mathbf{x}')]
+\kappa(\mathbf{x},\mathbf{x}')=\mathbb{E}_{\mathbf{w}\sim p}[ \xi_\mathbf{w}(\mathbf{x}) \xi_\mathbf{w}(\mathbf{x}')]
 \end{equation}
-where $E$ stands for the expectation, $p$ is a probability distribution, and $\xi$ is a function parameterized by $w$. Most RF constructions in \eqref{eq:RF_decomposition} are known as Random Fourier Features (RFF), which are based on Bochner's theorem. Specifically, if the kernel $\kappa$ is continuous and shift invariant, its Fourier transform $p$ is a correct probability distribution if it is well-scaled. Thus, scaling a kernels to obtain $ \int p = 1$, we have:
+where $\mathbb{E}$ stands for the expectation, $p$ is a probability distribution, and $\xi$ is a function parameterized by $\mathbf{w}$. 
+To approximate such kernels, we can emperically average $m$ realizations of $\xi_\mathbf{w}(\mathbf{x}) \xi_\mathbf{w}(\mathbf{x}')$. To do that, we define RF maps:
 \begin{equation}
-\label{eq:real_Fourier_integral}
-\kappa(\mathbf{x}, \mathbf{x}')=\int_{\mathbb{R}^d}p(\mathbf{w})cos({\mathbf{w}^T(\mathbf{x}-\mathbf{x}')})d\mathbf{w}
-\end{equation}
-which leads to \eqref{eq:RF_decomposition} by setting $ \xi_\mathbf{w}(\mathbf{x})=\sqrt{2}cos(\mathbf{w}^T\mathbf{x}+b)$ such that $\mathbf{w}$ is drawn from $p$ and $b$ is drawn uniformly from $[0,2\pi]$. Finally, the random maps we propose  starting from \eqref{eq:RF_decomposition} are:
-\begin{align}
 	\label{eq:def_RF}
-	\varphi_{RF}(\mathbf{x}) = \frac{1}{\sqrt{m}} ( \xi_{\mathbf{w}_j}(\mathbf{x}) )_{j=1}^m \in \mathbb{C}^m
-\end{align}
-with $m$ is the number of features and the frequencies $\mathbf{w}_j$ are drawn identically and independently (iid) from $p$. For any two graphs $\G,\G'$, the next theorem states that using $\varphi_{RF}$ in $GSA-\varphi$, the Euclidean distance between the representation vectors $\bld{z}_\G, \bld{z}_{\G'}$ converges to the MMD metric between their distributions $\bld{f}_{\G,S_k}$, $\bld{f}_{\G',S_k}$. The MMD (Maximum Mean Discrepancy) metric between two distributions is defined by:
-\[
-MMD^2(\bld{f}_{\G,S_k}, \bld{f}_{\G',S_k}) = \sum_{(i,j)}^{N_k} (\bld{f}_{\G,S_k})_i (\bld{f}_{\G',S_k})_j\kappa(\phlet_i, \phlet_j)
-\]
+	\varphi(\mathbf{x}) = \frac{1}{\sqrt{m}} ( \xi_{\mathbf{w}_j}(\mathbf{x}) )_{j=1}^m \in \mathbb{C}^m
+\end{equation}
+where  $m$ is called here the number of features and the frequencies $\mathbf{w}_j$ are drawn identically and independently (iid) from $p$. Then, $\kappa(\mathbf{x},\mathbf{x}')\approx	\varphi(\mathbf{x})^T	\varphi(\mathbf{x}')$.
+
+ For each kernel as in  \eqref{eq:RF_decomposition} , and for any two graphs $\G,\G'$, we define the MMD (Maximum Mean Discrepancy) metric between the two corresponding distrubutions  $\bld{f}_{\G,S_k}, \bld{f}_{\G',S_k}$ by:
+ \[
+ MMD^2(\bld{f}_{\G,S_k}, \bld{f}_{\G',S_k}) = \mathbb{E}_{\mathbf{w}} \Big( \left| \mathbb{E}_{S_k(\G)} \xi_\mathbf{w}(F) - \mathbb{E}_{S_k(\G')} \xi_\mathbf{w}(F') \right|^2 \Big)
+ \]
+ The main property of the MMD is that, for so-called \emph{characteristic kernels}, it is a true metric on distributions, \emph{i.e.} $MMD(\mathcal{P}, \mathcal{Q}) = 0 \Leftrightarrow \mathcal{P} = \mathcal{Q}$. In addition, most usual kernels, like the Gaussian kernel, are characteristic \cite{MMD}.
+ 
+ The next theorem shows the efficiency of using RF maps as in \eqref{eq:def_RF} with our algorithm. It states  that the Euclidean distance between the representation vectors $\bld{z}_\G, \bld{z}_{\G'}$ converges to the MMD metric between their distributions $\bld{f}_{\G,S_k}$, $\bld{f}_{\G',S_k}$. 
+
 
 
 \begin{theorem}\label{theorem:concentration}
-Let $\G$ and $\G'$ be two graphs, $\mathfrak{F}_\G=\{F_i\}_{i=1}^{s}$ (resp. $\mathfrak{F}_{\G'}=\{F_i'\}_{i=1}^{s}$) be $iid$ size-k graphlet samples drawn from $S_k(\G)$ (resp. $S_k(\G')$). Assume a random feature map \ref{eq:def_RF}. Assume that $|\xi_\mathbf{w}(F)| \leq 1$ for any $\mathbf{w},F$.
-Proven in Appendix \ref{app:proof}, we have for all $\delta>0$ and with probability at least $1-\delta$:
+Let $\G$ and $\G'$ be two graphs, $\mathfrak{F}_\G=\{F_i\}_{i=1}^{s}$ (resp. $\mathfrak{F}_{\G'}=\{F_i'\}_{i=1}^{s}$) be $iid$ size-k graphlet samples drawn from $S_k(\G)$ (resp. $S_k(\G')$). Assume a random feature map as in \eqref{eq:def_RF}. Assume that $|\xi_\mathbf{w}(F)| \leq 1$ for any $\mathbf{w},F$.
+We have for all $\delta>0$ and with probability at least $1-\delta$:
 \begin{align*}
  \Big|\|\varphi(\mathfrak{F}_\G) - \varphi(\mathfrak{F}_{\G'})\|^2 - MMD(\bld{f}_{\G,S_k},\bld{f}_{\G',S_k})^2 \Big| \leq \\\frac{4 \sqrt{\log (6/\delta)}}{\sqrt{m}} + \frac{8\left(1+\sqrt{2\log(3/\delta)}\right)}{\sqrt{{s}}}
 \end{align*}
 \end{theorem}
 
-Note that this theorem suggests choosing $m$ of the same order of $s$.
-The main property of the MMD is that, for so-called \emph{characteristic kernels}, it is a true metric on distributions, \emph{i.e.} $MMD(\mathcal{P}, \mathcal{Q}) = 0 \Leftrightarrow \mathcal{P} = \mathcal{Q}$. In addition, most usual kernels, like the Gaussian kernel, are characteristic.
+\begin{proof}
+ see Appendix.
+\end{proof}
 
 \subsection{Considered choices of $\varphi_{RF}$}
 \label{sec:phi_choices}
-\textbf{Gaussian maps $\boldsymbol{\varphi_{Gs}}$ applied on the adjacency matrix}: $\varphi_{Gs}$ is the RFF map of the Gaussian kernel. We for each subgraph $\F$ take its vectorized adjacency matrix  $\mathbf{a}_\F=flatten(\mathbf{A}_\F)$ as input. Then:
+\textbf{Gaussian maps $\boldsymbol{\varphi_{Gs}}$ applied on the adjacency matrix}: $\varphi_{Gs}$ is the RF map of the Gaussian kernel \cite{rahimi2008random}. We for each subgraph $\F$ take its vectorized adjacency matrix  $\mathbf{a}_\F=flatten(\mathbf{A}_\F)$ as input. Then:
 \begin{equation}
 \label{eq:Gaussian_map}
     \varphi_{Gs}(\F) = \frac{1}{\sqrt{m}} \left( \sqrt{2} \cos(\mathbf{w}_j^T\mathbf{a}_\F+b_j) \right)_{j=1}^m \in \mathbb{R}^m
 \end{equation}
-where the frequencies $w_j\in \R^{k^2}$ are drawn from a Gaussian distribution with the inverse variance of the original kernel. 
+where the frequencies $\mathbf{w}_j\in \R^{k^2}$ are drawn from a Gaussian distribution with the inverse variance of the original kernel. 
 \BlankLine
-\noindent\textbf{Gaussian maps $\boldsymbol{\varphi_{Gs+Eig}}$ applied on the sorted Eigenvalues of the adjacency matrix:} instead of passing the vectorized adjacency matrix as input, we pass the vector of its sorted eigenvalues $\bm{\lambda}\in\R^k$. The motive proposing $\varphi_{Gs+Eig}$ is that it respects the isomorphism test since: 
+\noindent\textbf{Gaussian maps $\boldsymbol{\varphi_{Gs+Eig}}$ applied on the sorted eigenvalues of the adjacency matrix:} instead of passing the vectorized adjacency matrix as input, we pass the vector of its sorted eigenvalues $\bm{\lambda}\in\R^k$. The motive proposing $\varphi_{Gs+Eig}$ is that it respects the isomorphism test since: 
 i/ $\bld{\lambda}(\bld{A})=\bld{\lambda}(\bld{PAP^T})$ for any permutation matrix $\bld{P}$, 
 ii/ $F\cong F' \Rightarrow\exists \bld{P}, \bld{A}_F=P\bld{A}_{F'}P^T$.  
 Thus, $F\cong F' \Rightarrow \varphi_{Gs+Eig}(F)=\varphi_{Gs+Eig}(F')$. $\varphi_{Gs+Eig}$ maps isomorphic subgraphs to the same point in $\R^m$.
@@ -250,9 +255,9 @@ The complexities of the different mappings $\varphi$ examined in this work are s
 
 \section{Experiments}\label{sec:experiments}
 \subsection{Setup}\label{sec:setup}
-With respect to the performance and to the computation cost, we compare different choices of the map $\varphi$ in $GSA-\varphi$. We benchmark the performance of $GSA-\varphi_{OPU}$ against GIN based graph convolutional network.
+With respect to the performance and  the computation cost, we compare different choices of  map $\varphi$ in $GSA-\varphi$. We benchmark the performance of $GSA-\varphi_{OPU}$ against GIN based graph convolutional network.
 
-In all experiments except the last one, we use a synthetic dataset generated by \emph{Stochastic Block Model (SBM)} \cite{SBM}. We generate $300$ graphs, $240$ for training  and $60$ for testing. Each graph has $v=60$ nodes divided equally between six communities. Moreover, graphs are divided into two classes $\{0 , 1\}$ based on the edges distribution considered. For each class we fix two values $(p_{in} , p_{out})$ which are  the probabilities of generating an edge between any two nodes when they are in the same community and when they are in different ones, respectively. Beside, to prevent the classes being easily discriminated by the average degree of nodes as a feature, the pairs $(p_{in,i} , p_{out,i})_{i=0,1}$ are chosen so all nodes have a fixed expected average degree equal to $\mu=10$. Having one freedom degree left, we fix $p_{in,1}=0.3$, and we vary $r=(p_{in,1}/p_{in,0})$ the inter-classes similarity parameter: the closer $r$ is to $1$, the more similar both classes are, and thus the harder it is to discriminate them.
+In all experiments except the last one, we use a synthetic dataset generated by a \emph{Stochastic Block Model (SBM)} \cite{SBM}. We generate $300$ graphs, $240$ for training  and $60$ for testing. Each graph has $v=60$ nodes divided equally between six communities. Moreover, graphs are divided into two classes $\{0 , 1\}$ based on the edges distribution considered. For each class we fix two values $(p_{in} , p_{out})$ which are  the probabilities of generating an edge between any two nodes when they are in the same community and when they are in different ones, respectively. Besides, to prevent the classes from being easily discriminated by the average degree, the pairs $(p_{in,i} , p_{out,i})_{i=0,1}$ are chosen such that all nodes have a fixed expected average degree equal to $10$. Having one degree of freedom left, we fix $p_{in,1}=0.3$, and we vary $r=(p_{in,1}/p_{in,0})$ the inter-class similarity parameter: the closer $r$ is to $1$, the more similar both classes are, and thus the harder it is to discriminate them.
 
 On the other hand, D\&D is a labeled dataset of size $n=1178$ protein graphs \cite{DD_ref}. Also, nodes have 7 features each, which are not used by our algorithms, \emph{i.e.} we will try to classify the graphs just based on their structure. In what follows, unless otherwise indicated, we use uniform sampling and the adjacency matrix of subgraphs as input.
 
@@ -285,7 +290,7 @@ On the other hand, D\&D is a labeled dataset of size $n=1178$ protein graphs \ci
 \end{figure}
 
 \subsection{Choice of feature map $\varphi$}
-\textbf{Comparison of random features}: Fig \ref{fig:diff_phi}(a) shows  that $GSA-\varphi_{OPU}$ applied on adjacency matrices gives better test accuracy with sufficiently large $m$ than both $GSA-\varphi_{Gs}$ applied on adjacency matrices or $GSA-\varphi_{Gs+Eig}$ applied on its sorted eigenvalues. On the contrary, $GSA-\varphi_{Gs+Eig}$ performs best with a low number of random features, but increasing this number does not really improve the result and it is over-matched at high $m$. A possible justification is that the Eigenvalues of the adjacency matrix lose information about the subgraphs, even though respecting the isomorphism means that we are working with a smaller histogram and less random features are required.
+\textbf{Comparison of random features}: Fig \ref{fig:diff_phi}(a) shows  that $GSA-\varphi_{OPU}$ applied on adjacency matrices gives better test accuracy with sufficiently large $m$ than both $GSA-\varphi_{Gs}$ applied on adjacency matrices or $GSA-\varphi_{Gs+Eig}$ applied on its sorted eigenvalues. On the contrary, $GSA-\varphi_{Gs+Eig}$ performs best with a low number of random features, but increasing this number does not really improve the result and it is over-matched at high $m$. A possible justification is that the eigenvalues of the adjacency matrix lose information about the subgraphs, even though respecting the isomorphism means that we are working with a smaller histogram and less random features are required.
 
 \noindent\textbf{Comparing $GSA-\varphi_{OPU}$ to $GSA-\match$:} from Fig \ref{fig:diff_phi}(b) we observe that  with the same limited number of samples $s$, $GSA-\varphi_{OPU}$ clearly outperforms the approximated graphlet kernel $GSA-\match$, so we conclude that $GSA-\varphi_{OPU}$ is more adapted in this case than the traditional graphlet kernel.
 
@@ -363,7 +368,7 @@ In Fig \ref{fig:DD}, we have the test accuracy with varying value of $m$ and fix
 
 \section{Conclusion}
 \label{sec:Conclusion}
-We proposed a family of algorithms that combines graph sampling with efficient mappings. Then, we proposed to choose this mapping as kernel random maps, and showed a concentration of the random embedding around the MMD metric. Finally, while classical random features still require expensive matrix-vector multiplication, we used optical random features projections, which can be computed in $\mathcal{O}(1)$ to get the algorithm's fastest version. Our Experiments showed that it is significantly faster than traditional graphlet kernel and generally performs better while concentrating around the MMD metric. In our settings, it even outperformed a particular graph convolutional network on graph classification.
+We proposed a family of algorithms that combines graphlet sampling with efficient mappings. Then, we proposed to choose this mapping as kernel random maps, and showed a concentration of the random embedding around the MMD metric. Finally, while classical random features still require expensive matrix-vector multiplication, we used optical random features projections, which can be computed in $\mathcal{O}(1)$ to get the algorithm's fastest version. Our Experiments showed that it is significantly faster than traditional graphlet kernel and generally performs better while concentrating around the MMD metric. In our settings, it even outperformed a particular graph convolutional network on graph classification.
 
  A major point left open to be analyzed is how to use our algorithm to classify graphs with node features. One promising possibility is to use our algorithm to generate features embeddings on the graph level, and then feed these embeddings with the nodes' features to a deep neural network. Doing this, we take advantage of the speed of both our algorithm and GPUs. On the theoretical side, the properties of the MMD metric could be further analyzed on particular models of graphs to get a concentration with higher certainty. 
 

@@ -74,6 +74,13 @@ Ali Rahimi and Benjamin Recht,
 \newblock in {\em Advances in neural information processing systems}, 2008, pp.
   1177--1184.
 
+\bibitem{MMD}
+Dougal~J Sutherland, Hsiao-Yu Tung, Heiko Strathmann, Soumyajit De, Aaditya
+  Ramdas, Alex Smola, and Arthur Gretton,
+\newblock ``Generative models and model criticism via optimized maximum mean
+  discrepancy,''
+\newblock {\em arXiv preprint arXiv:1611.04488}, 2016.
+
 \bibitem{saade_opu}
 Alaa Saade, Francesco Caltagirone, Igor Carron, Laurent Daudet, Ang{\'e}lique
   Dr{\'e}meau, Sylvain Gigan, and Florent Krzakala,
