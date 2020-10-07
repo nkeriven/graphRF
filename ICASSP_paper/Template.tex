@@ -273,17 +273,11 @@ On the other hand, D\&D is a labeled dataset of size $n=1178$ protein graphs \ci
 \hfill
 \begin{minipage}[b]{0.48\linewidth}
   \centering
-  \centerline{\includegraphics[width=4.3cm]{figs/gk_vs_opu.pdf}}
+  \centerline{\includegraphics[width=4.3cm]{figs/computational_comp.pdf}}
 %  \vspace{1.5cm}
-  \centerline{(b) $\varphi_{OPU}$ Vs. $\match$}\medskip
+  \centerline{(b) Computation cost}\medskip
 \end{minipage}
 %
-\begin{minipage}[b]{1.0\linewidth}
-  \centering
-  \centerline{\includegraphics[width=5cm]{figs/computational_comp.pdf}}
-%  \vspace{2.0cm}
-  \centerline{(c) Computation cost}\medskip
-\end{minipage}
 \caption{Comparing different $\varphi$ maps in $GSA-\varphi$. (a) test accuracy when using RF maps with $k=6$ while varying $m$. (b) test accuracy of $GSA-\varphi_{OPU}$ and $GSA-\match$  fixing $k=5$ while varying $r$. (c) Computation time as a function of $k$. If not specified:  $r=1.1$, $s=2000$, $m=5000$ and the Gaussian map variance $\sigma^2=0.01$.}
 \label{fig:diff_phi}
 %
@@ -324,12 +318,6 @@ We see that $GSA-\varphi_{OPU}$ with RW  performs better than the GIN model when
   \centerline{(b) $\varphi_{OPU}$\& RW sampling}\medskip
 \end{minipage}
 %
-\begin{minipage}[b]{1.0\linewidth}
-  \centering
-  \centerline{\includegraphics[width=5cm]{figs/GCN.pdf}}
-%  \vspace{2.0cm}
-  \centerline{(c) GIN-based GCN model}\medskip
-\end{minipage}
 \caption{Comparing test accuracies of $GSA-\varphi_{OPU}$ and GIN-based GCN network when varying the problem difficulty $r$. We used $GSA-\varphi_{OPU}$ with uniform sampling in (a) and with random walk sampling in (b). In both cases: $s=2000$ and $m=5000$. (c) The model consists of 5 GIN layers then 2 fully connected layers, the dimensions of hidden layers: 4.}
 \label{fig:GCN}
 %
@@ -373,7 +361,7 @@ We proposed a family of algorithms that combines graphlet sampling with efficien
  A major point left open to be analyzed is how to use our algorithm to classify graphs with node features. One promising possibility is to use our algorithm to generate features embeddings on the graph level, and then feed these embeddings with the nodes' features to a deep neural network. Doing this, we take advantage of the speed of both our algorithm and GPUs. On the theoretical side, the properties of the MMD metric could be further analyzed on particular models of graphs to get a concentration with higher certainty. 
 
 
-\pagebreak
+
 
 % References should be produced using the bibtex program from suitable
 % BiBTeX files (here: strings, refs, manuals). The IEEEbib.bst bibliography

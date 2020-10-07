@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.17)  5 OCT 2020 01:03
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.17)  7 OCT 2020 21:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -382,59 +382,43 @@ File: figs/phi_comparison.pdf Graphic file (type pdf)
 <use figs/phi_comparison.pdf>
 Package pdftex.def Info: figs/phi_comparison.pdf  used on input line 268.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
-<figs/gk_vs_opu.pdf, id=28, 433.62pt x 289.08pt>
-File: figs/gk_vs_opu.pdf Graphic file (type pdf)
-<use figs/gk_vs_opu.pdf>
-Package pdftex.def Info: figs/gk_vs_opu.pdf  used on input line 276.
-(pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
-<figs/computational_comp.pdf, id=29, 433.62pt x 289.08pt>
+<figs/computational_comp.pdf, id=28, 433.62pt x 289.08pt>
 File: figs/computational_comp.pdf Graphic file (type pdf)
 <use figs/computational_comp.pdf>
-Package pdftex.def Info: figs/computational_comp.pdf  used on input line 283.
-(pdftex.def)             Requested size: 142.26378pt x 94.8409pt.
+Package pdftex.def Info: figs/computational_comp.pdf  used on input line 276.
+(pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 [3]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-<figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf, id=36, 433.62pt x 289.08pt>
+<figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf, id=35, 433.62pt x 289.08pt>
 
 File: figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf Graphic file (type pdf)
 
 <use figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf>
 Package pdftex.def Info: figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf  use
-d on input line 315.
+d on input line 309.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
-<figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf, id=37, 433.62pt x 289.08
+<figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf, id=36, 433.62pt x 289.08
 pt>
 File: figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf Graphic file (type p
 df)
 <use figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf>
 Package pdftex.def Info: figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf  
-used on input line 322.
+used on input line 316.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
-<figs/GCN.pdf, id=38, 433.62pt x 289.08pt>
-File: figs/GCN.pdf Graphic file (type pdf)
-<use figs/GCN.pdf>
-Package pdftex.def Info: figs/GCN.pdf  used on input line 329.
-(pdftex.def)             Requested size: 142.26378pt x 94.8409pt.
-<figs/DD.pdf, id=39, 433.62pt x 289.08pt>
+<figs/DD.pdf, id=37, 433.62pt x 289.08pt>
 File: figs/DD.pdf Graphic file (type pdf)
 <use figs/DD.pdf>
-Package pdftex.def Info: figs/DD.pdf  used on input line 343.
+Package pdftex.def Info: figs/DD.pdf  used on input line 331.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
-<figs/Reddit.pdf, id=40, 433.62pt x 289.08pt>
+<figs/Reddit.pdf, id=38, 433.62pt x 289.08pt>
 File: figs/Reddit.pdf Graphic file (type pdf)
 <use figs/Reddit.pdf>
-Package pdftex.def Info: figs/Reddit.pdf  used on input line 351.
+Package pdftex.def Info: figs/Reddit.pdf  used on input line 339.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
- [4 <./figs/phi_comparison.pdf> <./figs/gk_vs_opu.pdf
-
-pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figs/gk_vs_opu.pdf): PDF i
-nclusion: multiple pdfs with page group included in a single page
-> <./figs/computational_comp.pdf
+ [4 <./figs/phi_comparison.pdf> <./figs/computational_comp.pdf
 
 pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figs/computational_comp.pd
 f): PDF inclusion: multiple pdfs with page group included in a single page
@@ -448,10 +432,6 @@ arity_graphlet_size.pdf): PDF inclusion: multiple pdfs with page group included
 pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figs/LightOn_adj_SBM_simil
 arity_graphlet_size_RW.pdf): PDF inclusion: multiple pdfs with page group inclu
 ded in a single page
-> <./figs/GCN.pdf
-
-pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figs/GCN.pdf): PDF inclusi
-on: multiple pdfs with page group included in a single page
 > <./figs/DD.pdf
 
 pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figs/DD.pdf): PDF inclusio
@@ -460,18 +440,12 @@ n: multiple pdfs with page group included in a single page
 
 pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figs/Reddit.pdf): PDF incl
 usion: multiple pdfs with page group included in a single page
->]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-
-(./Template.bbl
+>] (./Template.bbl
 Underfull \hbox (badness 3746) in paragraph at lines 4--8
 []\OT1/ptm/m/n/10 Giannis Niko-lent-zos, Polykar-pos Mela-di-anos, and
  []
 
-[5]) [6
-
-]
+) [5]
 \openout2 = `app.aux'.
 
  (./app.tex
@@ -490,7 +464,7 @@ r/m/n/10 ) \OMS/cmsy/m/n/10 ^^@ \U/msb/m/n/10 E[]\OML/cmm/m/it/10 '\OT1/cmr/m/n
 /10 (\OML/cmm/m/it/10 F[]\OT1/cmr/m/n/10 )\OMS/cmsy/m/n/10 k$
  []
 
-) [7
+) [6
 
 ] (./Template.aux (./app.aux))
 
@@ -498,10 +472,10 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 4587 strings out of 480608
- 65907 string characters out of 5903630
+ 4575 strings out of 480608
+ 65651 string characters out of 5903630
  333148 words of memory out of 5000000
- 20340 multiletter control sequences out of 15000+600000
+ 20330 multiletter control sequences out of 15000+600000
  560094 words of font info for 90 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  34i,17n,45p,1067b,478s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -527,10 +501,10 @@ mf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2020
 t/fonts/type1/urw/times/utmbi8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/t
 ype1/urw/times/utmr8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/urw/t
 imes/utmri8a.pfb>
-Output written on Template.pdf (7 pages, 344036 bytes).
+Output written on Template.pdf (6 pages, 326402 bytes).
 PDF statistics:
- 474 PDF objects out of 1000 (max. 8388607)
- 123 compressed objects within 2 object streams
+ 401 PDF objects out of 1000 (max. 8388607)
+ 109 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
- 41 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 31 words of extra memory for PDF output out of 10000 (max. 10000000)
 
