@@ -25,7 +25,7 @@
 
 % Title.
 % ------
-\title{Fast graph classifier with optical random features}
+\title{Fast graph kernel with optical random features}
 %
 % Single address.
 % ---------------
@@ -59,9 +59,8 @@
 \maketitle
 %
 \begin{abstract}
-Graph Classification is the problem of mapping graphs to the classes they belong to. The graphlet kernel is a classical method in graph classification. However, it suffers from high computation cost due to the isomorphism test it includes. We propose a generic algorithm that mainly replaces the isomorphism test with a user-defined mapping. 
-This algorithm computes a feature vector for each graph. More importantly, we incorporate  \emph{optical processing units (OPUs)} technology by choosing the optical random features map. We show that OPUs complete  such mapping in \emph{ light-speed}. Besides, We prove theoretically that using the OPU is effective in graph classification. Finally, we support this with  the necessary experiments.
-
+%Graph Classification is the problem of mapping graphs to the classes they belong to.
+The graphlet kernel is a classical method in graph classification. In its most generic version, it however suffers from a high computation cost due to the isomorphism test it includes. As a generic proxy, the latter can be replaced with a user-defined mapping that computes various graph characteristics, however usually at the cost of losing information. In this paper, we propose to leverage \emph{kernel random features} within the graphlet framework, and establish a theoretical link with a mean kernel metric. If, at first glance, this method does not necessarily allow to reduce the computational complexity of the graphlet kernel, we then incorporate \emph{optical} random features that can complete such computation in \emph{constant time}. Experiments shows that the resulting algorithm is orders of magnitude faster that the graphlet kernel for the same, or better, accuracy.
 \end{abstract}
 %
 \begin{keywords}
@@ -70,26 +69,36 @@ Optical random features, Graph kernels
 %
 \section{Introduction}
 \label{sec:intro}
-Graph structures are used to model a set of objects and their interactions. In biology for instance,  proteins can be modeled as graphs where amino acids are nodes and the chemical links between them are edges \cite{protein_application}. In social networks, each post thread is modeled with a graph whose nodes are users, where an edge between two nodes exists if one replies to the other's comment on that thread \cite{graph_soc_net}.  
+In mathematics and data science, graphs are used to model a set of objects (the \emph{nodes}) and their interactions (the \emph{edges}). %Having \emph{a priori} known graph classes, \emph{graph classification} consists in predicting the class of an entire graph.
+Given a set of pre-labeled graphs $(\mathcal{X}=\{\G_1,\ldots,\G_n\}, \mathcal{Y}=\{y_1,\ldots,y_n\})$, where each graph $\G_i$ belongs to the class with label $y_i$, graph classification consists in designing an algorithm that outputs the class label of a new graph.
+%
+For instance, proteins can be modeled as graphs: amino acids are nodes and the chemical links between them are edges. They can be classified to enzymes and non-enzymes \cite{protein_application}.
+%
+In social networks analysis, post threads can be modeled with graphs whose nodes are users and edges are replies to others' comment \cite{graph_soc_net}. One task is then to discriminate between discussion-based and question/answer-based threads \cite{class_Reddit}.
+% where an edge between two nodes exists if one replies to the other's comment on that thread 
+ %For the two examples, , as in the D\&D dataset. In social networks, , as in Reddit-Binary dataset.
+%
+In addition to the graph structure, nodes and edges may have extra features. While it has been shown that node features are important to obtain high classification performance \cite{node_features}, here we focus on the case where one has only access to the graph structure.%\BlankLine
 
-Having \emph{a priori} known graph classes, the graph classification task is to predict the class of any given graph. In biology,  proteins are to be classified to enzymes and to non-enzymes \cite{protein_application}, as in the D\&D dataset. In social networks, one task is to discriminate between discussion-based and question/answer-based threads \cite{class_Reddit}, as in Reddit-Binary dataset.
 
-In addition to the graph structure, nodes and edges may have extra features that can be used in classifying graphs. It has been shown that node features are important to have high performance \cite{node_features}. Here, we focus on the slightly harder case where one has only access to the graph structure.
+%\noindent\textbf{Related work.}
+Structure-based graph classification has been tackled with many algorithms. Frequent subgraphs based algorithms \cite{frequent_subgraphs} analyze the graph dataset $\mathcal{X}$ to catch the frequent and discriminative subgraphs and use them as features. Kernel-based algorithms \cite{kriege_graph_kernels} can be used by defining similarity functions (kernels) between graphs. An early and popular example is the \emph{graphlet kernel}, which computes frequencies of subgraphs. It is however known to be quite costly to compute \cite{graphlet_kernel}, in particular due to the presence of graph isomorphism tests. While acceleration can be provided in particular cases \cite{Fast_graphlet}, the general case remains open.
+Finally, Graph neural networks (GNNs) \cite{GNN_bruna, GNN_review} have recently become very popular in graph machine learning. They are however known to exhibit limited performance when node features are unavailable \cite{GNN_limits}. %Recently, a particular model called GIN (Graph Isomorphism Network) was developed and provided high performance classification.
+%\BlankLine
 
-Moreover, we place ourselves in the context of \emph{supervised learning}, where we have access to a set of pre-labeled graphs $(\mathcal{X}=\{\G_1,\ldots,\G_n\}, \mathcal{Y}=\{y_1,\ldots,y_n\})$. Each graph $\G_i$ is a \emph{a priori} known to belong to the class with label $y_i$. The graph classification problem is: given this prior information, design an algorithm that, given in input a new graph, outputs the label of the class to which it belongs.  \BlankLine
-
-\noindent \textbf{Related work}
-Structure-based graph classification has been tackled using many algorithms. Frequent subgraphs based algorithms, gSpan method \cite{frequent_subgraphs} for instance, perform a prohibitive-cost analysis on the graph dataset $\mathcal{X}$ to catch the frequent and discriminative subgraphs, then use them as features. Graph kernel-based algorithms \cite{kriege_graph_kernels} compute fixed representation for graphs by defining the kernel as a similarity function between graphs. One example is \emph{the graphlet kernel}, which is an efficient method in the literature but is prone to high computation cost \cite{graphlet_kernel}.
-Graph convolutional networks (GCNs) are used to solve graph classification too. Recently, a particular model called GIN (Graph Isomorphism Network) was developed and provided high performance classification \cite{GCN_powerful}. \BlankLine
-
-\noindent\textbf{Contribution:} Random features are an computationally efficient method to approximate kernel functions which satisfy some conditions \cite{RF_1}. Optical Processing Units (OPUs) is a recently developed hardware that computes optical random features in light speed. On the other hand, the graphlet kernel represents a graph by how many times graphs of a smaller size occur in it. This kernel includes the isomorphism test in the counting process which makes it computationally expensive. Can we leverage OPUs computations to reduce the computational complexity of a combinatorial problem like the graphlet kernel ? We show, empirically and theoretically, that yes we can do that to obtain fast and efficient graph classifier. 
+%\noindent\textbf{Contribution:}
+In kernel methods, random features are an efficient method to approximate certain kernel functions \cite{Rahimi, RF_1}. Recently, it has been shown that \emph{optical computing} can be leveraged to compute such random features in \emph{constant time} in \emph{any dimension} -- within the limitations of the current hardware, here referred to as Optical Processing Units (OPUs).
+%On the other hand, the graphlet kernel represents a graph by how many times graphs of a smaller size occur in it. This kernel includes the isomorphism test in the counting process which makes it computationally expensive.
+The main goal of this paper is to provide a proof-of-concept answer to the following question: can leverage OPUs computations be used to reduce the computational complexity of a combinatorial problem like the graphlet kernel? Drawing on a connection with mean kernels and Maximum Mean Discrepancy (MMD) \cite{gretton}, we show, empirically and theoretically, that a fast and efficient graph classifier can indeed be obtained with OPU computations.
 
 \section{Background}
 \label{sec:background}
-\subsection{The graphlet kernel}\label{sec:graphlet_kernel}
-First, we present the concepts necessary to define the graphlet kernel. We represent a graph  of size $v$ by the adjacency matrix $\mathbf{A}\in \mathbb{R}^{v\times v}$,  which has $a_{i,j} =1$ if there is an edge between nodes $\{i,j\}$ and $0$ otherwise. Two graphs are said to be isomorphic ($\G\cong \G')$ iff we can permute the nodes' labels of one such that their adjacency matrices are equal \cite{isomorphism}. 
+%\subsection{The graphlet kernel}\label{sec:graphlet_kernel}
+First, we present the concepts necessary to define the graphlet kernel. We represent a graph of size $v$ by the adjacency matrix $\mathbf{A}\in \{0,1\}^{v\times v}$, such that $a_{i,j} =1$ if there is an edge between nodes $\{i,j\}$ and $0$ otherwise. Two graphs are said to be isomorphic ($\G\cong \G')$ if we can permute the nodes' labels of one such that their adjacency matrices are equal \cite{isomorphism}. 
 
-We denote by  $\mathfrak{H}=\{\phlet_1,..., \phlet_{N_k}\}$  the set of all non-isomorphic graphs, also called graphlets, of size $k$. We define the matching function $\varphi_k^{match}(\mathcal{F}) = \left[ 1_{(\mathcal{F} \cong \phlet_i)}\right]_{i=1}^{N_k} \in \{0,1\}^{N_k}$, where $1_\Omega$ is the indicator function. In words, $\match(\mathcal{F})$ is a Boolean vector of dimension $N_k$ which has a 1 in the coordinate $i$ if $\mathcal{F}\cong \phlet_i$, and $0$ otherwise. 
+In this paper, we will, depending on the context, manipulate two different notions of $k$-graphlets: with or without discriminating isomorphism. We denote by $\mathfrak{H}=\{\phlet_1,..., \phlet_{N_k}\}$ the set of all non-isomorphic graphs of size $k$, and $\bar\mathfrak{H}=\{\phlet_1,..., \phlet_{\bar N_k}\}$ with $\bar N_k = 
+
+We define the matching function $\varphi_k^{match}(\mathcal{F}) = \left[ 1_{(\mathcal{F} \cong \phlet_i)}\right]_{i=1}^{N_k} \in \{0,1\}^{N_k}$, where $1_\Omega$ is the indicator function. In words, $\match(\mathcal{F})$ is a Boolean vector of dimension $N_k$ which has a 1 in the coordinate $i$ if $\mathcal{F}\cong \phlet_i$, and $0$ otherwise. 
 Let $\mathfrak{F}_\G=\{\mathcal{F}_1,\mathcal{F}_2,\ldots,\}$ be the set of subgraphs induced by all size-k subsets of nodes  in a graph $\G$. We assign each graph with the following representation vector, called k-spectrum:
 \begin{equation}
 \mathbf{f}_\mathcal{G}=\frac{1}{|\mathfrak{F}_\mathcal{G}|}\sum_{\mathcal{F}\in\mathfrak{F}_\mathcal{G}} \match (\mathcal{F}) \in \R ^{N_k}
