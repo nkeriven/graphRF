@@ -96,30 +96,40 @@ The main goal of this paper is to provide a proof-of-concept answer to the follo
 %\subsection{The graphlet kernel}\label{sec:graphlet_kernel}
 First, we present the concepts necessary to define the graphlet kernel. We represent a graph of size $v$ by the adjacency matrix $\mathbf{A}\in \{0,1\}^{v\times v}$, such that $a_{i,j} =1$ if there is an edge between nodes $\{i,j\}$ and $0$ otherwise. Two graphs are said to be isomorphic ($\G\cong \G')$ if we can permute the nodes' labels of one such that their adjacency matrices are equal \cite{isomorphism}. 
 
-In this paper, we will, depending on the context, manipulate two different notions of $k$-graphlets: with or without discriminating isomorphism. We denote by $\mathfrak{H}=\{\phlet_1,..., \phlet_{N_k}\}$ the set of all non-isomorphic graphs of size $k$, and $\bar\mathfrak{H}=\{\phlet_1,..., \phlet_{\bar N_k}\}$ with $\bar N_k = 
+\subsection{Isomorphic graphlets}
 
-We define the matching function $\varphi_k^{match}(\mathcal{F}) = \left[ 1_{(\mathcal{F} \cong \phlet_i)}\right]_{i=1}^{N_k} \in \{0,1\}^{N_k}$, where $1_\Omega$ is the indicator function. In words, $\match(\mathcal{F})$ is a Boolean vector of dimension $N_k$ which has a 1 in the coordinate $i$ if $\mathcal{F}\cong \phlet_i$, and $0$ otherwise. 
-Let $\mathfrak{F}_\G=\{\mathcal{F}_1,\mathcal{F}_2,\ldots,\}$ be the set of subgraphs induced by all size-k subsets of nodes  in a graph $\G$. We assign each graph with the following representation vector, called k-spectrum:
+In this paper, we will, depending on the context, manipulate two different notions of $k$-graphlets (that is, small graphs of size $z$), with or without discriminating isomorphic graphlets. We denote by $\bar{\mathfrak{H}}=\{\bar{\phlet}_1,..., \bar{\phlet}_{\bar N_k}\}$ with $\bar{N}_k = 2^{\frac{k(k-1)}{2}}$ the set of all size-$k$ graphs, where isomorphic graphs are counted multiple times, and $\mathfrak{H}=\{\phlet_1,..., \phlet_{N_k}\} \subset \bar{\mathfrak{H}}$ the set of all non-isomorphic graphs of size $k$. Its size $N_k$ has a (quite verbose) closed-from expression \cite{oeid}, but is still exponential in $k$.
+%
+In the course of this paper, we shall manipulate mappings $\varphi(\mathcal{H})$ and probability distributions (histograms) over graphlets. When the mapping $\varphi$ is \emph{permutation-invariant}, then the underlying space is $\mathfrak{H}$, otherwise it is $\bar{\mathfrak{H}}$. Using one or the other obeys a tradeoff: $\bar{\mathfrak{H}}$ is larger, while $\mathfrak{H}$ may necessitate costly isomorphism tests. In any case, assuming each isomorphic copies has equal probability, a probability distribution over $\bar{\mathfrak{H}}$ can easily be transformed into one over $\mathfrak{H}$, and both versions contains the same amount of information.
+
+\subsection{The graphlet kernel}
+
+The traditional graphlet kernel is defined as follows. We define the matching function $\varphi_k^{match}(\mathcal{F}) = \left[ 1_{(\mathcal{F} \cong \phlet_i)}\right]_{i=1}^{N_k} \in \{0,1\}^{N_k}$, where $1_\Omega$ is the indicator function and $\mathcal{F}$ is a graph of size $k$. In words, $\match(\mathcal{F})$ is a one-hot vector of dimension $N_k$ identifying $\mathcal{F}$ up to isomorphism. Note that the cost of evaluating $\varphi_k^{match}$ once is $O\left(N_k C^{\cong}_k\right)$, where $C^{\cong}_k$ is the cost of the isomorphism test between two graphs of size $k$, for which no polynomial algorithm is known \cite{isomorphism_np}
+
+Given a graph $\G$, let $\mathfrak{F}_\G=\{\mathcal{F}_1,\mathcal{F}_2,\ldots,\}$ be the set of subgraphs induced by all size-$k$ subsets of nodes. The following representation vector is called the $k$-spectrum of $\G$:
 \begin{equation}
-\mathbf{f}_\mathcal{G}=\frac{1}{|\mathfrak{F}_\mathcal{G}|}\sum_{\mathcal{F}\in\mathfrak{F}_\mathcal{G}} \match (\mathcal{F}) \in \R ^{N_k}
+\mathbf{f}_\G=\frac{1}{|\mathfrak{F}_\mathcal{G}|}\sum_{\mathcal{F}\in\mathfrak{F}_\mathcal{G}} \match (\mathcal{F}) \in \R^{N_k}
 \end{equation}
-For two graphs $\G,\G'$, the graphlet kernel is defined by the inner product $\bld{f}_\G^T\bld{f}_{\G'}$. The graphlet kernel performs well especially with a sufficiently large value of $k$ \cite{graphlet_kernel}. However, in each graph $\G$ of size $v$, the computation cost to compute $\bld{f}_\G$ is $ C_{gk}= \mathcal{O}\left(\tbinom{v}{k} N_k C^{\cong}_k\right)$, where $C^{\cong}_k$ is the cost of the isomorphism test between two graphs of size $k$. This cost is expensive due to: i/ $\binom{v}{k}$ explodes as $v$ or $k$ increase, ii/ $N_k$ is exponential in $k$, iii/ yet there is no known method to test isomorphism in polynomial time of $k$ \cite{isomorphism_np}. 
+For two graphs $\G,\G'$, the graphlet kernel is defined as $\bld{f}_\G^T\bld{f}_{\G'}$. %The graphlet kernel performs well especially with a sufficiently large value of $k$ \cite{graphlet_kernel}. However, in each graph $\G$ of size $v$,
+For a graph of size $v$, the computation cost of $\mathbf{f}_\G$ is $C_{gk}= \mathcal{O}\left(\tbinom{v}{k}N_k C^{\cong}_k\right)$. This cost is usually prohibitively expensive, since each three terms are exponential in $k$.
 
-Usually, uniform graphlet sampling is used to accelerate the graphlet kernel \cite{graphlet_kernel}, where sampling a size-k subgraph means: first we uniformly at random choose $k$ nodes from the graph, then we sample the subgraph induced by those  nodes. This yields that each sample follow a uniform distribution over $\mathfrak{F}_\G$.
-
-Knowing this, the $k$-spectrum $\bld{f}_\G$ can be interpreted as follows: if one samples a subgraph from $\mathcal{G}$, then one has a probability $(\bld{f}_\G)_i$ of obtaining $\phlet_i$, \emph{i.e.}: $	\label{eq:histo_unif}
-	\mathbf{f}_\mathcal{G} = \mathbb{E}_{F \sim {\rm unif}} ~\varphi^{match}_k(F)$. 
-	It is thus natural to approach $\mathbf{f}_\mathcal{G}$ with a sample average, where by sampling $s$ subgraphs of size $k$ to form the collection 
-$\hat{\mathfrak{F}}_\G=\{F_1,...,F_s\}$, the estimator:
+Subgraph sampling is generally used as a first step to accelerate (and sometimes modify) the graphlet kernel \cite{graphlet_kernel}. Given a graph $\G$, we denote by $S_k(\G)$ a sampling process that yields a random subgraph of $\G$, of which there exists many variants \cite{lesco}. Then, sampling $s$ subgraphs $\{F_1,...,F_s\}$ of size $k$ from $S_k(\G)$ $i.i.d.$, we define the estimator:
 \begin{align}
 	\label{eq:fhat_unif}
-	\hat{\mathbf{f}}_\mathcal{G} =\frac{1}{s}\sum_{F\in\hat{\mathfrak{F}}_\G} \varphi^{match}_k(F).
+	\hat{\mathbf{f}}_{\mathcal{G},S_k} =\frac{1}{s}\sum_{F\in\hat{\mathfrak{F}}_\G} \varphi^{match}_k(F).
 \end{align}
-verifies by the law of large numbers that $\hat{\mathbf{f}}_\G \xrightarrow[s \to \infty]{} \mathbf{f}_\mathcal{G}$ with probability $1$.
+and its expectation $\mathbf{f}_{\mathcal{G},S} = \mathbb{E}_{F \sim S_k(\G)} ~\varphi^{match}_k(F)$, which is a probability distribution over the set of graphlets $\mathfrak{H}$. In this framework, the full graphlet kernel $\mathbf{f}_\G = \mathbf{f}_{\G, S^{unif}}$ corresponds to $S_k$ being \emph{uniform sampling}, that is, independently sampling $k$ nodes of $\G$. %In fact, there exist many different sampling techniques $S_k$, each follows a specific random process in sampling the $k$ nodes from a graph $\G$. 
+Nevertheless, different sampling process $S_k$ will result in different histograms $\bld{f}_{\G,S_k}$ \cite{leskovec2006sampling}, which we will also refer to as graphlet kernel. In this paper, we will also use the random walk (RW) sampler, which, unlike uniform sampling, tends to sample connected subgraphs, which may be more informative about the graph structure. 
 
-The computation cost per graph of the  graphlet kernel with graph sampling is $C_{gk + gs}= \mathcal{O}\left(s C_S N_k C^{\cong}_k\right)$, where $C_S$ is the cost of sampling one subgraph. Although the term $\binom{v}{k}$ doesn't exist  in this cost, still for a specific certainty in estimating $\bld{f}_\G$, the required number of samples $s$ must be proportional to $N_k$ \cite{graphlet_kernel}. So this version is still expensive especially when $k$ is large. 
+The computation cost per graph of the graphlet kernel with graph sampling is $C_{gk + gs}= \mathcal{O}\left(s C_S N_k C^{\cong}_k\right)$, where $C_S$ is the cost of sampling one subgraph. %Although the term $\binom{v}{k}$ doesn't exist  in this cost, still 
+For a fixed error in estimating $\bld{f}_{\G,S}$, the required number of samples $s$ is generally proportional to $N_k$ \cite{graphlet_kernel}, which is still expensive when $k$ is large. 
 
-In fact, there exist many different sampling techniques $S_k$, each follows a specific random process in sampling the $k$ nodes from a graph $\G$. As a result, subgraphs sampled with a technique different from the uniform sampling will have a different histogram $\bld{f}_{\G,S_k}$ than the one defined by $\bld{f}_\G$ \cite{leskovec2006sampling}. Such sampling technique is the random walk (RW) sampler. Unlike uniform sampling, RW tends to sample connected  subgraphs, which are more informative about the graph structure. 
+%where sampling a size-k subgraph means: first we uniformly at random choose $k$ nodes from the graph, then we sample the subgraph induced by those  nodes. This yields that each sample follow a uniform distribution over $\mathfrak{F}_\G$.
+
+%Knowing this, the $k$-spectrum $\bld{f}_\G$ can be interpreted as follows: if one samples a subgraph from $\mathcal{G}$, then one has a probability $(\bld{f}_\G)_i$ of obtaining $\phlet_i$, \emph{i.e.}: $	\label{eq:histo_unif}
+%	\mathbf{f}_\mathcal{G} = \mathbb{E}_{F \sim {\rm unif}} ~\varphi^{match}_k(F)$. 
+%	It is thus natural to approach $\mathbf{f}_\mathcal{G}$ with
+%verifies by the law of large numbers that $\hat{\mathbf{f}}_\G \xrightarrow[s \to \infty]{} \mathbf{f}_\mathcal{G}$ with probability $1$.
 
 
 \iffalse
@@ -154,10 +164,10 @@ where $ \xi_\mathbf{w}(\mathbf{x})=\sqrt{2}cos(\mathbf{w}^T\mathbf{x}+b)$ such t
 such that $\varphi(\mathbf{x})^*\varphi(\mathbf{x}')=\frac{1}{m} \sum_{j=1}^m \xi_{\mathbf{w}_j}(\mathbf{x})^*\xi_{\mathbf{w}_j}(\mathbf{x}')$, which, by Hoeffding's inequality, converges exponentially in $m$ to $\kappa(\mathbf{x},\mathbf{x}')$.
 \fi
 
-\section{Method} \label{ssed to get a lowerec:pagestyle}
+\section{Graphlet kernel with optical maps} \label{ssed to get a lowerec:pagestyle}
 \subsection{Proposed algorithm}
 \label{sec:algo}
-\begin{algorithm}[h]
+\begin{algorithm}[h]\label{alg:gsa}
 \DontPrintSemicolon
   \KwInput{labeled graph dataset $\mathcal{X}=(\G_i,y_i)_{i=1,\ldots,n}$}
   \tools{Graphlet sampler $S_k$, a function $\varphi$, linear classifier (ex. SVM) }\\
@@ -181,18 +191,21 @@ such that $\varphi(\mathbf{x})^*\varphi(\mathbf{x}')=\frac{1}{m} \sum_{j=1}^m \x
 \caption{GSA-$\varphi$ generic algorithm}
 \end{algorithm}
 
- We propose to replace $\match$ with a user-defined map $\varphi$, and to replace the uniform sampler with a user-chosen one like the RW sampler.  This makes it possible to deploy the OPU technology with this algorithm. We refer to this framework as \emph{graphlet sampling and Averaging $GSA-\varphi$}, and its cost per graph for a specific $\varphi$ is $C_{GSA-\varphi}= \mathcal{O}\left(s C_S C_{\varphi}\right)$, where $C_{\varphi}$ is the cost of applying $\varphi$ on one graphlet. 
+In this paper, we propose to deal with the main remaining bottleneck of the graphlet kernel, that is, the function $\match$. We therefore define a framework where it is replaced with a user-defined map $\varphi: \bar{\mathfrak{H}} \to \mathbb{R}^m$. %, and to replace the uniform sampler with a user-chosen one like the RW sampler.  
+%This makes it possible to deploy the OPU technology with this algorithm. 
+The resulting algorithm (Alg.~\ref{alg:gsa}) is referred to as \emph{graphlet sampling and Averaging $GSA-\varphi$}, and its cost per graph for a specific $\varphi$ is $C_{GSA-\varphi}= \mathcal{O}\left(s C_S C_{\varphi}\right)$, where $C_{\varphi}$ is the cost of applying $\varphi$ on one graphlet. 
 
-The function $\varphi$ here maps each subgraph to an $m$-dimensional space $\mathbb{R}^m$. Note that choosing $\varphi = \match$ and $S_k$ as the uniform sampler, GSA-$\match$ turns out to be the  graphlet kernel with graphlet sampling.  We see next that choosing  $\varphi$ as random maps is both fast and efficient.
+%The function $\varphi$ here maps each subgraph to an $m$-dimensional space $\mathbb{R}^m$.
+Note that choosing $\varphi = \match$ and $S_k$ as the uniform sampler, GSA-$\match$ turns out to be the  graphlet kernel with graphlet sampling.  We see next that choosing $\varphi$ as \emph{kernel random maps} is both fast and efficient.
 
 \subsection{Efficiency of kernel random features with $GSA-\varphi$} 
 \label{sec:MMD}
 A kernel $\kappa$ associated to a random features (RF) decomposition is a positive definite function of two inputs that can be decomposed  as follows   \cite{rahimi2008random}:
 \begin{equation}
 \label{eq:RF_decomposition}
-\kappa(\mathbf{x},\mathbf{x}')=\mathbb{E}_{\mathbf{w}\sim p}[ \xi_\mathbf{w}(\mathbf{x}) \xi_\mathbf{w}(\mathbf{x}')]
+\kappa(\mathbf{x},\mathbf{x}')=\mathbb{E}_{\mathbf{w}\sim p}[ \xi_\mathbf{w}(\mathbf{x}) \xi_\mathbf{w}(\mathbf{x}')^*]
 \end{equation}
-where $\mathbb{E}$ stands for the expectation, $p$ is a probability distribution, and $\xi$ is a function parameterized by $\mathbf{w}$. 
+where $p$ is a probability distribution, and $\xi$ is a real (or complex) function parameterized by $\mathbf{w}$.
 To approximate such kernels, we can emperically average $m$ realizations of $\xi_\mathbf{w}(\mathbf{x}) \xi_\mathbf{w}(\mathbf{x}')$. To do that, we define RF maps:
 \begin{equation}
 	\label{eq:def_RF}

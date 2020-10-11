@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.7) (preloaded format=pdflatex 2020.9.11)  10 OCT 2020 12:57
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (MiKTeX 20.7) (preloaded format=pdflatex 2020.9.11)  11 OCT 2020 17:57
 entering extended mode
 **./Template.tex
 (Template.tex
@@ -367,54 +367,57 @@ Underfull \hbox (badness 1394) in paragraph at lines 90--93
 []\OT1/ptm/m/n/10 In ker-nel meth-ods, ran-dom fea-tures are an ef-fi-cient
  []
 
-LaTeX Font Info:    Trying to load font information for U+euf on input line 99.
-
+LaTeX Font Info:    Trying to load font information for U+euf on input line 101
+.
 (C:\Users\nicol\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\ueuf.fd
 File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
 )
+
+LaTeX Warning: Citation `oeid' on page 1 undefined on input line 101.
+
 [1{C:/Users/nicol/AppData/Local/MiKTeX/pdftex/config/pdftex.map}
 
 
 
 ]
 
-LaTeX Warning: `h' float specifier changed to `ht'.
+LaTeX Warning: Citation `lesco' on page 2 undefined on input line 116.
 
 
-Underfull \hbox (badness 1005) in paragraph at lines 184--185
-[]\OT1/ptm/m/n/10 The func-tion $\OML/cmm/m/it/10 '$ \OT1/ptm/m/n/10 here maps 
-each sub-graph to an $\OML/cmm/m/it/10 m$\OT1/ptm/m/n/10 -
- []
+LaTeX Warning: Reference `alg:gsa' on page 2 undefined on input line 196.
 
-
-Overfull \hbox (27.99834pt too wide) detected at line 204
+[2]
+Overfull \hbox (27.99834pt too wide) detected at line 219
 \OML/cmm/m/it/10 MMD[]\OT1/cmr/m/n/10 (\OT1/cmr/bx/n/10 f[]\OML/cmm/m/it/10 ; \
 OT1/cmr/bx/n/10 f[]\OT1/cmr/m/n/10 ) = \U/msb/m/n/10 E[][] [][] []
  []
 
-[2]
-<figs/phi_comparison.pdf, id=26, 433.62pt x 289.08pt>
+<figs/phi_comparison.pdf, id=27, 433.62pt x 289.08pt>
 File: figs/phi_comparison.pdf Graphic file (type pdf)
 <use figs/phi_comparison.pdf>
-Package pdftex.def Info: figs/phi_comparison.pdf  used on input line 275.
+Package pdftex.def Info: figs/phi_comparison.pdf  used on input line 290.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
-<figs/computational_comp.pdf, id=27, 433.62pt x 289.08pt>
+<figs/computational_comp.pdf, id=28, 433.62pt x 289.08pt>
 File: figs/computational_comp.pdf Graphic file (type pdf)
 <use figs/computational_comp.pdf>
-Package pdftex.def Info: figs/computational_comp.pdf  used on input line 283.
+Package pdftex.def Info: figs/computational_comp.pdf  used on input line 298.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
-
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[3]
+
+Underfull \vbox (badness 1354) has occurred while \output is active []
+
+ [3]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
 <figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf, id=34, 433.62pt x 289.08pt>
 
 File: figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf Graphic file (type pdf)
 
 <use figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf>
 Package pdftex.def Info: figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf  use
-d on input line 316.
+d on input line 331.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
 <figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf, id=35, 433.62pt x 289.08
 pt>
@@ -422,26 +425,19 @@ File: figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf Graphic file (type p
 df)
 <use figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf>
 Package pdftex.def Info: figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf  
-used on input line 323.
+used on input line 338.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
 <figs/DD.pdf, id=36, 433.62pt x 289.08pt>
 File: figs/DD.pdf Graphic file (type pdf)
 <use figs/DD.pdf>
-Package pdftex.def Info: figs/DD.pdf  used on input line 338.
+Package pdftex.def Info: figs/DD.pdf  used on input line 353.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
 <figs/Reddit.pdf, id=37, 433.62pt x 289.08pt>
 File: figs/Reddit.pdf Graphic file (type pdf)
 <use figs/Reddit.pdf>
-Package pdftex.def Info: figs/Reddit.pdf  used on input line 346.
+Package pdftex.def Info: figs/Reddit.pdf  used on input line 361.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[4 <./figs/phi_comparison.pdf> <./figs/computational_comp.pdf
+ [4 <./figs/phi_comparison.pdf> <./figs/computational_comp.pdf
 
 pdfTeX warning: pdflatex (file ./figs/computational_comp.pdf): PDF inclusion: m
 ultiple pdfs with page group included in a single page
@@ -498,12 +494,12 @@ LaTeX Warning: There were multiply-defined labels.
  ) 
 Here is how much of TeX's memory you used:
  4573 strings out of 481174
- 67003 string characters out of 2904272
- 334939 words of memory out of 3000000
+ 66997 string characters out of 2904272
+ 335931 words of memory out of 3000000
  20044 multiletter control sequences out of 15000+200000
  562844 words of font info for 95 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
- 40i,17n,45p,1069b,478s stack positions out of 5000i,500n,10000p,200000b,50000s
+ 40i,17n,45p,1069b,480s stack positions out of 5000i,500n,10000p,200000b,50000s
 {C:/Users/nicol/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc}<C:
 /Users/nicol/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx1
 0.pfb><C:/Users/nicol/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
@@ -529,7 +525,7 @@ AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msbm10.pfb><C
 C:/Users/nicol/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmr8a.pfb><
 C:/Users/nicol/AppData/Local/Programs/MiKTeX/fonts/type1/urw/times/utmri8a.pfb>
 
-Output written on Template.pdf (6 pages, 359525 bytes).
+Output written on Template.pdf (6 pages, 361768 bytes).
 PDF statistics:
  398 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
