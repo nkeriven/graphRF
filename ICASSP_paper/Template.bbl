@@ -41,11 +41,6 @@ Nino Shervashidze, SVN Vishwanathan, Tobias Petri, Kurt Mehlhorn, and Karsten
 \newblock ``Efficient graphlet kernels for large graph comparison,''
 \newblock in {\em Artificial Intelligence and Statistics}, 2009, pp. 488--495.
 
-\bibitem{GCN_powerful}
-Keyulu Xu, Weihua Hu, Jure Leskovec, and Stefanie Jegelka,
-\newblock ``How powerful are graph neural networks?,''
-\newblock {\em arXiv preprint arXiv:1810.00826}, 2018.
-
 \bibitem{RF_1}
 Aman Sinha and John~C Duchi,
 \newblock ``Learning kernels with random features,''
@@ -88,6 +83,11 @@ Alaa Saade, Francesco Caltagirone, Igor Carron, Laurent Daudet, Ang{\'e}lique
   Approximating kernels at the speed of light,''
 \newblock in {\em 2016 IEEE International Conference on Acoustics, Speech and
   Signal Processing (ICASSP)}. IEEE, 2016, pp. 6215--6219.
+
+\bibitem{GCN_powerful}
+Keyulu Xu, Weihua Hu, Jure Leskovec, and Stefanie Jegelka,
+\newblock ``How powerful are graph neural networks?,''
+\newblock {\em arXiv preprint arXiv:1810.00826}, 2018.
 
 \bibitem{SBM}
 Thorben Funke and Till Becker,

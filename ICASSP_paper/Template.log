@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.17)  12 OCT 2020 15:26
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.9.17)  13 OCT 2020 11:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -300,22 +300,22 @@ LaTeX Warning: Label `subfig:RF_maps' multiply defined.
 (./app.aux))
 \openout1 = `Template.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 5
-9.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 62.
+LaTeX Font Info:    ... okay on input line 62.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 62.
+LaTeX Font Info:    ... okay on input line 62.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 62.
+LaTeX Font Info:    ... okay on input line 62.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 62.
+LaTeX Font Info:    ... okay on input line 62.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 62.
+LaTeX Font Info:    ... okay on input line 62.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 62.
+LaTeX Font Info:    ... okay on input line 62.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 62.
+LaTeX Font Info:    ... okay on input line 62.
+LaTeX Font Info:    Trying to load font information for OT1+ptm on input line 6
+2.
  (/usr/local/texlive/2020/texmf-dist/tex/latex/psnfss/ot1ptm.fd
 File: ot1ptm.fd 2001/06/04 font definitions for OT1/ptm.
 )
@@ -376,93 +376,127 @@ File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
 \c@theorem=\count279
-LaTeX Font Info:    Trying to load font information for U+msa on input line 63.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 66.
 
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 63.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 66.
 
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
-Overfull \hbox (5.8641pt too wide) in paragraph at lines 85--87
-\OT1/ptm/m/n/10 go-rithms, gSpan method [[]] for in-stance, per-form a prohibit
-ive-
+
+LaTeX Warning: Citation `Fast_graphlet' on page 1 undefined on input line 92.
+
+
+LaTeX Warning: Citation `GNN_bruna' on page 1 undefined on input line 93.
+
+
+LaTeX Warning: Citation `GNN_review' on page 1 undefined on input line 93.
+
+
+LaTeX Warning: Citation `GNN_limits' on page 1 undefined on input line 93.
+
+
+LaTeX Warning: Citation `Rahimi' on page 1 undefined on input line 97.
+
+
+LaTeX Warning: Citation `gretton' on page 1 undefined on input line 99.
+
+
+Underfull \hbox (badness 1394) in paragraph at lines 97--100
+[]\OT1/ptm/m/n/10 In ker-nel meth-ods, ran-dom fea-tures are an ef-fi-cient
  []
 
-LaTeX Font Info:    Trying to load font information for U+euf on input line 96.
-
+LaTeX Font Info:    Trying to load font information for U+euf on input line 112
+.
 (/usr/local/texlive/2020/texmf-dist/tex/latex/amsfonts/ueuf.fd
 File: ueuf.fd 2013/01/14 v3.01 Euler Fraktur
-) [1{/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
+)
+
+LaTeX Warning: Citation `oeid' on page 1 undefined on input line 112.
+
+[1{/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 
 
 ]
 
-LaTeX Warning: `h' float specifier changed to `ht'.
+LaTeX Warning: Citation `lesco' on page 2 undefined on input line 128.
 
 
-Underfull \hbox (badness 1005) in paragraph at lines 181--182
-[]\OT1/ptm/m/n/10 The func-tion $\OML/cmm/m/it/10 '$ \OT1/ptm/m/n/10 here maps 
-each sub-graph to an $\OML/cmm/m/it/10 m$\OT1/ptm/m/n/10 -
+Overfull \hbox (6.88052pt too wide) in paragraph at lines 132--135
+\OMS/cmsy/m/n/10 f\OML/cmm/m/it/10 F[]; :::; F[]\OMS/cmsy/m/n/10 g$\OT1/ptm/m/n
+/10 *[] and its ex-pec-ta-tion $\OT1/cmr/bx/n/10 f[] \OT1/cmr/m/n/10 = \U/msb/m
+/n/10 E[] []\OML/cmm/m/it/10 '[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 F\OT1/cmr/m/n
+/10 )$\OT1/ptm/m/n/10 ,
  []
 
 
-Overfull \hbox (27.99834pt too wide) detected at line 201
+Underfull \hbox (badness 1259) in paragraph at lines 136--138
+[]\OT1/ptm/m/n/10 The com-pu-ta-tion cost per graph of the []ap-prox-i-mate
+ []
+
+
+Package caption Warning: \label without proper reference on input line 182.
+See the caption package documentation for explanation.
+
+
+LaTeX Warning: Reference `alg:gsa' on page 2 undefined on input line 208.
+
+
+Underfull \vbox (badness 1616) has occurred while \output is active []
+
+ [2]
+Overfull \hbox (27.99834pt too wide) detected at line 236
 \OML/cmm/m/it/10 MMD[]\OT1/cmr/m/n/10 (\OT1/cmr/bx/n/10 f[]\OML/cmm/m/it/10 ; \
 OT1/cmr/bx/n/10 f[]\OT1/cmr/m/n/10 ) = \U/msb/m/n/10 E[][] [][] []
  []
 
-[2]
-<figs/phi_comparison.pdf, id=27, 433.62pt x 289.08pt>
+[3]
+<figs/phi_comparison.pdf, id=38, 433.62pt x 289.08pt>
 File: figs/phi_comparison.pdf Graphic file (type pdf)
 <use figs/phi_comparison.pdf>
-Package pdftex.def Info: figs/phi_comparison.pdf  used on input line 272.
+Package pdftex.def Info: figs/phi_comparison.pdf  used on input line 307.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
-<figs/computational_comp.pdf, id=28, 433.62pt x 289.08pt>
+<figs/computational_comp.pdf, id=39, 433.62pt x 289.08pt>
 File: figs/computational_comp.pdf Graphic file (type pdf)
 <use figs/computational_comp.pdf>
-Package pdftex.def Info: figs/computational_comp.pdf  used on input line 280.
+Package pdftex.def Info: figs/computational_comp.pdf  used on input line 315.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
-
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
-[3]
-<figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf, id=35, 433.62pt x 289.08pt>
+<figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf, id=40, 433.62pt x 289.08pt>
 
 File: figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf Graphic file (type pdf)
 
 <use figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf>
 Package pdftex.def Info: figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf  use
-d on input line 312.
+d on input line 347.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
-<figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf, id=36, 433.62pt x 289.08
+<figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf, id=41, 433.62pt x 289.08
 pt>
 File: figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf Graphic file (type p
 df)
 <use figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf>
 Package pdftex.def Info: figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf  
-used on input line 317.
+used on input line 352.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
 
-Overfull \hbox (2.50015pt too wide) in paragraph at lines 312--318
+Overfull \hbox (2.50015pt too wide) in paragraph at lines 347--353
  [][][] 
  []
 
-<figs/DD.pdf, id=37, 433.62pt x 289.08pt>
+<figs/DD.pdf, id=42, 433.62pt x 289.08pt>
 File: figs/DD.pdf Graphic file (type pdf)
 <use figs/DD.pdf>
-Package pdftex.def Info: figs/DD.pdf  used on input line 328.
+Package pdftex.def Info: figs/DD.pdf  used on input line 363.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
-<figs/Reddit.pdf, id=38, 433.62pt x 289.08pt>
+<figs/Reddit.pdf, id=43, 433.62pt x 289.08pt>
 File: figs/Reddit.pdf Graphic file (type pdf)
 <use figs/Reddit.pdf>
-Package pdftex.def Info: figs/Reddit.pdf  used on input line 336.
+Package pdftex.def Info: figs/Reddit.pdf  used on input line 371.
 (pdftex.def)             Requested size: 122.34692pt x 81.5638pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -481,20 +515,18 @@ arity_graphlet_size.pdf): PDF inclusion: multiple pdfs with page group included
 pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figs/LightOn_adj_SBM_simil
 arity_graphlet_size_RW.pdf): PDF inclusion: multiple pdfs with page group inclu
 ded in a single page
-> <./figs/DD.pdf
-
-pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figs/DD.pdf): PDF inclusio
-n: multiple pdfs with page group included in a single page
-> <./figs/Reddit.pdf
-
-pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figs/Reddit.pdf): PDF incl
-usion: multiple pdfs with page group included in a single page
 >] (./Template.bbl
 Underfull \hbox (badness 3746) in paragraph at lines 4--8
 []\OT1/ptm/m/n/10 Giannis Niko-lent-zos, Polykar-pos Mela-di-anos, and
  []
 
-) [5]
+[5 <./figs/DD.pdf> <./figs/Reddit.pdf
+
+pdfTeX warning: /Library/TeX/texbin/pdflatex (file ./figs/Reddit.pdf): PDF incl
+usion: multiple pdfs with page group included in a single page
+>]) [6
+
+]
 \openout2 = `app.aux'.
 
  (./app.tex
@@ -513,21 +545,24 @@ r/m/n/10 ) \OMS/cmsy/m/n/10 ^^@ \U/msb/m/n/10 E[]\OML/cmm/m/it/10 '\OT1/cmr/m/n
 /10 (\OML/cmm/m/it/10 F[]\OT1/cmr/m/n/10 )\OMS/cmsy/m/n/10 k$
  []
 
-) [6
+) [7
 
 ] (./Template.aux (./app.aux))
+
+LaTeX Warning: There were undefined references.
+
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 5815 strings out of 480608
- 87959 string characters out of 5903630
- 350873 words of memory out of 5000000
- 21558 multiletter control sequences out of 15000+600000
- 563777 words of font info for 96 fonts, out of 8000000 for 9000
+ 5820 strings out of 480608
+ 87979 string characters out of 5903630
+ 350907 words of memory out of 5000000
+ 21561 multiletter control sequences out of 15000+600000
+ 566947 words of font info for 100 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 50i,17n,49p,1067b,498s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 50i,17n,49p,1069b,504s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/t
 exlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/te
 xlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/local/texl
@@ -542,20 +577,23 @@ exmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb></usr/local/texlive/20
 20/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2020
 /texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2020/te
 xmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2020/texmf
--dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2020/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/2020/texmf-di
-st/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2020/texmf-dist
-/fonts/type1/public/amsfonts/euler/eufm10.pfb></usr/local/texlive/2020/texmf-di
-st/fonts/type1/public/amsfonts/euler/eufm7.pfb></usr/local/texlive/2020/texmf-d
-ist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2020/tex
-mf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2020/texmf-dist/fo
-nts/type1/urw/times/utmbi8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1
-/urw/times/utmr8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/urw/times
-/utmri8a.pfb>
-Output written on Template.pdf (6 pages, 341708 bytes).
+-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2020/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2020/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/2020/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmsy6.pfb></usr/local/texlive/2020/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2020/texmf-dist/font
+s/type1/public/amsfonts/cm/cmsy8.pfb></usr/local/texlive/2020/texmf-dist/fonts/
+type1/public/amsfonts/euler/eufm10.pfb></usr/local/texlive/2020/texmf-dist/font
+s/type1/public/amsfonts/euler/eufm7.pfb></usr/local/texlive/2020/texmf-dist/fon
+ts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2020/texmf-dist
+/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/typ
+e1/urw/times/utmbi8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/urw/ti
+mes/utmr8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/urw/times/utmri8
+a.pfb>
+Output written on Template.pdf (7 pages, 369310 bytes).
 PDF statistics:
- 409 PDF objects out of 1000 (max. 8388607)
- 115 compressed objects within 2 object streams
+ 427 PDF objects out of 1000 (max. 8388607)
+ 129 compressed objects within 2 object streams
  0 named destinations out of 1000 (max. 500000)
  31 words of extra memory for PDF output out of 10000 (max. 10000000)
 

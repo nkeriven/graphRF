@@ -5,9 +5,17 @@ The style file: IEEEbib.bst
 A level-1 auxiliary file: app.aux
 Database file #1: strings.bib
 Database file #2: refs.bib
+Warning--I didn't find a database entry for "Fast_graphlet"
+Warning--I didn't find a database entry for "GNN_bruna"
+Warning--I didn't find a database entry for "GNN_review"
+Warning--I didn't find a database entry for "GNN_limits"
+Warning--I didn't find a database entry for "Rahimi"
+Warning--I didn't find a database entry for "gretton"
+Warning--I didn't find a database entry for "oeid"
+Warning--I didn't find a database entry for "lesco"
 You've used 17 entries,
             1838 wiz_defined-function locations,
-            560 strings with 6649 characters,
+            573 strings with 6761 characters,
 and the built_in function-call counts, 4538 in all, are:
 = -- 405
 > -- 207
@@ -46,3 +54,4 @@ warning$ -- 0
 while$ -- 41
 width$ -- 19
 write$ -- 183
+(There were 8 warnings)
