@@ -199,70 +199,76 @@ such that $\varphi(\mathbf{x})^*\varphi(\mathbf{x}')=\frac{1}{m} \sum_{j=1}^m \x
 \caption{GSA-$\varphi$ generic algorithm}
 \end{algorithm}
 
-In this paper, we propose to deal with the main remaining bottleneck of the graphlet kernel, that is, the function $\match$. We therefore define a framework where it is replaced with a user-defined map $\varphi: \bar{\mathfrak{H}} \to \mathbb{R}^m$. %, and to replace the uniform sampler with a user-chosen one like the RW sampler.  
+In this paper, we propose to deal with the main remaining bottleneck of the graphlet kernel, that is, the function $\match$. First, we therefore define a framework where it is replaced with a user-defined map $\varphi: \bar{\mathfrak{H}} \to \mathbb{R}^m$. %, and to replace the uniform sampler with a user-chosen one like the RW sampler.  
 %This makes it possible to deploy the OPU technology with this algorithm. 
-The resulting algorithm (Alg.~\ref{alg:gsa}) is referred to as \emph{graphlet sampling and Averaging $GSA-\varphi$}, and its cost per graph for a specific $\varphi$ is $C_{GSA-\varphi}= \mathcal{O}\left(s C_S C_{\varphi}\right)$, where $C_{\varphi}$ is the cost of applying $\varphi$ on one graphlet. 
-
+The resulting algorithm (Alg.~\ref{alg:gsa}) is referred to as \emph{graphlet sampling and Averaging} (GSA-$\varphi$). The cost of computing $\mathbf{z}_\G$ is dominated by $C_{GSA-\varphi}= \mathcal{O}\left(s C_S C_{\varphi}\right)$, where $C_{\varphi}$ is the cost of applying $\varphi$ on one graphlet.
+%
 %The function $\varphi$ here maps each subgraph to an $m$-dimensional space $\mathbb{R}^m$.
-Note that choosing $\varphi = \match$ and $S_k$ as the uniform sampler, GSA-$\match$ turns out to be the  graphlet kernel with graphlet sampling.  We see next that choosing $\varphi$ as \emph{kernel random maps} is both fast and efficient.
+Note that choosing $\varphi = \match$ and $S_k$ as the uniform sampler, GSA-$\match$ turns out to be the graphlet kernel with sampling.
+We see next that choosing $\varphi$ as \emph{kernel random maps} is both fast and efficient. Some of these maps will \emph{not} be permutation-invariant at the graphlet level, however, in the infinite sample limit, it is easy to see that the representation vector $\mathbf{z}_\G$ is indeed permutation-invariant at the graph level.
 
 \subsection{Efficiency of kernel random features with $GSA-\varphi$} 
 \label{sec:MMD}
-A kernel $\kappa$ associated to a random features (RF) decomposition is a positive definite function of two inputs that can be decomposed  as follows   \cite{rahimi2008random}:
+
+By averaging $\match$, the graphlet kernel obtains discrete probability distributions $\hat{\mathbf{f}}_{\G, S_k}$. The underlying metric used to compare graphs is the Euclidean distance between these histograms. When $\match$ is replaced by another $\varphi$, one compare Euclidean distance between certain \emph{embeddings} of distributions, which is reminiscent of kernel mean embeddings \cite{gretton}. We show below that this corresponds to choosing $\varphi$ as kernel random features.
+
+For two objects $\mathbf{x}, \mathbf{x'}$, a kernel $\kappa$ associated to a random features (RF) decomposition is a positive definite function that can be decomposed  as follows \cite{rahimi2008random}:
 \begin{equation}
 \label{eq:RF_decomposition}
-\kappa(\mathbf{x},\mathbf{x}')=\mathbb{E}_{\mathbf{w}\sim p}[ \xi_\mathbf{w}(\mathbf{x}) \xi_\mathbf{w}(\mathbf{x}')^*]
+\kappa(\mathbf{x},\mathbf{x}')=\mathbb{E}_{\mathbf{w}\sim p}[ \xi_\mathbf{w}(\mathbf{x})^* \xi_\mathbf{w}(\mathbf{x}')]
 \end{equation}
-where $p$ is a probability distribution, and $\xi$ is a real (or complex) function parameterized by $\mathbf{w}$.
-To approximate such kernels, we can emperically average $m$ realizations of $\xi_\mathbf{w}(\mathbf{x}) \xi_\mathbf{w}(\mathbf{x}')$. To do that, we define RF maps:
+where $\xi$ is a real (or complex) function parameterized by $\mathbf{w} \in \Omega$, and $p$ is a probability distribution on $\Omega$. Classical examples include Fourier decomposition of translation-invariant kernels \cite{rahimi2008random}.
+%To approximate such kernels, we can empirically average $m$ realizations of $\xi_\mathbf{w}(\mathbf{x})^* \xi_\mathbf{w}(\mathbf{x}')$. 
+The RF methodology then defines maps:
 \begin{equation}
 	\label{eq:def_RF}
 	\varphi(\mathbf{x}) = \frac{1}{\sqrt{m}} ( \xi_{\mathbf{w}_j}(\mathbf{x}) )_{j=1}^m \in \mathbb{C}^m
 \end{equation}
-where  $m$ is called here the number of features and the frequencies $\mathbf{w}_j$ are drawn identically and independently (iid) from $p$. Then, $\kappa(\mathbf{x},\mathbf{x}')\approx	\varphi(\mathbf{x})^T	\varphi(\mathbf{x}')$.
+where $m$ is the number of features and the parameters $\mathbf{w}_j$ are drawn iid from $p$. Then, $\kappa(\mathbf{x},\mathbf{x}')\approx	\varphi(\mathbf{x})^H	\varphi(\mathbf{x}') = \frac{1}{m} \sum_j \xi_{\mathbf{w}_j}(\mathbf{x})^* \xi_{\mathbf{w}_j}(\mathbf{x}')$.
 
- For each kernel as in  \eqref{eq:RF_decomposition} , and for any two graphs $\G,\G'$, we define the MMD (Maximum Mean Discrepancy) metric between the two corresponding distrubutions  $\bld{f}_{\G,S_k}, \bld{f}_{\G',S_k}$ by:
- \[
- MMD^2(\bld{f}_{\G,S_k}, \bld{f}_{\G',S_k}) = \mathbb{E}_{\mathbf{w}} \Big( \left| \mathbb{E}_{S_k(\G)} \xi_\mathbf{w}(F) - \mathbb{E}_{S_k(\G')} \xi_\mathbf{w}(F') \right|^2 \Big)
- \]
- The main property of the MMD is that, for so-called \emph{characteristic kernels}, it is a true metric on distributions, \emph{i.e.} $MMD(\mathcal{P}, \mathcal{Q}) = 0 \Leftrightarrow \mathcal{P} = \mathcal{Q}$. In addition, most usual kernels, like the Gaussian kernel, are characteristic \cite{MMD}.
- 
- The next theorem shows the efficiency of using RF maps as in \eqref{eq:def_RF} with our algorithm. It states  that the Euclidean distance between the representation vectors $\bld{z}_\G, \bld{z}_{\G'}$ converges to the MMD metric between their distributions $\bld{f}_{\G,S_k}$, $\bld{f}_{\G',S_k}$. 
+Assume that we have a base kernel $\kappa(\F,\F')$ between \emph{graphlets}, with a RF decomposition $(\xi_\mathbf{w}, p)$, and define $\varphi$ as in \eqref{eq:def_RF}. Then, it is not hard to see that the Euclidean distance between the embeddings computed by Alg.~\ref{alg:gsa} $\|\mathbf{z}_\G - \mathbf{z}_{\G'}\|_2^2$ approximates the following \emph{Maximum Mean Discrepancy} (MMD) \cite{gretton, sriperumbudur} between the two discrete distributions of graphlets:
+ \begin{multline}
+ MMD^2(S_k(\G), S_k(\G')) \\= \mathbb{E}_{\mathbf{w}} \Big( \left| \mathbb{E}_{S_k(\G)} \xi_\mathbf{w}(\F) - \mathbb{E}_{S_k(\G')} \xi_\mathbf{w}(\F') \right|^2 \Big)
+ \end{multline}
+Note that here, $S_k(\G)$ can be interpreted as a distribution over $\mathfrak{H}$ if $\xi_\mathbf{w}$ is permutation-invariant, and over $\bar{\mathfrak{H}}$ otherwise. The main property of the MMD is that, for so-called \emph{characteristic kernels}, it is a true metric on distributions, \emph{i.e.} $MMD(S_k(\G), S_k(\G')) = 0 \Leftrightarrow S_k(\G) = S_k(\G')$, that is, it is $0$ if and only if $\G$ and $\G'$ incur the same distribution over graphlets. In addition, most usual kernels, like the Gaussian kernel, are characteristic \cite{MMD}.
+%
+The next theorem, whose proof can be found in the supplementary material, bounds the quality of the approximation. %It states  that the Euclidean distance between the representation vectors $\bld{z}_\G, \bld{z}_{\G'}$ converges to the MMD metric between their distributions $\bld{f}_{\G,S_k}$, $\bld{f}_{\G',S_k}$. 
 
-
+\textcolor{red}{todo: $S_k$ as a distribution over non-isomorphic graphlets. Isomorphism is a special case}
 
 \begin{theorem}\label{theorem:concentration}
-Let $\G$ and $\G'$ be two graphs, $\mathfrak{F}_\G=\{F_i\}_{i=1}^{s}$ (resp. $\mathfrak{F}_{\G'}=\{F_i'\}_{i=1}^{s}$) be $iid$ size-k graphlet samples drawn from $S_k(\G)$ (resp. $S_k(\G')$). Assume a random feature map as in \eqref{eq:def_RF}. Assume that $|\xi_\mathbf{w}(F)| \leq 1$ for any $\mathbf{w},F$.
+Let $\G$ and $\G'$ be two graphs. %$\mathfrak{F}_\G=\{F_i\}_{i=1}^{s}$ (resp. $\mathfrak{F}_{\G'}=\{F_i'\}_{i=1}^{s}$) be $iid$ size-k graphlet samples drawn from $S_k(\G)$ (resp. $S_k(\G')$). 
+Assume a random feature map as in \eqref{eq:def_RF}. Assume that $|\xi_\mathbf{w}(F)| \leq 1$ for any $\mathbf{w},F$.
 We have for all $\delta>0$ and with probability at least $1-\delta$:
-\begin{align*}
- \Big|\|\varphi(\mathfrak{F}_\G) - \varphi(\mathfrak{F}_{\G'})\|^2 - MMD(\bld{f}_{\G,S_k},\bld{f}_{\G',S_k})^2 \Big| \leq \\\frac{4 \sqrt{\log (6/\delta)}}{\sqrt{m}} + \frac{8\left(1+\sqrt{2\log(3/\delta)}\right)}{\sqrt{{s}}}
-\end{align*}
+\begin{multline*}
+ \Big|\|\mathbf{z}_\G - \mathbf{z}_{\G'} \|_2^2 - MMD^2(S_k(\G),S_k(\G')) \Big| \\ \leq\frac{4 \sqrt{\log (6/\delta)}}{\sqrt{m}} + \frac{8\left(1+\sqrt{2\log(3/\delta)}\right)}{\sqrt{{s}}}
+\end{multline*}
 \end{theorem}
-
-\begin{proof}
- see Appendix.
-\end{proof}
+According to this result, the number of random features $m$ should approximately be of the order of the number of samples $s$. We have seen that the latter is usually quite high, hence most usual random feature scheme will still incur a high computation cost overall. We discuss next random features with efficient optical hardware.
 
 \subsection{Considered choices of $\varphi_{RF}$}
 \label{sec:phi_choices}
-\textbf{Gaussian maps $\boldsymbol{\varphi_{Gs}}$ applied on the adjacency matrix}: $\varphi_{Gs}$ is the RF map of the Gaussian kernel \cite{rahimi2008random}. We for each subgraph $\F$ take its vectorized adjacency matrix  $\mathbf{a}_\F=flatten(\mathbf{A}_\F)$ as input. Then:
+\textbf{Gaussian maps $\boldsymbol{\varphi_{Gs}}$}: the RF map of the Gaussian kernel \cite{rahimi2008random}. For a graphlet $\F$ we define its vectorized adjacency matrix  $\mathbf{a}_\F=flatten(\mathbf{A}_\F)$, then:
 \begin{equation}
 \label{eq:Gaussian_map}
-    \varphi_{Gs}(\F) = \frac{1}{\sqrt{m}} \left( \sqrt{2} \cos(\mathbf{w}_j^T\mathbf{a}_\F+b_j) \right)_{j=1}^m \in \mathbb{R}^m
+ \mathsmaller{\varphi_{Gs}(\F) = m^{-1/2} \left( \sqrt{2} \cos(\mathbf{w}_j^T\mathbf{a}_\F+b_j) \right)_{j=1}^m \in \mathbb{R}^m}
 \end{equation}
-where the frequencies $\mathbf{w}_j\in \R^{k^2}$ are drawn from a Gaussian distribution with the inverse variance of the original kernel. 
+where the $\mathbf{w}_j\in \R^{k^2}$ are drawn from a Gaussian distribution and $b_j \sim \mathcal{U}([0, 2\pi])$. While using a Gaussian kernel on $\mathbf{a}_\mathcal{F}$ is not necessarily intuitive, this will serve as a baseline for the other methods. Note that $\varphi_{Gs}$ is not permutation-invariant.
 \BlankLine
-\noindent\textbf{Gaussian maps $\boldsymbol{\varphi_{Gs+Eig}}$ applied on the sorted eigenvalues of the adjacency matrix:} instead of passing the vectorized adjacency matrix as input, we pass the vector of its sorted eigenvalues $\bm{\lambda}\in\R^k$. The motive proposing $\varphi_{Gs+Eig}$ is that it respects the isomorphism test since: 
-i/ $\bld{\lambda}(\bld{A})=\bld{\lambda}(\bld{PAP^T})$ for any permutation matrix $\bld{P}$, 
-ii/ $F\cong F' \Rightarrow\exists \bld{P}, \bld{A}_F=P\bld{A}_{F'}P^T$.  
-Thus, $F\cong F' \Rightarrow \varphi_{Gs+Eig}(F)=\varphi_{Gs+Eig}(F')$. $\varphi_{Gs+Eig}$ maps isomorphic subgraphs to the same point in $\R^m$.
+\noindent\textbf{Gaussian maps $\boldsymbol{\varphi_{Gs+Eig}}$ applied on the sorted eigenvalues:} We consider a permutation-invariant alternative to the first case. %Instead of passing the vectorized adjacency matrix as input, 
+For a graphlet $\F$ we denote the vector of its sorted eigenvalues by $\bm{\lambda}(\F) \in\R^k$ and $\varphi_{Gs+eig}(\F) = \varphi_{Gs}(\bm{\lambda}(\F))$ (with $\bm{w}_j$ of dimension $k$). Note that the existence of co-spectral graphs, that is, non-isomorphic graphs with the same set of eigenvalues, implies a loss of information when computing $\bm{\lambda}(\F)$.
+%The motive proposing $\varphi_{Gs+Eig}$ is that it respects the isomorphism test since: 
+%i/ $\bld{\lambda}(\bld{A})=\bld{\lambda}(\bld{PAP^T})$ for any permutation matrix $\bld{P}$, 
+%ii/ $F\cong F' \Rightarrow\exists \bld{P}, \bld{A}_F=P\bld{A}_{F'}P^T$.  
+%Thus, $F\cong F' \Rightarrow \varphi_{Gs+Eig}(F)=\varphi_{Gs+Eig}(F')$. $\varphi_{Gs+Eig}$ maps isomorphic subgraphs to the same point in $\R^m$.
 \BlankLine
-\noindent\textbf{Optical random feature maps $\varphi_{OPU}$:} This corresponds to the fastest version of our algorithm. OPUs (Optical Processing Units) technology was developed to compute  a specific random features mapping in \emph{constant time  $\mathcal{O}(1)$} in both $m$ and $k$ using light scattering \cite{saade_opu}. Having the random matrix $\bld{W}$, traditional random maps (ex. $\varphi_{Gs}$) need  $\mathcal{O}(mk^2)$ cost to compute $\bld{Wx}$ as in \eqref{eq:Gaussian_map}. An OPU computes its associated map at the speed of light, this map is modeled as follows \cite{saade_opu}:
+\noindent\textbf{Optical random feature maps $\varphi_{OPU}$:} Due to high-dimensional matrix multiplication, Gaussian RF cost $\mathcal{O}(mk^2)$ and are notably expensive to compute in high-dimension (in this case, high $m$ in particular). To solve this, OPUs (Optical Processing Units) technology were recently developed to compute a specific random features mapping in \emph{constant time  $\mathcal{O}(1)$} in both $m$ and $k$ using light scattering \cite{saade_opu} -- within the current physical limitations of the devices, actually of the order of a few millions for both input and output dimensions. Here we again consider the flattened adjacency matrix for simplicity, and the corresponding map is:
 \[
 \label{OPU_equation}
-\mathbf{\varphi}_{OPU}(\mathbf{x})=|\mathbf{Wx+b}|^2 ;~\mathbf{W}\in \mathbb{R}^{m\times d},\mathbf{b}\in \mathbb{R}^m, \mathbf{x}\in \mathbb{R}^d
+\mathbf{\varphi}_{OPU}(\bm{A}_\F)=|\mathbf{W\bm{A}_\F+b}|^2 ;~\mathbf{W}\in \mathbb{R}^{m\times d},\mathbf{b}\in \mathbb{R}^m, \mathbf{x}\in \mathbb{R}^d
 \]
 Where $\mathbf{b}$ is a random bias vector, $d$ is the input space dimension, the amplitude function $|\cdot|$ is taken element wise, and $\mathbf{W}$ is a random \emph{iid} complex matrix with Gaussian real and imaginary parts.
+
 The complexities of the different mappings $\varphi$ examined in this work are summarized in Table \ref{tab:cost}.
 
 

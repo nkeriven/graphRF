@@ -1,7 +1,11 @@
-This is BibTeX, Version 0.99d (TeX Live 2019/Debian)
+This is BibTeX, Version 0.99d
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: Template.aux
+Reallocating 'name_of_file' (item size: 1) to 8 items.
 The style file: IEEEbib.bst
+Reallocating 'name_of_file' (item size: 1) to 8 items.
+Reallocating 'name_of_file' (item size: 1) to 5 items.
+Reallocating 'name_of_file' (item size: 1) to 8 items.
 A level-1 auxiliary file: app.aux
 Database file #1: strings.bib
 Database file #2: refs.bib
