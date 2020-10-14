@@ -20,6 +20,7 @@
 \usepackage{multirow}
 \usepackage{bm}
 \usepackage[toc,page]{appendix}
+\usepackage{hyperref}
 %\usepackage{cite}
 % !TeX spellcheck = en_US 
 % Example definitions.
@@ -67,7 +68,7 @@
 %
 \begin{abstract}
 %Graph Classification is the problem of mapping graphs to the classes they belong to.
-The graphlet kernel is a classical method in graph classification. \nt{It however suffers from a high computation cost due to the isomorphism test it includes. As a generic proxy, and in general at the cost of losing some information, this test can be efficiently replaced by a user-defined mapping that computes various graph characteristics.} In this paper, we propose to leverage \emph{kernel random features} within the graphlet framework, and establish a theoretical link with a mean kernel metric. If, at first glance, this method does not necessarily allow to reduce the computational complexity of the graphlet kernel \nt{*why do you say that? Isomorphism test is in exponential time; even without the OPU, the proposition of this paper is polynomial, so infinitely faster, no?*}, we then incorporate \emph{optical} random features that can compute such random features in \emph{constant time}. Experiments show that the resulting algorithm is orders of magnitude faster that the graphlet kernel for the same, or better, accuracy.
+The graphlet kernel is a classical method in graph classification. \nt{It however suffers from a high computation cost due to the isomorphism test it includes. As a generic proxy, and in general at the cost of losing some information, this test can be efficiently replaced by a user-defined mapping that computes various graph characteristics.} In this paper, we propose to leverage \emph{kernel random features} within the graphlet framework, and establish a theoretical link with a mean kernel metric. If this method can still be prohibitively costly for usual random features, we then incorporate \emph{optical} random features that can be computed in \emph{constant time}. Experiments show that the resulting algorithm is orders of magnitude faster that the graphlet kernel for the same, or better, accuracy.
 \end{abstract}
 %
 \begin{keywords}
@@ -89,18 +90,14 @@ In addition to the graph structure, nodes and edges may have extra features. Whi
 
 
 %\noindent\textbf{Related work.}
-Structure-based graph classification has been tackled with many algorithms. Frequent subgraphs based algorithms \cite{frequent_subgraphs} analyze the graph dataset $\mathcal{X}$ to catch the frequent and discriminative subgraphs and use them as features. Kernel-based algorithms \cite{kriege_graph_kernels} can be used by defining similarity functions (kernels) between graphs. An early and popular example is the \emph{graphlet kernel}, which computes frequencies of subgraphs. It is however known to be quite costly to compute \cite{graphlet_kernel}, in particular due to the presence of graph isomorphism tests. \nt{While possible in particular cases \cite{Fast_graphlet}, accelerating the graphlet kernel for arbitrary datasets remains open.} 
-Finally, Graph neural networks (GNNs) \cite{GNN_bruna, GNN_review} have recently become very popular in graph machine learning. They are however known to exhibit limited performance when node features are unavailable \cite{GNN_limits}. %Recently, a particular model called GIN (Graph Isomorphism Network) was developed and provided high performance classification.
+Structure-based graph classification has been tackled with many algorithms. Frequent subgraphs based algorithms \cite{frequent_subgraphs} analyze the graph dataset $\mathcal{X}$ to catch the frequent and discriminative subgraphs and use them as features. Kernel-based algorithms \cite{kriege_graph_kernels} can be used by defining similarity functions (kernels) between graphs. An early and popular example is the \emph{graphlet kernel}, which computes frequencies of subgraphs. It is however known to be quite costly to compute \cite{graphlet_kernel}, in particular due to the presence of graph isomorphism tests. \nt{While possible in particular cases \cite{graphlet_kernel}, accelerating the graphlet kernel for arbitrary datasets remains open.} 
+Finally, Graph neural networks (GNNs) \cite{Bruna2013, Bronstein2017} have recently become very popular in graph machine learning. They are however known to exhibit limited performance when node features are unavailable \cite{GCN_powerful}. %Recently, a particular model called GIN (Graph Isomorphism Network) was developed and provided high performance classification.
 %\BlankLine
 
 %\noindent\textbf{Contribution:}
-In kernel methods, random features are an efficient method to approximate certain kernel functions \cite{Rahimi, RF_1}. Recently, it has been shown\nt{*ref?*} that \emph{optical computing} can be leveraged to compute such random features in \emph{constant time} in \emph{any dimension} -- within the limitations of the current hardware, here referred to as Optical Processing Units (OPUs).
+In kernel methods, random features are an efficient method to approximate certain kernel functions \cite{rahimi2008random, RF_1}. Recently, it has been shown \cite{saade_opu} that \emph{optical computing} can be leveraged to compute such random features in \emph{constant time} in \emph{any dimension} -- within the limitations of the current hardware, here referred to as Optical Processing Units (OPUs).
 %On the other hand, the graphlet kernel represents a graph by how many times graphs of a smaller size occur in it. This kernel includes the isomorphism test in the counting process which makes it computationally expensive.
-The main goal of this paper is to provide a proof-of-concept answer to the following question: can OPU computations be used to reduce the computational complexity of a combinatorial problem like the graphlet kernel? Drawing on a connection with mean kernels and Maximum Mean Discrepancy (MMD) \cite{gretton}, we show, empirically and theoretically, that a fast and efficient graph classifier can indeed be obtained with OPU computations.
-
-\nt{* the biblio file is not up to date apparently *}
-
-\nt{* + good job with the intro! *}
+The main goal of this paper is to provide a proof-of-concept answer to the following question: can OPU computations be used to reduce the computational complexity of a combinatorial problem like the graphlet kernel? Drawing on a connection with mean kernels and Maximum Mean Discrepancy (MMD) \cite{Gretton2007}, we show, empirically and theoretically, that a fast and efficient graph classifier can indeed be obtained with OPU computations.
 
 \section{Background}
 \label{sec:background}
@@ -109,32 +106,33 @@ First, we present the concepts necessary to define the graphlet kernel. We repre
 
 \subsection{Isomorphic graphlets}
 
-In this paper, we will, depending on the context, manipulate two different notions of $k$-graphlets (that is, small graphs of size \nt{$k$}), with or without discriminating isomorphic graphlets. We denote by $\bar{\mathfrak{H}}=\{\bar{\phlet}_1,..., \bar{\phlet}_{\bar N_k}\}$ with $\bar{N}_k = 2^{\frac{k(k-1)}{2}}$ the set of all size-$k$ graphs, where isomorphic graphs are counted multiple times, and $\mathfrak{H}=\{\phlet_1,..., \phlet_{N_k}\} \subset \bar{\mathfrak{H}}$ the set of all non-isomorphic graphs of size $k$. Its size $N_k$ has a (quite verbose) closed-from expression \cite{oeid}, but is still exponential in $k$.
+In this paper, we will, depending on the context, manipulate two different notions of $k$-graphlets (that is, small graphs of size $k$): with or without discriminating isomorphic graphlets. We denote by $\bar{\mathfrak{H}}=\{\bar{\phlet}_1,..., \bar{\phlet}_{\bar N_k}\}$ with $\bar{N}_k = 2^{\frac{k(k-1)}{2}}$ the set of all size-$k$ graphs, where isomorphic graphs are counted multiple times, and $\mathfrak{H}=\{\phlet_1,..., \phlet_{N_k}\} \subset \bar{\mathfrak{H}}$ the set of all non-isomorphic graphs of size $k$. Its size $N_k$ has a (quite verbose) closed-from expression \cite{oeis}, but is still exponential in $k$.
 %
-In the course of this paper, we shall manipulate mappings $\varphi(\mathcal{H})$ and probability distributions (histograms) over graphlets. When the mapping $\varphi$ is \emph{permutation-invariant}, then the underlying space is $\mathfrak{H}$, otherwise it is $\bar{\mathfrak{H}}$. Using one or the other obeys a tradeoff: $\bar{\mathfrak{H}}$ is larger, while $\mathfrak{H}$ may necessitate costly isomorphism tests. In any case, assuming each isomorphic copies has equal probability, a probability distribution over $\bar{\mathfrak{H}}$ can easily be transformed into one over $\mathfrak{H}$, and both versions contains the same amount of information.
+In the course of this paper, we shall manipulate mappings $\varphi(\mathcal{H})$ and probability distributions (histograms) over graphlets. By default the underlying space will be $\bar{\mathfrak{H}}$, however when the mapping $\varphi$ is \emph{permutation-invariant}, then the underlying space can be thought of as $\mathfrak{H}$. %Using one or the other obeys a tradeoff: $\bar{\mathfrak{H}}$ is larger, while $\mathfrak{H}$ may necessitate costly isomorphism tests. 
+Also note that, assuming each isomorphic copies has equal probability, a probability distribution over $\bar{\mathfrak{H}}$ can be \emph{folded} into one over $\mathfrak{H}$, and both distributions \emph{contain the same amount of information}.
 
 \subsection{The graphlet kernel}
 
-The traditional graphlet kernel is defined as follows. We define the matching function $\varphi_k^{match}(\mathcal{F}) = \left[ 1_{(\mathcal{F} \cong \phlet_i)}\right]_{i=1}^{N_k} \in \{0,1\}^{N_k}$, where $1_\Omega$ is the indicator function and $\mathcal{F}$ is a graph of size $k$. In words, $\match(\mathcal{F})$ is a one-hot vector of dimension $N_k$ identifying $\mathcal{F}$ up to isomorphism. Note that the cost of evaluating $\varphi_k^{match}$ once is $O\left(N_k C^{\cong}_k\right)$, where $C^{\cong}_k$ is the cost of the isomorphism test between two graphs of size $k$, for which no polynomial algorithm is known \cite{isomorphism_np}. 
-
-Given a graph $\G$, let $\mathfrak{F}_\G=\{\mathcal{F}_1,\mathcal{F}_2,\ldots,\}$ be the set of subgraphs induced by all size-$k$ subsets of nodes\footnote{\nt{$|\mathfrak{F}_\G|$ depends on $\mathcal{G}$ and is usually much smaller than $N_k$. Extreme examples are the complete and the empty graphs, where $|\mathfrak{F}_\G|=1$.}}. The following representation vector is called the $k$-spectrum of $\G$:
+The traditional graphlet kernel is defined by computing histograms of subgraphs over non-isomorphic graphlets $\mathfrak{H}$. We define the matching function $\varphi_k^{match}(\mathcal{F}) = \left[ 1_{(\mathcal{F} \cong \phlet_i)}\right]_{i=1}^{N_k} \in \{0,1\}^{N_k}$, where $\mathcal{F}$ is a graph of size $k$. In words, $\match(\mathcal{F})$ is a one-hot vector of dimension $N_k$ identifying $\mathcal{F}$ up to isomorphism. Note that the cost of evaluating $\varphi_k^{match}$ once is $O\left(N_k C^{\cong}_k\right)$, where $C^{\cong}_k$ is the cost of the isomorphism test between two graphs of size $k$, for which no polynomial algorithm is known \cite{isomorphism_np}. 
+%
+Given a graph $\G$ of size $v$, let $\mathfrak{F}_\G=\{\mathcal{F}_1,\mathcal{F}_2,\ldots,\mathcal{F}_{\binom{v}{x}}\}$ be the collection of subgraphs induced by all size-$k$ subsets of nodes. The following representation vector is called the $k$-spectrum of $\G$:
 \begin{equation}
 \label{eq:gk}
-\mathbf{f}_\G=\frac{1}{|\mathfrak{F}_\mathcal{G}|}\sum_{\mathcal{F}\in\mathfrak{F}_\mathcal{G}} \match (\mathcal{F}) \in \R^{N_k}
+\mathsmaller{\mathbf{f}_\G=\binom{v}{k}^{-1}\sum_{\mathcal{F}\in\mathfrak{F}_\mathcal{G}} \match (\mathcal{F}) \in \R^{N_k}}
 \end{equation}
-For two graphs $\G,\G'$, the graphlet kernel is defined as $\bld{f}_\G^T\bld{f}_{\G'}$. %The graphlet kernel performs well especially with a sufficiently large value of $k$ \cite{graphlet_kernel}. However, in each graph $\G$ of size $v$,
+For two graphs $\G,\G'$, the graphlet kernel \cite{graphlet_kernel} is then defined as $\bld{f}_\G^T\bld{f}_{\G'}$. %The graphlet kernel performs well especially with a sufficiently large value of $k$ \cite{graphlet_kernel}. However, in each graph $\G$ of size $v$,
 For a graph of size $v$, the computation cost of $\mathbf{f}_\G$ is $C_{gk}= \mathcal{O}\left(\tbinom{v}{k}N_k C^{\cong}_k\right)$. This cost is usually prohibitively expensive, since each three terms are exponential in $k$.
 
-Subgraph sampling is generally used as a first step to accelerate (and sometimes modify) the graphlet kernel \cite{graphlet_kernel}. Given a graph $\G$, we denote by $S_k(\G)$ a sampling process that yields a random subgraph of $\G$, of which there exists many variants \cite{lesco}. Then, sampling $s$ iid subgraphs $\{F_1,...,F_s\}$ of size $k$ from $S_k(\G)$, we define the estimator:
+Subgraph sampling is generally used as a first step to accelerate (and sometimes modify) the graphlet kernel \cite{graphlet_kernel}. Given a graph $\G$, we denote by $S_k(\G)$ a sampling process that yields a random subgraph of $\G$, seen as a probability distribution over $\bar{\mathfrak{H}}$. %There exists many variants \cite{lesco}. 
+Then, sampling $s$ subgraphs $\hat{\mathfrak{F}} = \{F_1,...,F_s\}$ $i.i.d.$ from $S_k(\G)$, we define the estimator:
 \begin{align}
 	\label{eq:fhat_unif}
-	\hat{\mathbf{f}}_{\mathcal{G},S_k} =\frac{1}{s}\sum_{F\in\hat{\mathfrak{F}}_\G} \varphi^{match}_k(F).
+	\mathsmaller{\hat{\mathbf{f}}_{\mathcal{G},S_k} =s^{-1}\sum_{F\in\hat{\mathfrak{F}}_\G} \varphi^{match}_k(F).}
 \end{align}
-\nt{*you sum over $\hat{\mathfrak{F}}_\G$ that you have not defined. Do we really need the notation $\hat{\mathfrak{F}}_\G$? Perhaps we can say we sum over $\{F_1,...,F_s\}$*}
-and its expectation $\mathbf{f}_{\mathcal{G},S} = \mathbb{E}_{F \sim S_k(\G)} ~\varphi^{match}_k(F)$, which is a probability distribution over the set of graphlets $\mathfrak{H}$. \nt{We refer to these expectations as graphlet kernels. In fact, in all generality, any choice of sampling procedure $S_k$ yields a different definition of graphlet kernel. For instance, if one considers uniform sampling ($S^{\rm unif}$: independently samples $k$ nodes of $\G$ without replacement), then one obtains the original graphlet kernel of Eq.~\eqref{eq:gk}: $\mathbf{f}_{\G, S^{\rm unif}} = \mathbf{f}_\G$. Other choices of sampling procedures are possible~\cite{leskovec2006sampling}.} In this paper, we will also use the random walk (RW) sampler, which, unlike uniform sampling, tends to sample connected subgraphs, which may be more informative about the graph structure. 
+and its expectation $\mathbf{f}_{\mathcal{G},S} = \mathbb{E}_{F \sim S_k(\G)} ~\varphi^{match}_k(F)$, which is nothing more than the \emph{folding} of the distribution $S_k(\G)$ over non-isomorphic graphlets $\mathfrak{H}$. \nt{For any sampler, we refer to these expectations as graphlet kernels. In fact, in all generality, any choice of sampling procedure $S_k$ yields a different definition of graphlet kernel. For instance, if one considers uniform sampling ($S^{\rm unif}$: independently samples $k$ nodes of $\G$ without replacement), then one obtains the original graphlet kernel of Eq.~\eqref{eq:gk}: $\mathbf{f}_{\G, S^{\rm unif}} = \mathbf{f}_\G$. Other choices of sampling procedures are possible~\cite{leskovec2006sampling}.} In this paper, we will also use the random walk (RW) sampler, which, unlike uniform sampling, tends to sample connected subgraphs, which may be more informative about the graph structure. 
 
 The computation cost per graph of the \nt{approximate graphlet kernel with graph sampling of Eq.~\eqref{eq:fhat_unif}} is $C_{gk + gs}= \mathcal{O}\left(s C_S N_k C^{\cong}_k\right)$, where $C_S$ is the cost of sampling one subgraph. %Although the term $\binom{v}{k}$ doesn't exist  in this cost, still 
-For a fixed error in estimating $\bld{f}_{\G,S}$, the required number of samples $s$ is generally proportional to $N_k$ \nt{*rather needs to be prop to $N_k$, no?*} \cite{graphlet_kernel}, which \nt{unfortunately still yields an unaffordable algorithm}.
+For a fixed error in estimating $\bld{f}_{\G,S}$, the required number of samples $s$ generally needs to be proportional to $N_k$ \cite{graphlet_kernel}, which \nt{unfortunately still yields an unaffordable algorithm}.
 
 %where sampling a size-k subgraph means: first we uniformly at random choose $k$ nodes from the graph, then we sample the subgraph induced by those  nodes. This yields that each sample follow a uniform distribution over $\mathfrak{F}_\G$.
 
@@ -144,77 +142,84 @@ For a fixed error in estimating $\bld{f}_{\G,S}$, the required number of samples
 %verifies by the law of large numbers that $\hat{\mathbf{f}}_\G \xrightarrow[s \to \infty]{} \mathbf{f}_\mathcal{G}$ with probability $1$.
 
 
-\iffalse
-\subsection{Kernel Random features}\label{sec:Random_features}
-Kernels by definition are symmetric and positive  semi-definite functions that takes two data points as input. Based on Mercer theorem, for each kernel $\kappa$, there exists a Hilbert space $\mathbb{H}$ and a  feature map $\phi:\mathbb{R}^d\mapsto\mathbb{H}$ such that:  
-	\begin{equation}
-	\label{eq:kernel_main_equation}
-	\kappa(\mathbf{x},\mathbf{x}')=<\phi(\mathbf{x}),\phi(\mathbf{x}')>_\mathbb{H},~ \forall \mathbf{x},\mathbf{x}'\in\mathbb{R}^d
-	\end{equation}
-	where $<\phi(\mathbf{x}),\phi(\mathbf{x}')>_\mathbb{H}$ is the inner product defined in $\mathbb{H}$.
-
-Random features (RF) is an approach developed to approximate kernels with reduced computational time  \cite{rahimi2008random}. The idea is that, instead of considering the true lifting function $\phi$ in Eq. \ref{eq:kernel_main_equation}, we explicitly map the data points using an appropriate randomized feature map $\varphi:\mathbb{R}^d \xrightarrow{}\mathbb{C}^m$, such that the kernel for two data points $\mathbf{x}, \mathbf{x}'$ is approximated by the inner product of their random features with high probability:
-\begin{equation}
-\label{eq:approx_RF}
-\kappa(\mathbf{x},\mathbf{x}')=<\phi(\mathbf{x}),\phi(\mathbf{x}')>_\mathbb{H} \approx \varphi(\mathbf{x})^*\varphi(\mathbf{x}')
-\end{equation}
-where $^*$ stands for the conjugate transpose. Most RF constructions are known as Random Fourier Features (RFF), and are based on
-the following theorem.
-\begin{theorem}[Bochner's theorem]
-	A continuous and shift-invariant kernel $\kappa(\mathbf{x},\mathbf{x}')=\kappa(\mathbf{x}-\mathbf{x}')$ on $\mathbb{R}^d$ is positive definite if and only if $\kappa$ is the Fourier transform of a non-negative measure.
-\end{theorem}
-Therefore, scaling such kernels to obtain $\kappa(0) = \int p = 1$,   its Fourier transform $p(\mathbf{w})$ becomes a correct probability distribution, so we write:
-\begin{equation}
-\label{eq:real_Fourier_integral}
-\kappa(\mathbf{x}-\mathbf{x}')=\int_{\mathbb{R}^d}p(\mathbf{w})cos({\mathbf{w}^T(\mathbf{x}-\mathbf{x}')})d\mathbf{w}=E_{\mathbf{w}\sim p}[ \xi_\mathbf{w}(\mathbf{x}) \xi_\mathbf{w}(\mathbf{x}')]
-\end{equation}
-where $ \xi_\mathbf{w}(\mathbf{x})=\sqrt{2}cos(\mathbf{w}^T\mathbf{x}+b)$ such that $\mathbf{w}$ is drawn from $p$ and $b$ is drawn uniformly from $[0,2\pi]$. The RF methodology consists in averaging $m$ instances of $\  \xi_\mathbf{w}(\mathbf{x})^*  \xi_\mathbf{w}(\mathbf{x}')$  with different random frequencies $\mathbf{w}_j$ drawn identically and independently (iid) from $p$, that is, define
-\begin{align}
-	\label{eq:def_RF}
-	\varphi(\mathbf{x}) = \frac{1}{\sqrt{m}} ( \xi_{\mathbf{w}_j}(\mathbf{x}) )_{j=1}^m \in \mathbb{C}^m
-\end{align}
-such that $\varphi(\mathbf{x})^*\varphi(\mathbf{x}')=\frac{1}{m} \sum_{j=1}^m \xi_{\mathbf{w}_j}(\mathbf{x})^*\xi_{\mathbf{w}_j}(\mathbf{x}')$, which, by Hoeffding's inequality, converges exponentially in $m$ to $\kappa(\mathbf{x},\mathbf{x}')$.
-\fi
+%\iffalse
+%\subsection{Kernel Random features}\label{sec:Random_features}
+%Kernels by definition are symmetric and positive  semi-definite functions that takes two data points as input. Based on Mercer theorem, for each kernel $\kappa$, there exists a Hilbert space $\mathbb{H}$ and a  feature map $\phi:\mathbb{R}^d\mapsto\mathbb{H}$ such that:  
+%	\begin{equation}
+%	\label{eq:kernel_main_equation}
+%	\kappa(\mathbf{x},\mathbf{x}')=<\phi(\mathbf{x}),\phi(\mathbf{x}')>_\mathbb{H},~ \forall \mathbf{x},\mathbf{x}'\in\mathbb{R}^d
+%	\end{equation}
+%	where $<\phi(\mathbf{x}),\phi(\mathbf{x}')>_\mathbb{H}$ is the inner product defined in $\mathbb{H}$.
+%
+%Random features (RF) is an approach developed to approximate kernels with reduced computational time  \cite{rahimi2008random}. The idea is that, instead of considering the true lifting function $\phi$ in Eq. \ref{eq:kernel_main_equation}, we explicitly map the data points using an appropriate randomized feature map $\varphi:\mathbb{R}^d \xrightarrow{}\mathbb{C}^m$, such that the kernel for two data points $\mathbf{x}, \mathbf{x}'$ is approximated by the inner product of their random features with high probability:
+%\begin{equation}
+%\label{eq:approx_RF}
+%\kappa(\mathbf{x},\mathbf{x}')=<\phi(\mathbf{x}),\phi(\mathbf{x}')>_\mathbb{H} \approx \varphi(\mathbf{x})^*\varphi(\mathbf{x}')
+%\end{equation}
+%where $^*$ stands for the conjugate transpose. Most RF constructions are known as Random Fourier Features (RFF), and are based on
+%the following theorem.
+%\begin{theorem}[Bochner's theorem]
+%	A continuous and shift-invariant kernel $\kappa(\mathbf{x},\mathbf{x}')=\kappa(\mathbf{x}-\mathbf{x}')$ on $\mathbb{R}^d$ is positive definite if and only if $\kappa$ is the Fourier transform of a non-negative measure.
+%\end{theorem}
+%Therefore, scaling such kernels to obtain $\kappa(0) = \int p = 1$,   its Fourier transform $p(\mathbf{w})$ becomes a correct probability distribution, so we write:
+%\begin{equation}
+%\label{eq:real_Fourier_integral}
+%\kappa(\mathbf{x}-\mathbf{x}')=\int_{\mathbb{R}^d}p(\mathbf{w})cos({\mathbf{w}^T(\mathbf{x}-\mathbf{x}')})d\mathbf{w}=E_{\mathbf{w}\sim p}[ \xi_\mathbf{w}(\mathbf{x}) \xi_\mathbf{w}(\mathbf{x}')]
+%\end{equation}
+%where $ \xi_\mathbf{w}(\mathbf{x})=\sqrt{2}cos(\mathbf{w}^T\mathbf{x}+b)$ such that $\mathbf{w}$ is drawn from $p$ and $b$ is drawn uniformly from $[0,2\pi]$. The RF methodology consists in averaging $m$ instances of $\  \xi_\mathbf{w}(\mathbf{x})^*  \xi_\mathbf{w}(\mathbf{x}')$  with different random frequencies $\mathbf{w}_j$ drawn identically and independently (iid) from $p$, that is, define
+%\begin{align}
+%	\label{eq:def_RF}
+%	\varphi(\mathbf{x}) = \frac{1}{\sqrt{m}} ( \xi_{\mathbf{w}_j}(\mathbf{x}) )_{j=1}^m \in \mathbb{C}^m
+%\end{align}
+%such that $\varphi(\mathbf{x})^*\varphi(\mathbf{x}')=\frac{1}{m} \sum_{j=1}^m \xi_{\mathbf{w}_j}(\mathbf{x})^*\xi_{\mathbf{w}_j}(\mathbf{x}')$, which, by Hoeffding's inequality, converges exponentially in $m$ to $\kappa(\mathbf{x},\mathbf{x}')$.
+%\fi
 
 \section{Graphlet kernel with optical maps} \label{ssed to get a lowerec:pagestyle}
-\subsection{Proposed algorithm}
+\subsection{Proposed method}
 \label{sec:algo}
-\begin{algorithm}[h]\label{alg:gsa}
-\DontPrintSemicolon
-  \KwInput{labeled graph dataset $\mathcal{X}=(\G_i,y_i)_{i=1,\ldots,n}$}
-  \tools{Graphlet sampler $S_k$, a function $\varphi$, linear classifier (ex. SVM) }\\
-  \Hyp{k: graphlet size, $s$: number of graphlet samples per graph}, $m$: \emph{number of random features}\\
-  \KwOutput{Trained model to classify graphs}
-  
-  %\KwData{Testing set $x$}
-  %$\sum_{i=1}^{\infty} := 0$ \tcp*{this is a comment}
-  %\tcc{}
-  \Algo{\\}
-  Random initialization of the SVM weights\\
-  \For{$\G_i$ in $\mathcal{X}$}{
-  $\mathbf{z}_i=\mathbf{0}$ (null vector of size $m$) \\
-  \For{$j=1:s$}{
-  $F_{i,j}\gets S_k(\G_i)$\\
-  $\mathbf{z}_i\gets \mathbf{z}_i +\frac{1}{s}\varphi(F_{i,j})$
-  }
-  }
-  $\mathcal{D}_{\varphi}\gets (\mathbf{z}_i,y_i)_{i=1,\ldots, n}$\\
-  Train the linear classifier on the new vector-valued dataset $\mathcal{D}_{\varphi}$
-\caption{GSA-$\varphi$ generic algorithm}
-\end{algorithm}
+%\begin{algorithm}[h]\label{alg:gsa}
+%\DontPrintSemicolon
+%  \KwInput{labeled graph dataset $\mathcal{X}=(\G_i,y_i)_{i=1,\ldots,n}$}
+%  \tools{Graphlet sampler $S_k$, a function $\varphi$, linear classifier (ex. SVM) }\\
+%  \Hyp{k: graphlet size, $s$: number of graphlet samples per graph}, $m$: \emph{number of random features}\\
+%  \KwOutput{Trained model to classify graphs}
+%  
+%  %\KwData{Testing set $x$}
+%  %$\sum_{i=1}^{\infty} := 0$ \tcp*{this is a comment}
+%  %\tcc{}
+%  \Algo{\\}
+%  Random initialization of the SVM weights\\
+%  \For{$\G_i$ in $\mathcal{X}$}{
+%  $\mathbf{z}_i=\mathbf{0}$ (null vector of size $m$) \\
+%  \For{$j=1:s$}{
+%  $F_{i,j}\gets S_k(\G_i)$\\
+%  $\mathbf{z}_i\gets \mathbf{z}_i +\frac{1}{s}\varphi(F_{i,j})$
+%  }
+%  }
+%  $\mathcal{D}_{\varphi}\gets (\mathbf{z}_i,y_i)_{i=1,\ldots, n}$\\
+%  Train the linear classifier on the new vector-valued dataset $\mathcal{D}_{\varphi}$
+%\caption{GSA-$\varphi$ generic algorithm}
+%\end{algorithm}
 
-In this paper, we propose to deal with the main remaining bottleneck of the graphlet kernel, that is, the function $\match$. First, we therefore define a framework where it is replaced with a user-defined map $\varphi: \bar{\mathfrak{H}} \to \mathbb{R}^m$. %, and to replace the uniform sampler with a user-chosen one like the RW sampler.  
+In this paper, we focus on the main remaining bottleneck of the graphlet kernel, that is, the function $\match$. We therefore define a framework where it is replaced with a user-defined map $\varphi: \bar{\mathfrak{H}} \to \mathbb{R}^m$, which leads to the final representation:
+\begin{align}
+	\label{eq:fhat_phi}
+	\mathsmaller{\hat{\mathbf{f}}_{\mathcal{G},S_k,\varphi} =s^{-1}\sum_{F\in\hat{\mathfrak{F}}_\G} \varphi(F).}
+\end{align}
+and similarly its expectation $\mathbf{f}_{\mathcal{G},S_k,\varphi}$.
+%, and to replace the uniform sampler with a user-chosen one like the RW sampler.  
 %This makes it possible to deploy the OPU technology with this algorithm. 
-The resulting algorithm (Alg.~\ref{alg:gsa}) is referred to as \emph{graphlet sampling and Averaging} (GSA-$\varphi$). The cost of computing $\mathbf{z}_\G$ is dominated by $C_{GSA-\varphi}= \mathcal{O}\left(s C_S C_{\varphi}\right)$, where $C_{\varphi}$ is the cost of applying $\varphi$ on one graphlet.
+The resulting methodology is referred to as \emph{Graphlet Sampling and Averaging} (GSA-$\varphi$). The cost of computing \eqref{eq:fhat_phi} is essentially that of computing $\varphi$ for each sample: $C_{GSA-\varphi}= \mathcal{O}\left(s C_S C_{\varphi}\right)$, where $C_{\varphi}$ is the cost of applying $\varphi$.
 %
 %The function $\varphi$ here maps each subgraph to an $m$-dimensional space $\mathbb{R}^m$.
-Note that choosing $\varphi = \match$ and $S_k$ as the uniform sampler, GSA-$\match$ turns out to be the graphlet kernel with sampling.
-We see next that choosing $\varphi$ as \emph{kernel random maps} is both fast and efficient. Some of these maps will \emph{not} be permutation-invariant at the graphlet level, however, in the infinite sample limit, it is easy to see that the representation vector $\mathbf{z}_\G$ is indeed permutation-invariant at the graph level.
+%Note that choosing $\varphi = \match$ and $S_k$ as the uniform sampler, GSA-$\match$ turns out to be the graphlet kernel with sampling.
+%
+Similar methods have been studied with $\varphi$ as simple graphlets statistics \cite{Dutta2018}, which unavoidably incurs information loss. We see next that choosing $\varphi$ as \emph{kernel random maps} preserves information for a sufficient number of random features. Some of these maps will \emph{not} be permutation-invariant at the graphlet level, however, in the infinite sample limit, it is easy to see that the representation vector $\mathbf{f}_{\mathcal{G},S_k,\varphi}$ is indeed permutation-invariant at the graph level.
 
-\subsection{Efficiency of kernel random features with $GSA-\varphi$} 
+\subsection{Kernel random features with $GSA-\varphi$} 
 \label{sec:MMD}
 
-By averaging $\match$, the graphlet kernel obtains discrete probability distributions $\hat{\mathbf{f}}_{\G, S_k}$. The underlying metric used to compare graphs is the Euclidean distance between these histograms. When $\match$ is replaced by another $\varphi$, one compare Euclidean distance between certain \emph{embeddings} of distributions, which is reminiscent of kernel mean embeddings \cite{gretton}. We show below that this corresponds to choosing $\varphi$ as kernel random features.
+In the graphlet kernel, the underlying metric used to compare graphs is the Euclidean distance between graphlet histograms. When $\match$ is replaced by another $\varphi$, one compares certain \emph{embeddings} of distributions, which is reminiscent of kernel mean embeddings \cite{Gretton2007}. We show below that this corresponds to choosing $\varphi$ as kernel random features.
 
 For two objects $\mathbf{x}, \mathbf{x'}$, a kernel $\kappa$ associated to a random features (RF) decomposition is a positive definite function that can be decomposed  as follows \cite{rahimi2008random}:
 \begin{equation}
@@ -226,56 +231,60 @@ where $\xi$ is a real (or complex) function parameterized by $\mathbf{w} \in \Om
 The RF methodology then defines maps:
 \begin{equation}
 	\label{eq:def_RF}
-	\varphi(\mathbf{x}) = \frac{1}{\sqrt{m}} ( \xi_{\mathbf{w}_j}(\mathbf{x}) )_{j=1}^m \in \mathbb{C}^m
+	\mathsmaller{
+	\varphi(\mathbf{x}) = m^{-1/2} ( \xi_{\mathbf{w}_j}(\mathbf{x}) )_{j=1}^m \in \mathbb{C}^m}
 \end{equation}
-where $m$ is the number of features and the parameters $\mathbf{w}_j$ are drawn iid from $p$. Then, $\kappa(\mathbf{x},\mathbf{x}')\approx	\varphi(\mathbf{x})^H	\varphi(\mathbf{x}') = \frac{1}{m} \sum_j \xi_{\mathbf{w}_j}(\mathbf{x})^* \xi_{\mathbf{w}_j}(\mathbf{x}')$.
+where $m$ is the number of features and the parameters $\mathbf{w}_j$ are drawn iid from $p$. Then, $\kappa(\mathbf{x},\mathbf{x}')\approx	\varphi(\mathbf{x})^H	\varphi(\mathbf{x}') = m^{-1} \sum_j \xi_{\mathbf{w}_j}(\mathbf{x})^* \xi_{\mathbf{w}_j}(\mathbf{x}')$.
 
-Assume that we have a base kernel $\kappa(\F,\F')$ between \emph{graphlets}, with a RF decomposition $(\xi_\mathbf{w}, p)$, and define $\varphi$ as in \eqref{eq:def_RF}. Then, it is not hard to see that the Euclidean distance between the embeddings computed by Alg.~\ref{alg:gsa} $\|\mathbf{z}_\G - \mathbf{z}_{\G'}\|_2^2$ approximates the following \emph{Maximum Mean Discrepancy} (MMD) \cite{gretton, sriperumbudur} between the two discrete distributions of graphlets:
- \begin{multline}
- MMD^2(S_k(\G), S_k(\G')) \\= \mathbb{E}_{\mathbf{w}} \Big( \left| \mathbb{E}_{S_k(\G)} \xi_\mathbf{w}(\F) - \mathbb{E}_{S_k(\G')} \xi_\mathbf{w}(\F') \right|^2 \Big)
+Assume that we have a base kernel $\kappa(\F,\F')$ between \emph{graphlets}, with a RF decomposition $(\xi_\mathbf{w}, p)$, and define $\varphi$ as in \eqref{eq:def_RF}. Then, it is easy to show \cite{Keriven2017a, Keriven2018} that the Euclidean distance between the embeddings \eqref{eq:fhat_phi} approximates the following \emph{Maximum Mean Discrepancy} (MMD) \cite{Gretton2007, Sriperumbudur2010} between distributions on $\bar{\mathfrak{H}}$:
+ \begin{multline}\label{eq:MMD}
+ \mathsmaller{
+ \textup{MMD}^2(S_k(\G), S_k(\G'))} \\
+ \mathsmaller{= \mathbb{E}_{\mathbf{w}} \Big( \left| \mathbb{E}_{S_k(\G)} \xi_\mathbf{w}(F) - \mathbb{E}_{S_k(\G')} \xi_\mathbf{w}(F') \right|^2 \Big)}
  \end{multline}
-Note that here, $S_k(\G)$ can be interpreted as a distribution over $\mathfrak{H}$ if $\xi_\mathbf{w}$ is permutation-invariant, and over $\bar{\mathfrak{H}}$ otherwise. The main property of the MMD is that, for so-called \emph{characteristic kernels}, it is a true metric on distributions, \emph{i.e.} $MMD(S_k(\G), S_k(\G')) = 0 \Leftrightarrow S_k(\G) = S_k(\G')$, that is, it is $0$ if and only if $\G$ and $\G'$ incur the same distribution over graphlets. In addition, most usual kernels, like the Gaussian kernel, are characteristic \cite{MMD}.
+The main property of the MMD is that, for so-called \emph{characteristic kernels}, it is a true metric on distributions, \emph{i.e.} $\textup{MMD}(S_k(\G), S_k(\G')) = 0 \Leftrightarrow S_k(\G) = S_k(\G')$. % that is, it is $0$ if and only if $S_k(\G)$ and $S_k(\G')$ incur the same distribution over $\bar{\mathfrak{H}}$. 
+Most usual kernels, like the Gaussian kernel, are characteristic \cite{Gretton2007, Sriperumbudur2010}.
 %
-The next theorem, whose proof can be found in the supplementary material, bounds the quality of the approximation. %It states  that the Euclidean distance between the representation vectors $\bld{z}_\G, \bld{z}_{\G'}$ converges to the MMD metric between their distributions $\bld{f}_{\G,S_k}$, $\bld{f}_{\G',S_k}$. 
+The proof of the theorem below can be found in the supplementary material. %It states  that the Euclidean distance between the representation vectors $\bld{z}_\G, \bld{z}_{\G'}$ converges to the MMD metric between their distributions $\bld{f}_{\G,S_k}$, $\bld{f}_{\G',S_k}$. 
 
-\textcolor{red}{todo: $S_k$ as a distribution over non-isomorphic graphlets. Isomorphism is a special case}
+%\textcolor{red}{todo: $S_k$ as a distribution over non-isomorphic graphlets. Isomorphism is a special case}
 
 \begin{theorem}\label{theorem:concentration}
 Let $\G$ and $\G'$ be two graphs. %$\mathfrak{F}_\G=\{F_i\}_{i=1}^{s}$ (resp. $\mathfrak{F}_{\G'}=\{F_i'\}_{i=1}^{s}$) be $iid$ size-k graphlet samples drawn from $S_k(\G)$ (resp. $S_k(\G')$). 
 Assume a random feature map as in \eqref{eq:def_RF}. Assume that $|\xi_\mathbf{w}(F)| \leq 1$ for any $\mathbf{w},F$.
 We have for all $\delta>0$ and with probability at least $1-\delta$:
-\begin{multline*}
- \Big|\|\mathbf{z}_\G - \mathbf{z}_{\G'} \|_2^2 - MMD^2(S_k(\G),S_k(\G')) \Big| \\ \leq\frac{4 \sqrt{\log (6/\delta)}}{\sqrt{m}} + \frac{8\left(1+\sqrt{2\log(3/\delta)}\right)}{\sqrt{{s}}}
-\end{multline*}
+\begin{multline}\label{eq:bound}
+\mathsmaller{
+ \Big|\|\hat{\mathbf{f}}_{\G,S_k,\varphi} - \hat{\mathbf{f}}_{\G',S_k,\varphi} \|_2^2 - \textup{MMD}^2(S_k(\G),S_k(\G')) \Big| } \\
+ \mathsmaller{ \leq 4 m^{-\frac12} \sqrt{\log (6/\delta)} + 8s^{-\frac12} \left(1+\sqrt{2\log(3/\delta)}\right)}
+\end{multline}
 \end{theorem}
-According to this result, the number of random features $m$ should approximately be of the order of the number of samples $s$. We have seen that the latter is usually quite high, hence most usual random feature scheme will still incur a high computation cost overall. We discuss next random features with efficient optical hardware.
+Hence, if two classes of graphs are well-separated in terms of the MMD \eqref{eq:MMD}, for sufficiently high $m,s$, GSA-$\varphi$ has the same classification power. However, according to \eqref{eq:bound}, the number of random features $m$ should be of the order of the number of samples $s$. We have seen that the latter is generally quite high, hence most usual random feature scheme, typically in $C_\varphi =O(k^2 m)$, still have a high computation cost. We discuss next the use of \emph{optical hardware}.
 
 \subsection{Considered choices of $\varphi_{RF}$}
 \label{sec:phi_choices}
-\textbf{Gaussian maps $\boldsymbol{\varphi_{Gs}}$}: the RF map of the Gaussian kernel \cite{rahimi2008random}. For a graphlet $\F$ we define its vectorized adjacency matrix  $\mathbf{a}_\F=flatten(\mathbf{A}_\F)$, then:
+\textbf{Gaussian maps}: the RF map of the Gaussian kernel \cite{rahimi2008random}. For a graphlet $\F$ we define its vectorized adjacency matrix  $\mathbf{a}_\F=flatten(\mathbf{A}_\F)$, then:
 \begin{equation}
 \label{eq:Gaussian_map}
  \mathsmaller{\varphi_{Gs}(\F) = m^{-1/2} \left( \sqrt{2} \cos(\mathbf{w}_j^T\mathbf{a}_\F+b_j) \right)_{j=1}^m \in \mathbb{R}^m}
 \end{equation}
-where the $\mathbf{w}_j\in \R^{k^2}$ are drawn from a Gaussian distribution and $b_j \sim \mathcal{U}([0, 2\pi])$. While using a Gaussian kernel on $\mathbf{a}_\mathcal{F}$ is not necessarily intuitive, this will serve as a baseline for the other methods. Note that $\varphi_{Gs}$ is not permutation-invariant.
+where the $\mathbf{w}_j\in \R^{k^2}$ are drawn from a Gaussian distribution and $b_j \sim \mathcal{U}([0, 2\pi])$. While using a Gaussian kernel on $\mathbf{a}_\mathcal{F}$ is not very intuitive, this will serve as a baseline for the other methods. Note that $\varphi_{Gs}$ is not permutation-invariant.
 \BlankLine
-\noindent\textbf{Gaussian maps $\boldsymbol{\varphi_{Gs+Eig}}$ applied on the sorted eigenvalues:} We consider a permutation-invariant alternative to the first case. %Instead of passing the vectorized adjacency matrix as input, 
-For a graphlet $\F$ we denote the vector of its sorted eigenvalues by $\bm{\lambda}(\F) \in\R^k$ and $\varphi_{Gs+eig}(\F) = \varphi_{Gs}(\bm{\lambda}(\F))$ (with $\bm{w}_j$ of dimension $k$). Note that the existence of co-spectral graphs, that is, non-isomorphic graphs with the same set of eigenvalues, implies a loss of information when computing $\bm{\lambda}(\F)$.
+\noindent\textbf{Gaussian maps applied on the sorted eigenvalues:} We consider a permutation-invariant alternative to the first case. %Instead of passing the vectorized adjacency matrix as input, 
+For a graphlet $\F$ we denote the vector of its \emph{sorted} eigenvalues by $\bm{\lambda}(\F) \in\R^k$ and $\varphi_{Gs+eig}(\F) = \varphi_{Gs}(\bm{\lambda}(\F))$ (with $\mathbf{w}_j$ of dimension $k$). Note that the existence of co-spectral graphs, that is, non-isomorphic graphs with the same set of eigenvalues, implies a loss of information when computing $\bm{\lambda}(\F)$.
 %The motive proposing $\varphi_{Gs+Eig}$ is that it respects the isomorphism test since: 
 %i/ $\bld{\lambda}(\bld{A})=\bld{\lambda}(\bld{PAP^T})$ for any permutation matrix $\bld{P}$, 
 %ii/ $F\cong F' \Rightarrow\exists \bld{P}, \bld{A}_F=P\bld{A}_{F'}P^T$.  
 %Thus, $F\cong F' \Rightarrow \varphi_{Gs+Eig}(F)=\varphi_{Gs+Eig}(F')$. $\varphi_{Gs+Eig}$ maps isomorphic subgraphs to the same point in $\R^m$.
 \BlankLine
-\noindent\textbf{Optical random feature maps $\varphi_{OPU}$:} Due to high-dimensional matrix multiplication, Gaussian RF cost $\mathcal{O}(mk^2)$ and are notably expensive to compute in high-dimension (in this case, high $m$ in particular). To solve this, OPUs (Optical Processing Units) technology were recently developed to compute a specific random features mapping in \emph{constant time  $\mathcal{O}(1)$} in both $m$ and $k$ using light scattering \cite{saade_opu} -- within the current physical limitations of the devices, actually of the order of a few millions for both input and output dimensions. Here we again consider the flattened adjacency matrix for simplicity, and the corresponding map is:
+\noindent\textbf{Optical random feature maps:} Due to high-dimensional matrix multiplication, Gaussian RFs cost $\mathcal{O}(mk^2)$ and are notably expensive to compute in high-dimension (in this case, high $m$ in particular). To solve this, OPUs (Optical Processing Units) were recently developed to compute a specific random features mapping in \emph{constant time  $\mathcal{O}(1)$} using light scattering \cite{saade_opu} -- within the physical limits of the OPU, currently of the order of a few millions for both input and output dimensions. Here we again consider the flattened adjacency matrix for simplicity. The OPU computes an operation of the type:
 \[
 \label{OPU_equation}
-\mathbf{\varphi}_{OPU}(\bm{A}_\F)=|\mathbf{W\bm{A}_\F+b}|^2 ;~\mathbf{W}\in \mathbb{R}^{m\times d},\mathbf{b}\in \mathbb{R}^m, \mathbf{x}\in \mathbb{R}^d
+\mathbf{\varphi}_{OPU}(\F)= m^{-1/2}\left(|\mathbf{w}_j^T \mathbf{a}_\F+\mathbf{b}_j|^2\right)_{j=1}^m
 \]
-Where $\mathbf{b}$ is a random bias vector, $d$ is the input space dimension, the amplitude function $|\cdot|$ is taken element wise, and $\mathbf{W}$ is a random \emph{iid} complex matrix with Gaussian real and imaginary parts.
-
+Where $\mathbf{b}_j$ is random bias and $\mathbf{w}_j$ is a random complex vector with Gaussian real and imaginary parts. Note that here, $\mathbf{w}_j, \mathbf{b}_j$ are incurred by the physics and are unknown, however the corresponding kernel $\kappa(\F,\F')$ has a closed-form expression \cite{saade_opu}.
+%
 The complexities of the different mappings $\varphi$ examined in this work are summarized in Table \ref{tab:cost}.
-
-
 
 \begin{table}
 \centering
@@ -283,10 +292,10 @@ The complexities of the different mappings $\varphi$ examined in this work are s
 \hline
 \multicolumn{2}{|c|}{Graphlet kernel} & $O(\tbinom{v}{k} N_k C^{\cong}_k)$\\ \hline \hline
 %
-\multirow{4}{*}{GSA-$\varphi$ with:} & $\varphi^{match}_k$ & $O(C_s s N_k C^{\cong}_k)$ \\
-& $\varphi_{Gs}$ & $O(C_s s m k^2)$ \\ 
-& $\varphi_{Gs+Eigen}$  & $O(C_s s (m k + k^3))$ \\ 
-& $\varphi_{OPU}$  & $O(C_s s)$ \\ \hline
+\multirow{4}{*}{GSA-$\varphi$ with:} & $\varphi^{match}_k$ & $O(C_S s N_k C^{\cong}_k)$ \\
+& $\varphi_{Gs}$ & $O(C_S s m k^2)$ \\ 
+& $\varphi_{Gs+eig}$  & $O(C_S s (m k + k^3))$ \\ 
+& $\varphi_{OPU}$  & $O(C_S s)$ \\ \hline
 \end{tabular}
 \caption{Per-graph complexities of GSA-$\varphi$.}
 \label{tab:cost}
@@ -403,6 +412,8 @@ We proposed a generic framework that can deploy OPUs random features in graph cl
 % style file from IEEE produces unsorted bibliography list.
 % -------------------------------------------------------------------------
 \bibliographystyle{IEEEbib}
+\small
 \bibliography{strings,refs}
+\normalsize
 \include{app}
 \end{document}
