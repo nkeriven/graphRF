@@ -1,0 +1,149 @@
+\begin{thebibliography}{10}
+
+\bibitem{protein_application}
+Giannis Nikolentzos, Polykarpos Meladianos, and Michalis Vazirgiannis,
+\newblock ``Matching node embeddings for graph similarity,''
+\newblock in {\em Thirty-First AAAI Conference on Artificial Intelligence},
+  2017.
+
+\bibitem{graph_soc_net}
+Pinar Yanardag and SVN Vishwanathan,
+\newblock ``Deep graph kernels,''
+\newblock in {\em Proceedings of the 21th ACM SIGKDD International Conference
+  on Knowledge Discovery and Data Mining}, 2015, pp. 1365--1374.
+
+\bibitem{class_Reddit}
+Christopher Morris, Nils~M Kriege, Franka Bause, Kristian Kersting, Petra
+  Mutzel, and Marion Neumann,
+\newblock ``Tudataset: A collection of benchmark datasets for learning with
+  graphs,''
+\newblock {\em arXiv preprint arXiv:2007.08663}, 2020.
+
+\bibitem{node_features}
+Chi~Thang Duong, Thanh~Dat Hoang, Ha~The~Hien Dang, Quoc Viet~Hung Nguyen, and
+  Karl Aberer,
+\newblock ``On node features for graph neural networks,''
+\newblock {\em arXiv preprint arXiv:1911.08795}, 2019.
+
+\bibitem{frequent_subgraphs}
+X~Yan and J~Han,
+\newblock ``gspan: Graph-based substructure pattern mining, 2002,''
+\newblock {\em Published by the IEEE Computer Society}, 2003.
+
+\bibitem{kriege_graph_kernels}
+Nils~M Kriege, Fredrik~D Johansson, and Christopher Morris,
+\newblock ``A survey on graph kernels,''
+\newblock {\em Applied Network Science}, vol. 5, no. 1, pp. 1--42, 2020.
+
+\bibitem{graphlet_kernel}
+Nino Shervashidze, SVN Vishwanathan, Tobias Petri, Kurt Mehlhorn, and Karsten
+  Borgwardt,
+\newblock ``Efficient graphlet kernels for large graph comparison,''
+\newblock in {\em Artificial Intelligence and Statistics}, 2009, pp. 488--495.
+
+\bibitem{Bruna2013}
+Joan Bruna, Wojciech Zaremba, Arthur Szlam, and Yann LeCun,
+\newblock ``{Spectral Networks and Locally Connected Networks on Graphs},''
+\newblock in {\em ICLR}, 2014, pp. 1--14.
+
+\bibitem{Bronstein2017}
+Michael~M. Bronstein, Joan Bruna, Yann Lecun, Arthur Szlam, and Pierre
+  Vandergheynst,
+\newblock ``{Geometric Deep Learning: Going beyond Euclidean data},''
+\newblock {\em IEEE Signal Processing Magazine}, vol. 34, no. 4, pp. 18--42,
+  2017.
+
+\bibitem{GCN_powerful}
+Keyulu Xu, Weihua Hu, Jure Leskovec, and Stefanie Jegelka,
+\newblock ``How powerful are graph neural networks?,''
+\newblock {\em arXiv preprint arXiv:1810.00826}, 2018.
+
+\bibitem{rahimi2008random}
+Ali Rahimi and Benjamin Recht,
+\newblock ``Random features for large-scale kernel machines,''
+\newblock in {\em Advances in neural information processing systems}, 2008, pp.
+  1177--1184.
+
+\bibitem{RF_1}
+Aman Sinha and John~C Duchi,
+\newblock ``Learning kernels with random features,''
+\newblock in {\em Advances in Neural Information Processing Systems}, 2016, pp.
+  1298--1306.
+
+\bibitem{saade_opu}
+Alaa Saade, Francesco Caltagirone, Igor Carron, Laurent Daudet, Ang{\'e}lique
+  Dr{\'e}meau, Sylvain Gigan, and Florent Krzakala,
+\newblock ``Random projections through multiple optical scattering:
+  Approximating kernels at the speed of light,''
+\newblock in {\em 2016 IEEE International Conference on Acoustics, Speech and
+  Signal Processing (ICASSP)}. IEEE, 2016, pp. 6215--6219.
+
+\bibitem{Gretton2007}
+Arthur Gretton, Karsten~M. Borgwardt, Malte~J. Rasch, Bernhard Sch{\"{o}}lkopf,
+  and Alexander~J. Smola,
+\newblock ``{A Kernel Method for the Two-Sample Problem},''
+\newblock in {\em Advances in Neural Information Processing Systems (NIPS)},
+  2007, pp. 513--520.
+
+\bibitem{isomorphism}
+Johannes Kobler, Uwe Sch{\"o}ning, and Jacobo Tor{\'a}n,
+\newblock {\em The graph isomorphism problem: its structural complexity},
+\newblock Springer Science \& Business Media, 2012.
+
+\bibitem{oeis}
+OEIS~Foundation Inc.,
+\newblock ``The online encyclopedia of integer sequences,
+  https://oeis.org/a000088,''
+\newblock 2019.
+
+\bibitem{isomorphism_np}
+Anna Lubiw,
+\newblock ``Some np-complete problems similar to graph isomorphism,''
+\newblock {\em SIAM Journal on Computing}, vol. 10, no. 1, pp. 11--21, 1981.
+
+\bibitem{leskovec2006sampling}
+Jure Leskovec and Christos Faloutsos,
+\newblock ``Sampling from large graphs,''
+\newblock in {\em Proceedings of the 12th ACM SIGKDD international conference
+  on Knowledge discovery and data mining}, 2006, pp. 631--636.
+
+\bibitem{Dutta2018}
+Anjan Dutta and Hichem Sahbi,
+\newblock ``{Stochastic Graphlet Embedding},''
+\newblock {\em IEEE Transactions on Neural Networks and Learning Systems},
+  2018.
+
+\bibitem{Keriven2017a}
+Nicolas Keriven, Anthony Bourrier, R{\'{e}}mi Gribonval, and Patrick
+  P{\'{e}}r{\`{e}}z,
+\newblock ``{Sketching for Large-Scale Learning of Mixture Models},''
+\newblock {\em Information and Inference: A Journal of the IMA}, vol. 7, no. 3,
+  pp. 447--508, 2018.
+
+\bibitem{Keriven2018}
+Nicolas Keriven, Damien Garreau, and Iacopo Poli,
+\newblock ``{NEWMA: a new method for scalable model-free online change-point
+  detection},''
+\newblock {\em arXiv:1805.08061}, pp. 1--22, 2018.
+
+\bibitem{Sriperumbudur2010}
+Bharath~K. Sriperumbudur, Arthur Gretton, Kenji Fukumizu, Bernhard
+  Sch{\"{o}}lkopf, and Gert~R.G. Lanckriet,
+\newblock ``{Hilbert space embeddings and metrics on probability measures},''
+\newblock {\em The Journal of Machine Learning Research}, vol. 11, pp.
+  1517--1561, 2010.
+
+\bibitem{SBM}
+Thorben Funke and Till Becker,
+\newblock ``Stochastic block models: A comparison of variants and inference
+  methods,''
+\newblock {\em PloS one}, vol. 14, no. 4, 2019.
+
+\bibitem{DD_ref}
+Paul~D Dobson and Andrew~J Doig,
+\newblock ``Distinguishing enzyme structures from non-enzymes without
+  alignments,''
+\newblock {\em Journal of molecular biology}, vol. 330, no. 4, pp. 771--783,
+  2003.
+
+\end{thebibliography}
