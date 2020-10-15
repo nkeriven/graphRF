@@ -102,7 +102,7 @@ The main goal of this paper is to provide a proof-of-concept answer to the follo
 \section{Background}
 \label{sec:background}
 %\subsection{The graphlet kernel}\label{sec:graphlet_kernel}
-First, we present the concepts necessary to define the graphlet kernel. We represent a graph of size $v$ by the adjacency matrix $\mathbf{A}\in \{0,1\}^{v\times v}$, such that $a_{i,j} =1$ if there is an edge between nodes $\{i,j\}$ and $0$ otherwise. Two graphs are said to be isomorphic ($\G\cong \G')$ if we can permute the nodes' labels of one such that their adjacency matrices are equal \cite{isomorphism}. 
+First, we present the concepts necessary to define the graphlet kernel. We represent a graph of size $v$ by the adjacency matrix $\mathbf{A}\in \{0,1\}^{v\times v}$, such that $a_{i,j} =1$ if there is an edge between nodes $\{i,j\}$ and $0$ otherwise. Two graphs are said to be isomorphic ($\G\cong \G')$ if we can permute the nodes of one such that their adjacency matrices are equal \cite{isomorphism}. 
 
 \subsection{Isomorphic graphlets}
 
@@ -129,10 +129,10 @@ Then, sampling $s$ subgraphs $\hat{\mathfrak{F}}_\G = \{F_1,...,F_s\}$ $i.i.d.$ 
 	\label{eq:fhat_unif}
 	\mathsmaller{\hat{\mathbf{f}}_{\mathcal{G},S_k} =s^{-1}\sum_{F\in\hat{\mathfrak{F}}_\G} \varphi^{match}_k(F).}
 \end{align}
-and its expectation $\mathbf{f}_{\mathcal{G},S} = \mathbb{E}_{F \sim S_k(\G)} ~\varphi^{match}_k(F)$, which is nothing more than the \emph{folding} of the distribution $S_k(\G)$ over non-isomorphic graphlets $\mathfrak{H}$. For any sampler, we refer to these expectations as graphlet kernels. In fact, in all generality, any choice of sampling procedure $S_k$ yields a different definition of graphlet kernel. For instance, if one considers uniform sampling ($S^{\rm unif}$: independently samples $k$ nodes of $\G$ without replacement), then one obtains the original graphlet kernel of Eq.~\eqref{eq:gk}: $\mathbf{f}_{\G, S^{\rm unif}} = \mathbf{f}_\G$. Other choices of sampling procedures are possible~\cite{leskovec2006sampling}. In this paper, we will also use the random walk (RW) sampler, which, unlike uniform sampling, tends to sample connected subgraphs, which may be more informative about the graph structure. 
-
+and its expectation $\mathbf{f}_{\mathcal{G},S} = \mathbb{E}_{F \sim S_k(\G)} ~\varphi^{match}_k(F)$, which is nothing more than the \emph{folding} of the distribution $S_k(\G)$ over non-isomorphic graphlets $\mathfrak{H}$. For any sampler, we refer to these expectations as graphlet kernels. In all generality, any choice of sampling procedure $S_k$ yields a different definition of graphlet kernel. For instance, if one considers uniform sampling ($S^{\rm unif}$: independently samples $k$ nodes of $\G$ without replacement), then one obtains the original graphlet kernel of Eq.~\eqref{eq:gk}: $\mathbf{f}_{\G, S^{\rm unif}} = \mathbf{f}_\G$. Other choices of sampling procedures are possible~\cite{leskovec2006sampling}. In this paper, we will also use the random walk (RW) sampler, which, unlike uniform sampling, tends to sample connected subgraphs. %, which may be more informative about the graph structure. 
+%
 The computation cost per graph of the approximate graphlet kernel of Eq.~\eqref{eq:fhat_unif} is $C_{gk + gs}= \mathcal{O}\left(s C_S N_k C^{\cong}_k\right)$, where $C_S$ is the cost of sampling one subgraph. %Although the term $\binom{v}{k}$ doesn't exist  in this cost, still 
-For a fixed error in estimating $\bld{f}_{\G,S}$, the required number of samples $s$ generally needs to be proportional to $N_k$ \cite{graphlet_kernel}, which unfortunately still yields an unaffordable algorithm.
+For a fixed error in estimating $\bld{f}_{\G,S}$, the required number of samples $s$ generally needs to be proportional to $N_k$ \cite{graphlet_kernel}, which unfortunately still yields a generally unaffordable algorithm.
 
 %where sampling a size-k subgraph means: first we uniformly at random choose $k$ nodes from the graph, then we sample the subgraph induced by those  nodes. This yields that each sample follow a uniform distribution over $\mathfrak{F}_\G$.
 
@@ -175,27 +175,26 @@ For a fixed error in estimating $\bld{f}_{\G,S}$, the required number of samples
 %\fi
 
 \begin{algorithm}
-	\label{alg:gsa}
 	\DontPrintSemicolon
 	\KwInput{labeled graph dataset $\mathcal{X}=(\G_i,y_i)_{i=1,\ldots,n}$}
-	\tools{Graphlet sampler $S_k$, a function $\varphi$, a linear classifier (ex. SVM) }\\
-	\Hyp{k: graphlet size, $s$: number of graphlet samples}, $m$: \emph{number of random features}\\
+	\tools{Graphlet sampler $S_k$, a function $\varphi:\bar{\mathfrak{H}}\to \mathbb{R}^m$, a linear classifier (ex. SVM) }\\
+	\Hyp{$s$: number of graphlet samples}\\%, $m$: \emph{number of random features}\\
 	\KwOutput{Trained model to classify graphs}
 	%\KwData{Testing set $x$}
 	%$\sum_{i=1}^{\infty} := 0$ \tcp*{this is a comment}
 	%\tcc{}
 	\Algo{\\}
-	Random initialization of the SVM weights\\
+	%Random initialization of the SVM weights\\
 	\For{$\G_i$ in $\mathcal{X}$}{
-		$\mathbf{z}_i=\mathbf{0}$ (null vector of size $m$) \\
+		$\mathbf{f}_i=\mathbf{0}$ (null vector of size $m$) \\
 		\For{$j=1:s$}{
 			$F_{i,j}\gets S_k(\G_i)$\\
-			$\mathbf{z}_i\gets \mathbf{z}_i +\frac{1}{s}\varphi(F_{i,j})$
+			$\mathbf{f}_i\gets \mathbf{f}_i +\frac{1}{s}\varphi(F_{i,j})$
 		}
 	}
-	$\mathcal{D}_{\varphi}\gets (\mathbf{z}_i,y_i)_{i=1,\ldots, n}$\\
-	Train the classifier on this vector-valued dataset $\mathcal{D}_{\varphi}$
-	\caption{GSA-$\varphi$ generic algorithm}
+	%$\mathcal{D}_{\varphi}\gets (\mathbf{f}_i,y_i)_{i=1,\ldots, n}$\\
+	Train the classifier on the vector dataset $(\mathbf{f}_i,y_i)_{i=1}^n$
+	\caption{GSA-$\varphi$ generic algorithm}\label{alg:gsa}
 \end{algorithm}
 
 \section{Graphlet kernel with optical maps} \label{ssed to get a lowerec:pagestyle}
@@ -206,15 +205,15 @@ In this paper, we focus on the main remaining bottleneck of the graphlet kernel,
 	\label{eq:fhat_phi}
 	\mathsmaller{\hat{\mathbf{f}}_{\mathcal{G},S_k,\varphi} =s^{-1}\sum_{F\in\hat{\mathfrak{F}}_\G} \varphi(F).}
 \end{align}
-and similarly its expectation $\mathbf{f}_{\mathcal{G},S_k,\varphi}$.
+%and similarly its expectation $\mathbf{f}_{\mathcal{G},S_k,\varphi}$.
 %, and to replace the uniform sampler with a user-chosen one like the RW sampler.  
 %This makes it possible to deploy the OPU technology with this algorithm. 
-The resulting methodology is referred to as \emph{Graphlet Sampling and Averaging} (GSA-$\varphi$), and summarized in Alg.~\ref{alg:gsa}. The cost of computing \eqref{eq:fhat_phi} is $C_{GSA-\varphi}= \mathcal{O}\left(s C_S C_{\varphi}\right)$, where $C_{\varphi}$ is the cost of applying $\varphi$.
+The resulting methodology (Alg.~\ref{alg:gsa}) is referred to as \emph{Graphlet Sampling and Averaging} (GSA-$\varphi$). The cost of computing \eqref{eq:fhat_phi} is $C_{GSA-\varphi}= \mathcal{O}\left(s C_S C_{\varphi}\right)$, where $C_{\varphi}$ is the cost of applying $\varphi$.
 %
 %The function $\varphi$ here maps each subgraph to an $m$-dimensional space $\mathbb{R}^m$.
 %Note that choosing $\varphi = \match$ and $S_k$ as the uniform sampler, GSA-$\match$ turns out to be the graphlet kernel with sampling.
 %
-Similar methods have been studied with $\varphi$ as simple graphlets statistics \cite{Dutta2018}, which unavoidably incurs information loss. We see next that choosing $\varphi$ as \emph{kernel random maps} preserves information for a sufficient number of random features. Some of these maps will \emph{not} be permutation-invariant at the graphlet level, however, in the infinite sample limit, it is easy to see that the representation vector $\mathbf{f}_{\mathcal{G},S_k,\varphi}$ is indeed permutation-invariant at the graph level.
+Similar methods have been studied with $\varphi$ as simple graph statistics \cite{Dutta2018}, which unavoidably incurs information loss. We see next that choosing $\varphi$ as \emph{kernel random features} preserves information for a sufficient number of features. Some of these maps will \emph{not} be permutation-invariant at the graphlet level, however, in the infinite sample limit, it is easy to see that $\hat{\mathbf{f}}_{\mathcal{G},S_k,\varphi}$ is permutation-invariant at the graph level.
 
 \subsection{Kernel random features with $GSA-\varphi$} 
 \label{sec:MMD}
@@ -240,7 +239,7 @@ Assume that we have a base kernel $\kappa(\F,\F')$ between \emph{graphlets}, wit
  \begin{multline}\label{eq:MMD}
  \mathsmaller{
  \textup{MMD}^2(S_k(\G), S_k(\G'))} \\
- \mathsmaller{= \mathbb{E}_{\mathbf{w}} \Big( \left| \mathbb{E}_{S_k(\G)} \xi_\mathbf{w}(F) - \mathbb{E}_{S_k(\G')} \xi_\mathbf{w}(F') \right|^2 \Big)}
+ \mathsmaller{= \mathbb{E}_{\mathbf{w}} \left( \left| \mathbb{E}_{S_k(\G)} \xi_\mathbf{w}(F) - \mathbb{E}_{S_k(\G')} \xi_\mathbf{w}(F') \right|^2 \right)}
  \end{multline}
 The main property of the MMD is that, for so-called \emph{characteristic kernels}, it is a true metric on distributions, \emph{i.e.} $\textup{MMD}(S_k(\G), S_k(\G')) = 0 \Leftrightarrow S_k(\G) = S_k(\G')$. % that is, it is $0$ if and only if $S_k(\G)$ and $S_k(\G')$ incur the same distribution over $\bar{\mathfrak{H}}$. 
 Most usual kernels, like the Gaussian kernel, are characteristic \cite{Gretton2007, Sriperumbudur2010}.
@@ -260,7 +259,7 @@ We have for all $\delta>0$ and with probability at least $1-\delta$:
 \end{multline}
 \end{theorem}
 \begin{proof}
-	See the extended version of this article~\cite{arxiv_version}.
+	See the supplementary material~\cite{arxiv_version}.
 \end{proof}
 Hence, if two classes of graphs are well-separated in terms of the MMD \eqref{eq:MMD}, then, for sufficiently large $m,s$, GSA-$\varphi$ has the same classification power. However, according to \eqref{eq:bound}, $m$ should be of the order of $s$, and we have seen that the latter generally needs to be quite large:  most usual random feature scheme, typically in $C_\varphi =O(k^2 m)$, still have a high computation cost. We discuss next the use of \emph{optical hardware}.
 
@@ -273,15 +272,15 @@ Hence, if two classes of graphs are well-separated in terms of the MMD \eqref{eq
 \end{equation}
 where $\mathbf{a}_\F=flatten(\mathbf{A}_\F)$ is the vectorized adjacency matrix of the graphlet $\F$, 
 the $\mathbf{w}_j\in \R^{k^2}$ are drawn from a Gaussian distribution and $b_j \sim \mathcal{U}([0, 2\pi])$. While using a Gaussian kernel on $\mathbf{a}_\mathcal{F}$ is not very intuitive, this will serve as a baseline for other methods. Note that $\varphi_{Gs}$ is not permutation-invariant.
-\BlankLine
+
 \noindent\textbf{Gaussian maps applied on the sorted eigenvalues:} We consider a permutation-invariant alternative to the first case. %Instead of passing the vectorized adjacency matrix as input, 
 For a graphlet $\F$ we denote the vector of its \emph{sorted} eigenvalues by $\bm{\lambda}(\F) \in\R^k$ and $\varphi_{Gs+eig}(\F) = \varphi_{Gs}(\bm{\lambda}(\F))$ (with $\mathbf{w}_j$ of dimension $k$). Note that the existence of co-spectral graphs, that is, non-isomorphic graphs with the same set of eigenvalues, implies a loss of information when computing $\bm{\lambda}(\F)$.
 %The motive proposing $\varphi_{Gs+Eig}$ is that it respects the isomorphism test since: 
 %i/ $\bld{\lambda}(\bld{A})=\bld{\lambda}(\bld{PAP^T})$ for any permutation matrix $\bld{P}$, 
 %ii/ $F\cong F' \Rightarrow\exists \bld{P}, \bld{A}_F=P\bld{A}_{F'}P^T$.  
 %Thus, $F\cong F' \Rightarrow \varphi_{Gs+Eig}(F)=\varphi_{Gs+Eig}(F')$. $\varphi_{Gs+Eig}$ maps isomorphic subgraphs to the same point in $\R^m$.
-\BlankLine
-\noindent\textbf{Optical random feature maps:} Due to high-dimensional matrix multiplication, Gaussian RFs cost $\mathcal{O}(mk^2)$ and are notably expensive to compute in high-dimension (in this case, large $m$). To solve this, OPUs (Optical Processing Units) were recently developed to compute a specific random features mapping in \emph{constant time  $\mathcal{O}(1)$} using light scattering~\cite{saade_opu} -- within the physical limits of the OPU, currently of the order of a few millions for both input and output dimensions. Here we again consider the flattened adjacency matrix for simplicity. The OPU computes an operation of the type:
+
+\noindent\textbf{Optical random feature maps:} Due to high-dimensional matrix multiplication, Gaussian RFs cost $\mathcal{O}(mk^2)$ and are notably expensive to compute in high-dimension (here mostly large $m$). To solve this, OPUs (Optical Processing Units) were recently developed to compute a specific random features mapping in \emph{constant time  $\mathcal{O}(1)$} using light scattering~\cite{saade_opu} -- within the physical limits of the OPU, currently of the order of a few millions for both input and output dimensions. Here we again consider the flattened adjacency matrix for simplicity. The OPU computes an operation of the type:
 \[
 \label{OPU_equation}
 \mathbf{\varphi}_{OPU}(\F)= m^{-1/2}\left(|\mathbf{w}_j^T \mathbf{a}_\F+\mathbf{b}_j|^2\right)_{j=1}^m
@@ -310,9 +309,9 @@ Table \ref{tab:cost} summarizes the complexities of the mappings $\varphi$ exami
 \subsection{Datasets}\label{sec:setup}
 %With respect to the performance and  the computation time, we compare different choices of  map $\varphi$ in $GSA-\varphi$. We benchmark the performance of $GSA-\varphi_{OPU}$ against GIN based graph convolutional network \cite{GCN_powerful}.
 %
-In order to first compare performances of different methods in a controlled setting, we consider a synthetic dataset generated by a \emph{Stochastic Block Model (SBM)} \cite{SBM}. We generate $300$ graphs, $240$ for training  and $60$ for testing. Each graph has $v=60$ nodes divided equally in six communities. Moreover, graphs are divided into two classes $\{0 , 1\}$. For each class we fix $p_{in}$ (resp. $p_{out}$) which is the probability of generating an edge between any two nodes in the same (resp. different) community. Besides, to prevent the classes from being easily discriminated by the average degree, the pairs $(p_{in,i} , p_{out,i})_{i=0,1}$ are chosen such that nodes in graphs of both classes have the same expected degree (set to $10$). Having one degree of freedom left, we fix $p_{in,1}$ to $0.3$, and vary $r=(p_{in,1}/p_{in,0})$ the inter-class similarity parameter: the closer $r$ is to $1$, the more similar both classes are, and thus the harder it is to discriminate them.
+In order to first compare performances of different methods in a controlled setting, we consider a synthetic dataset generated by a \emph{Stochastic Block Model (SBM)} \cite{SBM}. We generate $300$ graphs, $240$ for training  and $60$ for testing. Each graph has $v=60$ nodes divided equally in six communities. Graphs are divided into two classes $\{0 , 1\}$. For each class we fix $p_{in}$ (resp. $p_{out}$) the edge probability between any two nodes in the same (resp. different) community. Besides, to prevent the classes from being easily discriminated by the average degree, the pairs $(p_{in,i} , p_{out,i})_{i=0,1}$ are chosen such that nodes in graphs of both classes have the same expected degree (set to $10$). Having one degree of freedom left, we fix $p_{in,1}$ to $0.3$, and vary $r=(p_{in,1}/p_{in,0})$ the inter-class similarity parameter: the closer $r$ is to $1$, the more similar both classes are, and thus the harder it is to discriminate them.
 
-In addition, we perform experiments on two real-world datasets: D\&D \cite{DD_ref} and Reddit-Binary \cite{class_Reddit} are of size $n=1178$ and  $n=2000$ respectively. We recall that even though D\&D dataset is labeled, the graphs are classified based on their structure only and all other information is discarded. Python codes can be found on \url{https://github.com/hashemghanem/OPU_Graph_Classifier.git}
+In addition, we perform experiments on two real-world datasets: D\&D \cite{DD_ref} and Reddit-Binary \cite{class_Reddit} of size $n=1178$ and  $n=2000$ respectively. We recall that even though D\&D dataset is labeled, the graphs are classified based on their structure only and all other information is discarded. Python codes can be found on \url{https://github.com/hashemghanem/OPU_Graph_Classifier}. The OPU is developped by LightOn (\url{https://lighton.ai}). The rest of the experiments are performed on a laptop.
 
 %In D\&D, nodes have 7 features each, which are not used by our algorithms, \emph{i.e.} we  classify  graphs based on their structure only. 
 
@@ -320,35 +319,30 @@ In addition, we perform experiments on two real-world datasets: D\&D \cite{DD_re
 
 
 \begin{figure}
+\centering
 	%
-	\begin{minipage}[b]{.48\linewidth}
-		\centering
-		\centerline{\includegraphics[width=4.3cm]{figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf}}
+%	\begin{minipage}[b]{.48\linewidth}
+%		\centering
+		%\centerline{
+	\includegraphics[width=4.4cm]{figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf}%}
 		%  \vspace{1.5cm}
 		%	\centerline{(a) RF maps}\medskip
-
-	\end{minipage}
-	\hfill
-	\begin{minipage}[b]{0.48\linewidth}
-		\centering
-		\centerline{\includegraphics[width=4.3cm]{figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf}}
+%
+%	\end{minipage}
+%	\hfill
+%	\begin{minipage}[b]{0.48\linewidth}
+%		\centering
+		%\centerline{
+		\includegraphics[width=4.4cm]{figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf}%}
 		%  \vspace{1.5cm}
 		%		\centerline{(b) Computation time}\medskip
-	\end{minipage}
+	%\end{minipage}
 	%
-	\caption{(left)~performance of $GSA-\varphi_{OPU}$ with uniform sampling ($s=2000$) for different values of $k$ ($m$ fixed at $5000$) and $m$ ($k$ fixed to $6$). (right)~comparison of the performance of $GSA-\varphi_{OPU}$ with RW sampling for different values of $k$, versus $GSA-\match$ with same number of samples and random features $s=2000$ and $m=5000$; as well as the GIN-based model consisting of 5 GIN layers followed by 2 fully connected layers, the dimension of hidden layers= 4.\nt{*remove the hard-encoded titles in the pdf as well as the (ab). btw, the curve $m=5000$ is not plotted on the left figure (which makes sense as it should be the same as $k=6$): remove $m=5000$ from the legend.*}
+	\caption{\small (left)~performance of $GSA-\varphi_{OPU}$ with uniform sampling ($s=2000$) for different values of $k$ ($m$ fixed at $5000$) and $m$ ($k$ fixed to $6$). (right)~comparison of the performance of $GSA-\varphi_{OPU}$ with RW sampling for different values of $k$, versus $GSA-\match$ with same number of samples and random features $s=2000$ and $m=5000$; as well as the GNN consisting of 5 GIN layers \cite{GCN_powerful} followed by 2 fully connected layers, with dimension of hidden layers 4.%\nt{*remove the hard-encoded titles in the pdf as well as the (ab). btw, the curve $m=5000$ is not plotted on the left figure (which makes sense as it should be the same as $k=6$): remove $m=5000$ from the legend.*}
 }
 	\label{fig:GCN}
 	%
 \end{figure}
-
-
-
-
-
-
-
-
 
 
 
@@ -365,61 +359,69 @@ with $k=6$. % We conclude that $GSA-\varphi_{OPU}$ is more adapted in this case 
 \noindent\textbf{Computational time}. Fig \ref{fig:diff_phi} (right) compares computation time per subgraph, with respect to the subgraph size $k$. %Other parameters are identically fixed for all methods. 
 As expected, the execution time is exponential with $k$ for $GSA-\match$, roughly polynomial for $GSA-\varphi_{Gs}$ and $GSA-\varphi_{Gs+Eig}$, and constant for $GSA-\varphi_{OPU}$.% and significantly the lowest when $k\geq7$. 
 
-To summarize, $GSA-\varphi_{OPU}$ outperforms traditional methods both in accuracy and computation time.
+%To summarize, $GSA-\varphi_{OPU}$ outperforms traditional methods both in accuracy and computation time.
 
-\subsection{Comparing $GSA-\varphi_{OPU}$ and GIN-based model}\label{sec:vs_GIN}
+\subsection{Comparing $GSA-\varphi_{OPU}$ and a GNN model}\label{sec:vs_GIN}
 
-In Fig \ref{fig:GCN}, we see that $GSA-\varphi_{OPU}$ with either RW sampling  ($k\geq4$) or uniform sampling ($k\geq5$) performs better than the GIN-based graph convolutional model of~\cite{GCN_powerful}. We do not report the computational time for GIN, as it is highly dependent on high-speed graphical processing units (GPUs) for training.
+In Fig \ref{fig:GCN}, we see that $GSA-\varphi_{OPU}$ with either RW sampling  ($k\geq4$) or uniform sampling ($k\geq5$) performs better than a deep GNN, specifically a model based on GIN layers~\cite{GCN_powerful}. GNNs are known to struggle in the absence of node features. %We do not report the computational time for GIN, as it is highly dependent on high-speed graphical processing units (GPUs) for training.
 
 
 
 \begin{figure}
+\centering
 	%
-	\begin{minipage}[b]{.48\linewidth}
-		\centering
-		\centerline{\includegraphics[width=4.3cm]{figs/phi_comparison.pdf}}
+%	\begin{minipage}[b]{.48\linewidth}
+%		\centering
+		%\centerline{
+		\includegraphics[width=4.4cm]{figs/phi_comparison.pdf}%}
 		%  \vspace{1.5cm}
 	%	\centerline{(a) RF maps}\medskip
-		\label{subfig:RF_maps}
-	\end{minipage}
-	\hfill
-	\begin{minipage}[b]{0.48\linewidth}
-		\centering
-		\centerline{\includegraphics[width=4.3cm]{figs/computational_comp.pdf}}
+%		\label{subfig:RF_maps}
+%	\end{minipage}
+%	\hfill
+%	\begin{minipage}[b]{0.48\linewidth}
+%		\centering
+	%	\centerline{
+		\includegraphics[width=4.4cm]{figs/computational_comp.pdf}%}
 		%  \vspace{1.5cm}
 %		\centerline{(b) Computation time}\medskip
-	\end{minipage}
+%	\end{minipage}
 	%
-	\caption{(left) Test accuracy versus $m$, for different maps  $\varphi$ in $GSA-\varphi$. (right) Computation time versus $k$ for $GSA-\varphi$ and the graphlet kernel. These figures are for $r=1.1$, $s=2000$, $m=5000$ and a Gaussian map variance $\sigma^2=0.01$.}
+	\caption{\small (left) Test accuracy versus $m$, for different maps  $\varphi$ in $GSA-\varphi$. (right) Computation time versus $k$ for $GSA-\varphi$ and the graphlet kernel. These figures are for $r=1.1$, $s=2000$, $m=5000$ and a Gaussian map variance $\sigma^2=0.01$.}
 	\label{fig:diff_phi}
 	%
 \end{figure}
 
 
 \begin{figure}
+\centering
 %
-\begin{minipage}[b]{.48\linewidth}
-  \centering
-  \centerline{\includegraphics[width=4.3cm]{figs/DD.pdf}}
+%\begin{minipage}[b]{.48\linewidth}
+%  \centering
+ % \centerline{
+  \includegraphics[width=4.4cm]{figs/DD.pdf}%}
 %  \vspace{1.5cm}
  % \centerline{(a) D\&D }\medskip
-  \label{subfig:RF_maps}
-\end{minipage}
-\hfill
-\begin{minipage}[b]{0.48\linewidth}
-  \centering
-  \centerline{\includegraphics[width=4.3cm]{figs/Reddit.pdf}}
+%  \label{subfig:RF_maps}
+%\end{minipage}
+%\hfill
+%\begin{minipage}[b]{0.48\linewidth}
+%  \centering
+%  \centerline{
+  \includegraphics[width=4.4cm]{figs/Reddit.pdf}%}
 %  \vspace{1.5cm}
   %\centerline{(b) Reddit-Binary}\medskip
-\end{minipage}
+%\end{minipage}
 %
-\caption{$GSA-\varphi$ vs the graphlet kernel on real datasets. (left)~D\&D. (right) Reddit-Binary. With $s=4000$, and $k=7$.}
+\caption{\small $GSA-\varphi$ vs the graphlet kernel on real datasets. (left)~D\&D. (right) Reddit-Binary. With $s=4000$, and $k=7$.}
 \label{fig:DD}
 %
 \end{figure}
 
 \subsection{$GSA-\varphi_{OPU}$  on real datasets}\label{sec:DD_Reddit}
-Fig \ref{fig:DD} shows the test accuracy of $GSA-\varphi_{OPU}$ versus $m$, for two real datasets. For each value of $m$ we conduct the experiment 3 times on D\&D and 4 times on Reddit-Binary dataset and take the average accuracy. For  D\&D, although results of the 3 experiments get more concentrated as $m$ increases, no clear and steady improvement in the average accuracy is observed. This might be accentuated by the fact that node features are ignored. However, this average is still better than the accuracy obtained by $GSA-\match$. For Reddit-Binary, the variance of experiments also decreases slightly with $m$. More importantly, the average accuracy is monotonically increasing, and outperforms  $GSA-\match$ for $m\geq5000$. 
+Fig \ref{fig:DD} shows the test accuracy of $GSA-\varphi_{OPU}$ versus $m$, for two real datasets, compared with the graphlet kernel as a baseline. For each value of $m$ we conduct the experiment 3 times on D\&D and 4 times on Reddit-Binary dataset. For  D\&D, no steady improvement in the average accuracy is observed, however its variance between experiments decreases as $m$ increases. %This might be accentuated by the fact that node features are ignored. However, 
+This average is still better than the accuracy obtained by $GSA-\match$. For Reddit-Binary, %the variance of experiments also decreases slightly with $m$. More importantly, 
+the average accuracy increases with the number of random features, and outperforms $GSA-\match$ for $m\geq5000$. 
 
 % To start a new column (but not a new page) and help balance the last-page
 % column length use \vfill\pagebreak.
@@ -430,12 +432,17 @@ Fig \ref{fig:DD} shows the test accuracy of $GSA-\varphi_{OPU}$ versus $m$, for 
 \section{Conclusion}
 \label{sec:Conclusion}
 
-We proposed a generic framework that can deploy OPUs random features in graph classification, since OPUs compute such features  in  $\mathcal{O}(1)$ in both input/output dimensions. Then, we showed a concentration of the random embedding around the MMD metric. Our experiments showed that our algorithm is significantly faster than the graphlet kernel with graphlet sampling and  performs better while concentrating around the MMD metric. Moreover,  it outperformed a state-of-the-art graph convolutional network on graph classification.
+in this paper, we deployed OPUs random features in graph classification within the graphlet kernel framework. On the theoretical side, we showed concentration of the random embedding around an MMD metric between graphlet histograms, hinting at the potential of OPUs in such a combinatorial setting to reduce computation costs without information loss. On the practical side, our experiments showed that the proposed algorithm is significantly faster than the graphlet kernel with generally better performance. %Moreover, it outperformed a state-of-the-art graph convolutional network on graph classification.
+%
+A major point left open is how to use the OPU in the presence of node features. A promising possibility is to integrate it within a message-passing framework to efficienty generate high-level embeddings that also use node features.
+%
+%our algorithm to generate features embeddings on the graph level, and then feed these embeddings with the nodes' features to a deep neural network. 
+On the theoretical side, the properties of the MMD metric could be further analyzed on particular models of graphs such as SBMs.
 
- A major point left open to be analyzed is how to use our algorithm to classify graphs with node features. One promising possibility is to use our algorithm to generate features embeddings on the graph level, and then feed these embeddings with the nodes' features to a deep neural network. On the theoretical side, the properties of the MMD metric could be further analyzed on particular models of graphs to get a concentration with higher certainty. 
 
+\section*{Acknowledgements}
 
-
+The authors warmly thank LightOn for the use of the OPU. HG is supported by the LabEx PERSYVAL (ANR-11-LABX-0025-01) \emph{``Bourse d'excellence''}. NT is partly supported by the French National Research Agency in the framework of the "Investissements d’avenir” program (ANR-15-IDEX-02) and the LabEx PERSYVAL (ANR-11-LABX-0025-01); as well as  the ANR GraVa (ANR-18-CE40-0005)
 
 % References should be produced using the bibtex program from suitable
 % BiBTeX files (here: strings, refs, manuals). The IEEEbib.bst bibliography
