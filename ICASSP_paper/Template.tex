@@ -318,22 +318,39 @@ In addition, we perform experiments on two real-world datasets: D\&D \cite{DD_re
 
 %In what follows, unless otherwise stated, we use uniform sampling and the adjacency matrix of subgraphs as input. 
 
+
 \begin{figure}
-	\captionsetup[subfigure]{justification=centering}
-	\centering
-	\subfloat[$\varphi_{OPU}$\& uniform sampling]
-	{
-		\includegraphics[width=4.3cm]{figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf}%
-	}
-	%\hspace{1cm}%
-	\subfloat[$\varphi_{OPU}$\& RW sampling,\\ graphlet kernel, and GIN model]
-	{%
-		\includegraphics[width=4.3cm]{figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf}%
-	}
+	%
+	\begin{minipage}[b]{.48\linewidth}
+		\centering
+		\centerline{\includegraphics[width=4.3cm]{figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf}}
+		%  \vspace{1.5cm}
+		%	\centerline{(a) RF maps}\medskip
+
+	\end{minipage}
+	\hfill
+	\begin{minipage}[b]{0.48\linewidth}
+		\centering
+		\centerline{\includegraphics[width=4.3cm]{figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf}}
+		%  \vspace{1.5cm}
+		%		\centerline{(b) Computation time}\medskip
+	\end{minipage}
+	%
 	\caption{(left)~performance of $GSA-\varphi_{OPU}$ with uniform sampling ($s=2000$) for different values of $k$ ($m$ fixed at $5000$) and $m$ ($k$ fixed to $6$). (right)~comparison of the performance of $GSA-\varphi_{OPU}$ with RW sampling for different values of $k$, versus $GSA-\match$ with same number of samples and random features $s=2000$ and $m=5000$; as well as the GIN-based model consisting of 5 GIN layers followed by 2 fully connected layers, the dimension of hidden layers= 4.\nt{*remove the hard-encoded titles in the pdf as well as the (ab). btw, the curve $m=5000$ is not plotted on the left figure (which makes sense as it should be the same as $k=6$): remove $m=5000$ from the legend.*}
-	}
+}
 	\label{fig:GCN}
+	%
 \end{figure}
+
+
+
+
+
+
+
+
+
+
 
 \subsection{Varying $m, k$ and $S_k$ in $GSA-{\varphi_{OPU}}$}
 From Fig. \ref{fig:GCN} (left), we observe that as $k$ and/or $m$ increase, the performance of $GSA-{\varphi_{OPU}}$ associated to uniform sampling increases, saturating in this SBM dataset for $m=5000$ and $k=6$. From the right figure, and as expected, we note that RW sampling provides better results than the uniform version: the smaller $k$, the larger the improvement.
