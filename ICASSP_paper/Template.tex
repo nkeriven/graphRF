@@ -68,7 +68,7 @@
 %
 \begin{abstract}
 %Graph Classification is the problem of mapping graphs to the classes they belong to.
-The graphlet kernel is a classical method in graph classification. It however suffers from a high computation cost due to the isomorphism test it includes. As a generic proxy, and in general at the cost of losing some information, this test can be efficiently replaced by a user-defined mapping that computes various graph characteristics. In this paper, we propose to leverage \emph{kernel random features} within the graphlet framework, and establish a theoretical link with a mean kernel metric. If this method can still be prohibitively costly for usual random features, we then incorporate \emph{optical} random features that can be computed in \emph{constant time}. Experiments show that the resulting algorithm is orders of magnitude faster that the graphlet kernel for the same, or better, accuracy.
+The graphlet kernel is a classical method in graph classification. It however suffers from a high computation cost due to the isomorphism test it includes. As a generic proxy, and in general at the cost of losing some information, this test can be efficiently replaced by a user-defined mapping that computes various graph characteristics. In this paper, we propose to leverage \emph{kernel random features} within the graphlet framework, and establish a theoretical link with a mean kernel metric. If this method can still be prohibitively costly for usual random features, we then incorporate \emph{optical} random features that can be computed in \emph{constant time}. Experiments show that the resulting algorithm is orders of magnitude faster than the graphlet kernel for the same, or better, accuracy.
 \end{abstract}
 %
 \begin{keywords}
@@ -259,7 +259,7 @@ We have for all $\delta>0$ and with probability at least $1-\delta$:
 \end{multline}
 \end{theorem}
 \begin{proof}
-	See the supplementary material~\cite{arxiv_version}.
+	see the preprint version of this article ~\cite{ghanem2020fast}.
 \end{proof}
 Hence, if two classes of graphs are well-separated in terms of the MMD \eqref{eq:MMD}, then, for sufficiently large $m,s$, GSA-$\varphi$ has the same classification power. However, according to \eqref{eq:bound}, $m$ should be of the order of $s$, and we have seen that the latter generally needs to be quite large:  most usual random feature scheme, typically in $C_\varphi =O(k^2 m)$, still have a high computation cost. We discuss next the use of \emph{optical hardware}.
 
@@ -451,5 +451,5 @@ On the theoretical side, the properties of the MMD metric could be further analy
 
 \bibliography{strings,refs}
 \normalsize
-\include{app}
+%\include{app}
 \end{document}

@@ -133,6 +133,10 @@ Bharath~K. Sriperumbudur, Arthur Gretton, Kenji Fukumizu, Bernhard
 \newblock {\em The Journal of Machine Learning Research}, vol. 11, pp.
   1517--1561, 2010.
 
+\bibitem{ghanem2020fast}
+Hashem Ghanem, Nicolas Keriven, and Nicolas Tremblay,
+\newblock ``Fast graph kernel with optical random features,'' 2020.
+
 \bibitem{SBM}
 Thorben Funke and Till Becker,
 \newblock ``Stochastic block models: A comparison of variants and inference

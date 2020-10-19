@@ -2,50 +2,48 @@ This is BibTeX, Version 0.99d (TeX Live 2020)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: Template.aux
 The style file: IEEEbib.bst
-A level-1 auxiliary file: app.aux
 Database file #1: strings.bib
 Database file #2: refs.bib
-Warning--I didn't find a database entry for "arxiv_version"
 Warning--empty booktitle in oeis
-You've used 24 entries,
+You've used 25 entries,
             1838 wiz_defined-function locations,
-            606 strings with 7939 characters,
-and the built_in function-call counts, 6430 in all, are:
-= -- 577
-> -- 286
+            607 strings with 8033 characters,
+and the built_in function-call counts, 6587 in all, are:
+= -- 588
+> -- 297
 < -- 9
-+ -- 104
-- -- 80
-* -- 463
-:= -- 958
-add.period$ -- 25
-call.type$ -- 24
-change.case$ -- 23
++ -- 108
+- -- 83
+* -- 471
+:= -- 983
+add.period$ -- 26
+call.type$ -- 25
+change.case$ -- 24
 chr.to.int$ -- 0
-cite$ -- 25
-duplicate$ -- 308
-empty$ -- 620
-format.name$ -- 80
-if$ -- 1482
+cite$ -- 26
+duplicate$ -- 313
+empty$ -- 638
+format.name$ -- 83
+if$ -- 1518
 int.to.chr$ -- 0
-int.to.str$ -- 24
+int.to.str$ -- 25
 missing$ -- 25
-newline$ -- 123
-num.names$ -- 24
-pop$ -- 89
+newline$ -- 127
+num.names$ -- 25
+pop$ -- 96
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 180
+skip$ -- 184
 stack$ -- 0
 substring$ -- 429
-swap$ -- 114
+swap$ -- 115
 text.length$ -- 9
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 0
 warning$ -- 1
-while$ -- 63
-width$ -- 26
-write$ -- 258
-(There were 2 warnings)
+while$ -- 64
+width$ -- 27
+write$ -- 267
+(There was 1 warning)
