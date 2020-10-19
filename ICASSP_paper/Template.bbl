@@ -23,7 +23,7 @@ Christopher Morris, Nils~M Kriege, Franka Bause, Kristian Kersting, Petra
 Chi~Thang Duong, Thanh~Dat Hoang, Ha~The~Hien Dang, Quoc Viet~Hung Nguyen, and
   Karl Aberer,
 \newblock ``On node features for graph neural networks,''
-\newblock {\em arXiv preprint arXiv:1911.08795}, 2019.
+\newblock {\em preprint arXiv:1911.08795}, 2019.
 
 \bibitem{frequent_subgraphs}
 X~Yan and J~Han,
@@ -135,7 +135,8 @@ Bharath~K. Sriperumbudur, Arthur Gretton, Kenji Fukumizu, Bernhard
 
 \bibitem{ghanem2020fast}
 Hashem Ghanem, Nicolas Keriven, and Nicolas Tremblay,
-\newblock ``Fast graph kernel with optical random features,'' 2020.
+\newblock ``Fast graph kernel with optical random features,''
+\newblock {\em preprint arXiv:2010.08270}, 2020.
 
 \bibitem{SBM}
 Thorben Funke and Till Becker,
