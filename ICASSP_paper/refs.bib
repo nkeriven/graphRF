@@ -1,19 +1,3 @@
-@InProceedings{C2,
-  author = 	 "Jones, C.D. and Smith, A.B. and Roberts, E.F.",
-  title =        "Article Title",
-  booktitle =        "Proceedings Title",
-  organization = "IEEE",
-  year = 	 "2003",
-  volume = 	 "II",
-  pages = 	 "803-806"
-}
-@article{MMD,
-	title={Generative models and model criticism via optimized maximum mean discrepancy},
-	author={Sutherland, Dougal J and Tung, Hsiao-Yu and Strathmann, Heiko and De, Soumyajit and Ramdas, Aaditya and Smola, Alex and Gretton, Arthur},
-	journal={arXiv preprint arXiv:1611.04488},
-	year={2016}
-}
-
 @inproceedings{graph_soc_net,
   title={Deep graph kernels},
   author={Yanardag, Pinar and Vishwanathan, SVN},
@@ -90,11 +74,13 @@
   publisher={Springer}
 }
 
-@article{GCN_powerful,
-  title={How powerful are graph neural networks?},
-  author={Xu, Keyulu and Hu, Weihua and Leskovec, Jure and Jegelka, Stefanie},
-  journal={arXiv preprint arXiv:1810.00826},
-  year={2018}
+@inproceedings{
+	GCN_powerful,
+	title={How Powerful are Graph Neural Networks?},
+	author={Keyulu Xu and Weihua Hu and Jure Leskovec and Stefanie Jegelka},
+	booktitle={International Conference on Learning Representations},
+	year={2019},
+	url={https://openreview.net/forum?id=ryGs6iA5Km},
 }
 
 
@@ -219,18 +205,23 @@ title = {{Sketching for Large-Scale Learning of Mixture Models}},
 volume = {7},
 year = {2018}
 }
+
+
 @article{Keriven2018,
-abstract = {We consider the problem of detecting abrupt changes in the distribution of a multi-dimensional time series, with limited computing power and memory. In this paper, we propose a new method for model-free online change-point detection that relies only on fast and light recursive statistics, inspired by the classical Exponential Weighted Moving Average algorithm (EWMA). The proposed idea is to compute two EWMA statistics on the stream of data with different forgetting factors, and to compare them. By doing so, we show that we implicitly compare recent samples with older ones, without the need to explicitly store them. Additionally, we leverage Random Features to efficiently use the Maximum Mean Discrepancy as a distance between distributions. We show that our method is orders of magnitude faster than usual non-parametric methods for a given accuracy.},
-archivePrefix = {arXiv},
-arxivId = {1805.08061},
-author = {Keriven, Nicolas and Garreau, Damien and Poli, Iacopo},
-eprint = {1805.08061},
-file = {:home/kerivenn/Documents/Mendeley Desktop/2018/Keriven, Garreau, Poli - 2018 - NEWMA a new method for scalable model-free online change-point detection(2).pdf:pdf},
-journal = {arXiv:1805.08061},
-pages = {1--22},
-title = {{NEWMA: a new method for scalable model-free online change-point detection}},
-year = {2018}
+	TITLE = {{NEWMA: a new method for scalable model-free online change-point detection}},
+	AUTHOR = {Keriven, Nicolas and Garreau, Damien and Poli, Iacopo},
+	URL = {https://hal.archives-ouvertes.fr/hal-02484988},
+	JOURNAL = {{IEEE Transactions on Signal Processing}},
+	PUBLISHER = {{Institute of Electrical and Electronics Engineers}},
+	VOLUME = {68},
+	PAGES = {3515 - 3528},
+	YEAR = {2020},
+	MONTH = Apr,
+	DOI = {10.1109/TSP.2020.2990597},
+	HAL_ID = {hal-02484988},
+	HAL_VERSION = {v1},
 }
+
 @article{Sriperumbudur2010,
 author = {Sriperumbudur, Bharath K. and Gretton, Arthur and Fukumizu, Kenji and Sch{\"{o}}lkopf, Bernhard and Lanckriet, Gert R.G.},
 file = {:home/kerivenn/Documents/Mendeley Desktop/2010/Sriperumbudur et al. - 2010 - Hilbert space embeddings and metrics on probability measures.pdf:pdf},
@@ -240,6 +231,7 @@ title = {{Hilbert space embeddings and metrics on probability measures}},
 volume = {11},
 year = {2010}
 }
+
 @article{Dutta2018,
 abstract = {Graph-based methods are known to be successful in many machine learning and pattern classification tasks. These methods consider semistructured data as graphs where nodes correspond to primitives (parts, interest points, and segments) and edges characterize the relationships between these primitives. However, these nonvectorial graph data cannot be straightforwardly plugged into off-the-shelf machine learning algorithms without a preliminary step of--explicit/implicit--graph vectorization and embedding. This embedding process should be resilient to intraclass graph variations while being highly discriminant. In this paper, we propose a novel high-order stochastic graphlet embedding that maps graphs into vector spaces. Our main contribution includes a new stochastic search procedure that efficiently parses a given graph and extracts/samples unlimitedly high-order graphlets. We consider these graphlets, with increasing orders, to model local primitives as well as their increasingly complex interactions. In order to build our graph representation, we measure the distribution of these graphlets into a given graph, using particular hash functions that efficiently assign sampled graphlets into isomorphic sets with a very low probability of collision. When combined with maximum margin classifiers, these graphlet-based representations have a positive impact on the performance of pattern comparison and recognition as corroborated through extensive experiments using standard benchmark databases.},
 archivePrefix = {arXiv},

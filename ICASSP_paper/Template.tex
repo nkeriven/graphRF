@@ -121,7 +121,7 @@ Given a graph $\G$ of size $v$, let $\mathfrak{F}_\G=\{\mathcal{F}_1,\mathcal{F}
 \mathsmaller{\mathbf{f}_\G=\binom{v}{k}^{-1}\sum_{\mathcal{F}\in\mathfrak{F}_\mathcal{G}} \match (\mathcal{F}) \in \R^{N_k}}
 \end{equation}
 For two graphs $\G,\G'$, the graphlet kernel \cite{graphlet_kernel} is then defined as $\bld{f}_\G^T\bld{f}_{\G'}$. %The graphlet kernel performs well especially with a sufficiently large value of $k$ \cite{graphlet_kernel}. However, in each graph $\G$ of size $v$,
-For a graph of size $v$, the computation cost of $\mathbf{f}_\G$ is $C_{gk}= \mathcal{O}\left(\tbinom{v}{k}N_k C^{\cong}_k\right)$. This cost is usually prohibitively expensive, since each three terms are exponential in $k$.
+For a graph of size $v$, the computation cost of $\mathbf{f}_\G$ is $C_{gk}= \mathcal{O}\left(\tbinom{v}{k}N_k C^{\cong}_k\right)$. This cost is usually prohibitively expensive, since the three terms are exponential in $k$.
 
 Subgraph sampling is generally used as a first step to accelerate (and sometimes modify) the graphlet kernel \cite{graphlet_kernel}. Given a graph $\G$, we denote by $S_k(\G)$ a sampling process that yields a random subgraph of $\G$, seen as a probability distribution over $\bar{\mathfrak{H}}$. %There exists many variants \cite{lesco}. 
 Then, sampling $s$ subgraphs $\hat{\mathfrak{F}}_\G = \{F_1,...,F_s\}$ $i.i.d.$ from $S_k(\G)$, we define the estimator:
@@ -235,7 +235,7 @@ The RF methodology then defines maps:
 \end{equation}
 where $m$ is the number of features and the parameters $\mathbf{w}_j$ are drawn iid from $p$. Then, $\kappa(\mathbf{x},\mathbf{x}')\approx	\varphi(\mathbf{x})^H	\varphi(\mathbf{x}') = m^{-1} \sum_j \xi_{\mathbf{w}_j}(\mathbf{x})^* \xi_{\mathbf{w}_j}(\mathbf{x}')$. 
 
-Assume that we have a base kernel $\kappa(\F,\F')$ between \emph{graphlets}, with a RF decomposition $(\xi_\mathbf{w}, p)$, and define $\varphi$ as in \eqref{eq:def_RF}. Then, one can show \cite{Keriven2017a, Keriven2018} that the Euclidean distance between the embeddings \eqref{eq:fhat_phi} approximates the following \emph{Maximum Mean Discrepancy} (MMD) \cite{Gretton2007, Sriperumbudur2010} between distributions on $\bar{\mathfrak{H}}$:
+Assume that we have a base kernel $\kappa(\F,\F')$ between \emph{graphlets}, with an RF decomposition $(\xi_\mathbf{w}, p)$, and define $\varphi$ as in \eqref{eq:def_RF}. Then, one can show \cite{Keriven2017a, Keriven2018} that the Euclidean distance between the embeddings \eqref{eq:fhat_phi} approximates the following \emph{Maximum Mean Discrepancy} (MMD) \cite{Gretton2007, Sriperumbudur2010} between distributions on $\bar{\mathfrak{H}}$:
  \begin{multline}\label{eq:MMD}
  \mathsmaller{
  \textup{MMD}^2(S_k(\G), S_k(\G'))} \\

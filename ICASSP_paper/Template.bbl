@@ -56,7 +56,7 @@ Michael~M. Bronstein, Joan Bruna, Yann Lecun, Arthur Szlam, and Pierre
 \bibitem{GCN_powerful}
 Keyulu Xu, Weihua Hu, Jure Leskovec, and Stefanie Jegelka,
 \newblock ``How powerful are graph neural networks?,''
-\newblock {\em arXiv preprint arXiv:1810.00826}, 2018.
+\newblock in {\em International Conference on Learning Representations}, 2019.
 
 \bibitem{rahimi2008random}
 Ali Rahimi and Benjamin Recht,
@@ -75,8 +75,7 @@ Alaa Saade, Francesco Caltagirone, Igor Carron, Laurent Daudet, Ang{\'e}lique
   Dr{\'e}meau, Sylvain Gigan, and Florent Krzakala,
 \newblock ``Random projections through multiple optical scattering:
   Approximating kernels at the speed of light,''
-\newblock in {\em 2016 IEEE International Conference on Acoustics, Speech and
-  Signal Processing (ICASSP)}. IEEE, 2016, pp. 6215--6219.
+\newblock IEEE, 2016, pp. 6215--6219.
 
 \bibitem{Gretton2007}
 Arthur Gretton, Karsten~M. Borgwardt, Malte~J. Rasch, Bernhard Sch{\"{o}}lkopf,
@@ -124,7 +123,8 @@ Nicolas Keriven, Anthony Bourrier, R{\'{e}}mi Gribonval, and Patrick
 Nicolas Keriven, Damien Garreau, and Iacopo Poli,
 \newblock ``{NEWMA: a new method for scalable model-free online change-point
   detection},''
-\newblock {\em arXiv:1805.08061}, pp. 1--22, 2018.
+\newblock {\em {IEEE Transactions on Signal Processing}}, vol. 68, pp. 3515 --
+  3528, Apr. 2020.
 
 \bibitem{Sriperumbudur2010}
 Bharath~K. Sriperumbudur, Arthur Gretton, Kenji Fukumizu, Bernhard
