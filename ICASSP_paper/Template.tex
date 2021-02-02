@@ -259,7 +259,14 @@ We have for all $\delta>0$ and with probability at least $1-\delta$:
 \end{multline}
 \end{theorem}
 \begin{proof}
-	due to space limitations, we refer the reader to the appendix of the preprint version of this article~\cite{ghanem2020fast}.
+		Version 1.
+	
+	Note that the left side in \eqref{eq:bound} is smaller than the sum:
+	$ \big|\|\hat{\mathbf{f}}_{\G,S_k,\varphi} - \hat{\mathbf{f}}_{\G',S_k,\varphi} \|_2^2 -\| \mathbb{E}_{S_k(\G)} \varphi(F) - \mathbb{E}_{S_k(\G')} \varphi(F')\| \big| + \big|\| \mathbb{E}_{S_k(\G)} \varphi(F) - \mathbb{E}_{S_k(\G')} \varphi(F')\| - \textup{MMD}^2(S_k(\G),S_k(\G')) \big|$. Then, we deduce the final result by applying the Hoeffding and  union bound inequalities.  A detailed proof is in the appendix of the preprint version of this article~\cite{ghanem2020fast}.
+	
+	Version 2.
+	
+	Adding and subtracting $\| \mathbb{E}_{S_k(\G)} \varphi(F) - \mathbb{E}_{S_k(\G')} \varphi(F')\|$, a triangular inequality shows that the left side in \eqref{eq:bound} is smaller than the sum of 2 terms. Hoeffding's inequality is then used to show an upper bound on each term (with a simple triangular inequality+union bound). Last, a union bound extracts \eqref{eq:bound} from the previous step. A detailed proof is in the appendix of the preprint version of this article~\cite{ghanem2020fast}.
 \end{proof}
 Hence, if two classes of graphs are well-separated in terms of the MMD \eqref{eq:MMD}, then, for sufficiently large $m,s$, GSA-$\varphi$ has the same classification power. However, according to \eqref{eq:bound}, $m$ should be of the order of $s$, and we have seen that the latter generally needs to be quite large:  most usual random feature scheme, typically in $C_\varphi =O(k^2 m)$, still have a high computation cost. We discuss next the use of \emph{optical hardware}.
 
