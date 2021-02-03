@@ -7,10 +7,9 @@
 \BOOKMARK [2][-]{subsection.3.2}{ Kernel random features with GSA-}{section.3}% 7
 \BOOKMARK [2][-]{subsection.3.3}{ Considered choices of RF}{section.3}% 8
 \BOOKMARK [1][-]{section.4}{ Experiments}{}% 9
-\BOOKMARK [2][-]{subsection.4.1}{ Datasets}{section.4}% 10
-\BOOKMARK [2][-]{subsection.4.2}{ Varying m, k and Sk in GSA-OPU}{section.4}% 11
-\BOOKMARK [2][-]{subsection.4.3}{ Choice of feature map }{section.4}% 12
-\BOOKMARK [2][-]{subsection.4.4}{ Comparing GSA-OPU and a GNN model}{section.4}% 13
-\BOOKMARK [2][-]{subsection.4.5}{ GSA-OPU on real datasets}{section.4}% 14
-\BOOKMARK [1][-]{section.5}{ Conclusion}{}% 15
-\BOOKMARK [1][-]{section.6}{ References}{}% 16
+\BOOKMARK [2][-]{subsection.4.1}{ Varying m, k and Sk in GSA-OPU}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.2}{ Choice of feature map }{section.4}% 11
+\BOOKMARK [2][-]{subsection.4.3}{ Comparing GSA-OPU and a GNN model}{section.4}% 12
+\BOOKMARK [2][-]{subsection.4.4}{ GSA-OPU on real datasets}{section.4}% 13
+\BOOKMARK [1][-]{section.5}{ Conclusion}{}% 14
+\BOOKMARK [1][-]{section.6}{ References}{}% 15
