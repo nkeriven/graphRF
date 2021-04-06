@@ -1,0 +1,154 @@
+% adapted Philippe Dreuw and Thomas Deselaers
+% further adapted from edits by James Malcolm
+% finally, Shawn Lankton made some edits (www.shawnlankton.com)
+
+\ProvidesPackage{beamerthemeinriaposter}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\mode<presentation>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\definecolor{butter}{rgb}{0.98824, 0.91373, 0.30980}		% #fce94f
+\definecolor{orange}{rgb}{0.98824, 0.68627, 0.24314}		% #fcaf3e
+\definecolor{inriared}{rgb}{0.95,0.95,1}
+%\definecolor{inriared}{RGB}{226,0,38} % looks different on screen but printed correctly
+\definecolor{inriagray}{RGB}{125,108,123}
+\definecolor{lightlightgray}{rgb}{0.95,0.95,0.95}
+\definecolor{lightlightred}{rgb}{1,0.73,0.73}
+
+\setbeamercolor{headline}{bg=inriared}
+\setbeamercolor{footline}{bg=inriared}
+\setbeamerfont{footline}{size=\large}
+\setbeamercolor{separation line}{bg=black}
+\setbeamercolor{title in headline}{fg=black}
+\setbeamercolor{author in headline}{fg=black}
+\setbeamercolor{institute in headline}{fg=black}
+\setbeamercolor{infos}{fg=black}
+
+\setbeamercolor{framesubtitle}{fg=blue, bg=gray}
+\setbeamercolor{author in head/foot}{fg=white,bg=inriared}
+\setbeamercolor{title in head/foot}{fg=white,bg=inriared}
+\setbeamercolor{website in footline}{fg=black,bg=inriared}
+\setbeamercolor{email in footline}{fg=black,bg=inriared}
+
+\setbeamercolor*{normal text}{fg=black, bg=white}
+\setbeamercolor*{block body}{fg=black,bg=white}
+\setbeamercolor*{block title}{fg=black,bg=lightgray}
+\setbeamerfont{block title}{size=\large,series=\sc\bf}
+\setbeamercolor{upper separation line head}{fg=inriared}
+
+% \setbeamertemplate{blocks}[rounded][shadow=true]
+
+% \setbeamertemplate{itemize items}[triangle]
+\setbeamertemplate{navigation symbols}{}  % no navigation on a poster
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{block begin}{
+  \vskip.5ex
+  \begin{beamercolorbox}[rounded=true,shadow=true,leftskip=1ex,colsep*=.5ex]{block title}%
+    \usebeamerfont*{block title}{\large \insertblocktitle}
+  \end{beamercolorbox}%
+  {\ifbeamercolorempty[bg]{block body}{}{\nointerlineskip\vskip-0.5pt}}%
+  \usebeamerfont{block body}%
+  \begin{beamercolorbox}[rounded=true,shadow=true,colsep*=.5ex,sep=.5ex,vmode]{block body}%
+    \ifbeamercolorempty[bg]{block body}{\vskip-.25ex}{\vskip-.5ex}\vbox{}%
+  }
+  \setbeamertemplate{block end}{
+  \end{beamercolorbox}
+}
+
+\newenvironment<>{myalertblock}[1]{
+\begin{actionenv}#2%
+      \def\insertblocktitle{#1}%
+      \par%
+      \mode<presentation>{%
+        \setbeamercolor{block title}{bg=lightlightred}
+       \setbeamercolor{block body}{bg=lightlightgray}
+     }%
+      \usebeamertemplate{block begin}}
+    {\par\usebeamertemplate{block end}\end{actionenv}}
+    
+\newenvironment<>{mynotablock}[1]{
+\begin{actionenv}#2%
+      \def\insertblocktitle{#1}%
+      \par%
+      \mode<presentation>{%
+        \setbeamercolor{block title}{bg=white}
+       \setbeamercolor{block body}{bg=white}
+     }%
+      \usebeamertemplate{block begin}}
+    {\par\usebeamertemplate{block end}\end{actionenv}}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{headline}{
+  \leavevmode
+
+  \begin{beamercolorbox}[wd=\paperwidth]{headline}
+    \begin{columns}[T]
+      
+      
+      \begin{column}{0.65\paperwidth}
+        \vskip3ex
+        \raggedleft
+        \usebeamercolor{title in headline}{\color{fg}\textbf{\Large{\inserttitle}}\\}
+        
+        \usebeamercolor{author in headline}{\color{fg}\large{\insertauthor}\\}
+        \usebeamercolor{institute in headline}{\color{fg}\normalsize{\insertinstitute}\\}
+        %\vskip2ex
+      \end{column}
+      \begin{column}{.35\paperwidth}
+        \centering
+        \vspace{10pt}
+        \includegraphics[height=6cm]{logos/cnrs.png}
+        $\quad$
+        \includegraphics[height=6cm]{logos/logo-gipsa-bas-BD_transparent.png}
+        $\quad$
+        \includegraphics[height=6cm]{logos/nyu_stacked_color.png}
+        $\quad$
+        \includegraphics[height=4cm]{logos/logo_UB.png}
+        \vspace{10pt}
+      \end{column}
+%      \begin{column}{.2\paperwidth}
+%      \raggedleft
+%      \vskip4ex
+%      \usebeamercolor{infos}{\color{fg}\textbf{\small{\infos}}\\[1ex]}
+%      \end{column}
+%      \begin{column}{.03\paperwidth}
+%      \end{column}
+    \end{columns}
+  \end{beamercolorbox}
+
+  \begin{beamercolorbox}[wd=\paperwidth]{lower separation line head}
+    \rule{0pt}{2pt}
+  \end{beamercolorbox}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setbeamertemplate{footline}{
+  \begin{beamercolorbox}[wd=\paperwidth]{upper separation line foot}
+    \rule{0pt}{2pt}
+  \end{beamercolorbox}
+  \leavevmode%
+  \begin{beamercolorbox}[ht=4ex,leftskip=1cm,rightskip=1cm]{author in head/foot}%
+    \usebeamercolor{website in footline}{\color{fg} \footleft}
+    \hfill
+    \usebeamercolor{email in footline}{\color{fg} \footright}
+    \vskip1ex
+  \end{beamercolorbox}
+  \vskip0pt%
+  \begin{beamercolorbox}[wd=\paperwidth]{lower separation line foot}
+    \rule{0pt}{2pt}
+  \end{beamercolorbox}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Display a grid to help align images ... and it looks nice with this color scheme
+%\beamertemplategridbackground[1cm]
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\renewcommand{\sfdefault}{lmss}
+% \Mode<all>

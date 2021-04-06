@@ -1,0 +1,192 @@
+\usepackage{amsmath}
+\usepackage{amsfonts} 
+\usepackage{amssymb}
+
+%% Paired delimiters %%
+%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{mathtools}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+%\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
+\DeclarePairedDelimiterX{\dotp}[2]{\langle}{\rangle}{#1, #2}
+\DeclarePairedDelimiter{\set}{\{}{\}}
+\DeclarePairedDelimiterX{\setcond}[2]{\{}{\}}{#1 \;:\; #2}
+% for compatibility with previous versions
+\DeclarePairedDelimiter{\ens}{\{}{\}}
+\DeclarePairedDelimiterX{\enscond}[2]{\{}{\}}{#1 \;:\; #2}
+\newcommand{\normTV}[1]{\norm{#1}_{\text{TV}}}
+\newcommand{\normu}[1]{\norm{#1}_{1}}
+\newcommand{\normi}[1]{\norm{#1}_{\infty}}
+\newcommand{\normd}[1]{\norm{#1}_{2}}
+\newcommand{\normz}[1]{\norm{#1}_{0}}
+
+%% Classical number sets %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\NN}{\mathbb{N}}
+\newcommand{\ZZ}{\mathbb{Z}}
+\newcommand{\QQ}{\mathbb{Q}}
+\newcommand{\RR}{\mathbb{R}}
+\newcommand{\CC}{\mathbb{C}}
+\newcommand{\PP}{\mathbb{P}}
+
+\newcommand{\Xx}{\mathcal{X}}
+
+%% Lp spaces %%
+%%%%%%%%%%%%%%%
+% for compatibility
+\newcommand{\lun}{\ell^1}
+\newcommand{\ldeux}{\ell^2}
+\newcommand{\linf}{\ell^\infty}
+\newcommand{\ldeuxj}{{\ldeux_j}}
+\newcommand{\Lun}{\text{\upshape L}^1}
+\newcommand{\Ldeux}{\text{\upshape L}^2}
+\newcommand{\Linf}{\text{\upshape L}^\infty}
+\newcommand{\lzero}{\ell^0}
+\newcommand{\lp}{\ell^p}
+
+%% Algebra %%
+%%%%%%%%%%%%%
+\DeclareMathOperator{\Ker}{Ker}
+\let\Im\relax
+\DeclareMathOperator{\Im}{Im}
+\DeclareMathOperator{\Hom}{Hom}
+\DeclareMathOperator{\End}{End}
+% identity
+\newcommand{\ins}[1]{\mathrm{#1}}
+\newcommand{\Id}{\ins{Id}}
+% egal par d�finition
+\newcommand{\eqdef}{\ensuremath{\stackrel{\mbox{\upshape\tiny def.}}{=}}}
+
+%% Linear algebra %%
+%%%%%%%%%%%%%%%%%%%%
+\DeclareMathOperator{\tr}{tr}
+\DeclareMathOperator{\Tr}{Tr}
+\DeclareMathOperator{\rank}{rank}
+\DeclareMathOperator{\Span}{Span}
+\DeclareMathOperator{\Vect}{Vect}
+\DeclareMathOperator{\diag}{diag}
+\DeclareMathOperator{\aff}{aff}
+% transpose
+\newcommand{\transp}{\top}
+
+%% Calculus %%
+%%%%%%%%%%%%%%
+\DeclareMathOperator{\dom}{dom}
+\DeclareMathOperator{\grad}{grad}
+\DeclareMathOperator{\diverg}{div}
+%% partial derivatives
+\newcommand{\pd}[2]{ \frac{ \partial #1}{\partial #2} }
+\newcommand{\pdd}[2]{ \frac{ \partial^2 #1}{\partial #2^2} }
+%% for derivatives
+\renewcommand{\d}{\ins{d}}
+
+%% Combinatorics %%
+%%%%%%%%%%%%%%%%%%%
+\DeclareMathOperator{\Supp}{Supp}
+\DeclareMathOperator{\supp}{supp}
+\DeclareMathOperator{\Sign}{Sign}
+\DeclareMathOperator{\sign}{sign}
+\DeclareMathOperator{\Card}{Card}
+\DeclareMathOperator{\card}{Card}
+
+%% Topological operation %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\DeclareMathOperator{\interop}{int}
+\DeclareMathOperator{\rint}{ri}
+\DeclareMathOperator{\bd}{bd}
+\DeclareMathOperator{\rbd}{rbd}
+
+%% Convex calculus %%
+%%%%%%%%%%%%%%%%%%%%%
+\DeclareMathOperator{\Prox}{Prox}
+\DeclareMathOperator{\prox}{prox}
+\DeclareMathOperator{\conv}{conv}
+\DeclareMathOperator{\Proj}{Proj}
+
+%% Probability %%
+%%%%%%%%%%%%%%%%%
+\DeclareMathOperator{\Var}{Var}
+\DeclareMathOperator{\Cov}{Cov}
+\newcommand{\expect}[1]{\mathbb{E}(#1)}
+\newcommand{\varian}[1]{\mathbb{V}(#1)}
+
+%% Statistics %%
+%%%%%%%%%%%%%%%%
+\newcommand{\est}[1]{\hat{#1}}
+
+%% Min/Max %%
+%%%%%%%%%%%%%
+\DeclareMathOperator{\argmin}{argmin}
+\DeclareMathOperator{\argmax}{argmax}
+\DeclareMathOperator{\Argmin}{Argmin}
+\DeclareMathOperator{\Argmax}{Argmax}
+\newcommand{\uargmin}[1]{\underset{#1}{\argmin}\;}
+\newcommand{\uargmax}[1]{\underset{#1}{\argmax}\;}
+\newcommand{\uArgmin}[1]{\underset{#1}{\Argmin}\;}
+\newcommand{\uArgmax}[1]{\underset{#1}{\Argmax}\;}
+\newcommand{\umin}[1]{\underset{#1}{\min}\;}
+\newcommand{\umax}[1]{\underset{#1}{\max}\;}
+\newcommand{\usup}[1]{\underset{#1}{\sup}\;}
+\newcommand{\uinf}[1]{\underset{#1}{\inf}\;}
+
+%% Redefine classic %%
+%%%%%%%%%%%%%%%%%%%%%%
+%% Use french comparaison operator
+\renewcommand{\leq}{\leqslant}
+\renewcommand{\geq}{\geqslant}
+%% nice epsilon
+\renewcommand{\epsilon}{\varepsilon}
+
+%% Latin abbreviations %%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\ie}{{\em i.e.,~}}
+\newcommand{\etal}{{\em et al.~}}
+\newcommand{\eg}{{\em e.g.,~}}
+\newcommand{\lcf}{{\em cf.~}}
+
+%% Spaces %%
+%%%%%%%%%%%%
+\newcommand{\qandq}{ \quad \text{and} \quad }
+\newcommand{\qifq}{ \quad \text{if} \quad }
+\newcommand{\qwhereq}{ \quad \text{where} \quad }
+\newcommand{\qwithq}{ \quad \text{with} \quad }
+\newcommand{\qforq}{ \quad \text{for} \quad }
+\newcommand{\qsinceq}{ \quad \text{since} \quad }
+\newcommand{\qarrq}{\quad\Longrightarrow\quad}
+\newcommand{\qqarrqq}{\quad\Longrightarrow\quad}
+\newcommand{\qiffq}{\quad\Longleftrightarrow\quad}
+\newcommand{\qsubjq}{ \quad \text{subject to} \quad }
+
+\newcommand{\order}[1]{\mathcal{O}\left(#1\right)}
+\newcommand{\pa}[1]{\left(#1\right)}
+\renewcommand{\norm}[1]{\left\lVert#1\right\rVert}
+
+\DeclareMathOperator{\Ber}{Ber}
+\DeclareMathOperator{\PR}{Pr}
+\newcommand{\Ll}{\mathcal{L}}
+\newcommand{\Ww}{\mathcal{W}}
+\newcommand{\Cc}{\mathcal{C}}
+\newcommand{\Hh}{\mathcal{H}}
+\newcommand{\Pp}{\mathcal{P}}
+\newcommand{\Aa}{\mathcal{A}}
+\newcommand{\Dd}{\mathcal{D}}
+\newcommand{\Zz}{\mathcal{Z}}
+\newcommand{\Ff}{\mathcal{F}}
+\newcommand{\Qq}{\mathcal{Q}}
+\newcommand{\Bb}{\mathcal{B}}
+\def\Clip{c_{\textup{Lip.}}}
+\def\Wbar{\overline{W}}
+\def\KerClass{\Ww}
+\def\ProbClass{\Pp}
+\def\FuncClass{\Ff}
+\def\Px{P}
+\def\Pz{P^z}
+\def\noiseProb{\Lambda}
+\def\noiseProbClass{\Pi}
+\def\noiseLev{\beta}
+\def\noise{\nu}
+\def\gcneq{\Phi}
+\def\gcninv{\bar{\Phi}}
+\def\cgcneq{\Phi}
+\def\cgcninv{\bar{\Phi}}
+\def\RGClass{\mathcal{G}}
