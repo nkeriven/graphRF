@@ -1,0 +1,53 @@
+\begin{thebibliography}{7}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Ghanem et~al.(2021)Ghanem, Keriven, and Tremblay]{ghanem2020fast}
+Hashem Ghanem, Nicolas Keriven, and Nicolas Tremblay.
+\newblock Fast graph kernel with optical random features.
+\newblock \emph{ICASSP}, 2021.
+
+\bibitem[Saade et~al.(2016)Saade, Caltagirone, Carron, Daudet, Dr{\'e}meau,
+  Gigan, and Krzakala]{saade2016random}
+Alaa Saade, Francesco Caltagirone, Igor Carron, Laurent Daudet, Ang{\'e}lique
+  Dr{\'e}meau, Sylvain Gigan, and Florent Krzakala.
+\newblock Random projections through multiple optical scattering: Approximating
+  kernels at the speed of light.
+\newblock In \emph{2016 IEEE International Conference on Acoustics, Speech and
+  Signal Processing (ICASSP)}, pages 6215--6219. IEEE, 2016.
+
+\bibitem[Shervashidze et~al.(2009)Shervashidze, Vishwanathan, Petri, Mehlhorn,
+  and Borgwardt]{graphlet_kernel}
+Nino Shervashidze, SVN Vishwanathan, Tobias Petri, Kurt Mehlhorn, and Karsten
+  Borgwardt.
+\newblock Efficient graphlet kernels for large graph comparison.
+\newblock In \emph{Artificial Intelligence and Statistics}, pages 488--495,
+  2009.
+
+\bibitem[Kobler et~al.(2012)Kobler, Sch{\"o}ning, and Tor{\'a}n]{isomorphism}
+Johannes Kobler, Uwe Sch{\"o}ning, and Jacobo Tor{\'a}n.
+\newblock \emph{The graph isomorphism problem: its structural complexity}.
+\newblock Springer Science \& Business Media, 2012.
+
+\bibitem[Sinha and Duchi(2016)]{RF_1}
+Aman Sinha and John~C Duchi.
+\newblock Learning kernels with random features.
+\newblock In \emph{Advances in Neural Information Processing Systems}, pages
+  1298--1306, 2016.
+
+\bibitem[Xu et~al.(2019)Xu, Hu, Leskovec, and Jegelka]{GCN_powerful}
+Keyulu Xu, Weihua Hu, Jure Leskovec, and Stefanie Jegelka.
+\newblock How powerful are graph neural networks?
+\newblock In \emph{International Conference on Learning Representations}, 2019.
+\newblock URL \url{https://openreview.net/forum?id=ryGs6iA5Km}.
+
+\bibitem[Rahimi and Recht(2008)]{rahimi2008random}
+Ali Rahimi and Benjamin Recht.
+\newblock Random features for large-scale kernel machines.
+\newblock In \emph{Advances in neural information processing systems}, pages
+  1177--1184, 2008.
+
+\end{thebibliography}

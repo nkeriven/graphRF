@@ -1,0 +1,4 @@
+\beamer@sectionintoc {1}{Introduction to the graph classification problem}{2}{0}{1}
+\beamer@sectionintoc {2}{Background: the graphlet kernel}{7}{0}{2}
+\beamer@sectionintoc {3}{GSA-$\varphi $ algorithm with optical random features}{12}{0}{3}
+\beamer@sectionintoc {4}{Results and Discussion}{18}{0}{4}
