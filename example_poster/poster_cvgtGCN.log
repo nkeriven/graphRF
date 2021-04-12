@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.11.25)  12 APR 2021 01:49
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.11.25)  12 APR 2021 02:08
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -2148,7 +2148,7 @@ File: figs/subgraphs.pdf Graphic file (type pdf)
 <use figs/subgraphs.pdf>
 Package pdftex.def Info: figs/subgraphs.pdf  used on input line 320.
 (pdftex.def)             Requested size: 1037.5096pt x 284.52756pt.
-<figs/gk.pdf, id=25, 492.13925pt x 377.6194pt>
+<figs/gk.pdf, id=25, 492.13925pt x 377.60344pt>
 File: figs/gk.pdf Graphic file (type pdf)
 <use figs/gk.pdf>
 Package pdftex.def Info: figs/gk.pdf  used on input line 320.
@@ -2323,7 +2323,7 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 Here is how much of TeX's memory you used:
  27373 strings out of 480608
  534963 string characters out of 5903629
- 905847 words of memory out of 5000000
+ 905848 words of memory out of 5000000
  42478 multiletter control sequences out of 15000+600000
  698068 words of font info for 244 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -2344,7 +2344,7 @@ type1/public/pxfonts/pxsy.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/p
 ublic/pxfonts/pxsya.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/
 pxfonts/pxsyb.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/pxfont
 s/pxsyc.pfb>
-Output written on poster_cvgtGCN.pdf (1 page, 1463512 bytes).
+Output written on poster_cvgtGCN.pdf (1 page, 1462333 bytes).
 PDF statistics:
  431 PDF objects out of 1000 (max. 8388607)
  120 compressed objects within 2 object streams
