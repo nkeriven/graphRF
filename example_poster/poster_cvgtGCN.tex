@@ -126,46 +126,52 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{column}{0.25\linewidth}
 \begin{myalertblock}{1: Summary}
-	The \textbf{graphlet kernel}is a classical method in graph classification. It however suffers from a high computation cost due to the isomorphism test it includes.  
+	The \textbf{graphlet kernel} [1] is a classical method in graph classification. It however suffers from a high computation cost due to the isomorphism test it includes.
 \begin{center}	
-\mycolbacksum{We propose to leverage \myemph{kernel random features} within the graphlet framework, and establish a theoretical link with the \myemph{MMD metric}. If this method can still be prohibitively costly for usual random features, we then incorporate \myemph{optical} random features that can be computed in \emph{constant time}.}
+\mycolbacksum{We propose to leverage \myemph{kernel random features} [3] within the graphlet framework, and establish a theoretical link with the \myemph{MMD metric}. If this method can still be prohibitively costly for usual random features, we then incorporate \myemph{optical random features} [2] that can be computed in \emph{constant time}.}
 \end{center}
 
 \end{myalertblock}
 \vsp 
 
 
-\begin{myalertblock}{3: Efficiency of $GSA-\varphi$ with  $\varphi_{RF}$ \emph{w.r.t.} the \myemph{MMD} metric.}
+\begin{myalertblock}{3: Efficiency of $GSA-\varphi$ with \myemph{kernel RF} \emph{w.r.t.} the \myemph{MMD} metric.}
 \vspace{0.3cm}
 \small 
 \begin{itemize}
 	\item $\kappa(\mathbf{x},\mathbf{x}')= \mathbb{E}_{\mathbf{w} \sim p}~ \xi_\mathbf{w}(\mathbf{x})^* \xi_\mathbf{w}(\mathbf{x}')$ (kernels with RFs).
 	\vsp
-	\item $\varphi_{RF}(\mathbf{x}) = \frac{1}{\sqrt{m}} ( \xi_{\mathbf{W}_j}(\mathbf{x}) )_{j=1}^m \Rightarrow\kappa(\mathbf{x},\mathbf{x}')\approx \varphi_{RF}(\mathbf{x})^*\varphi_{RF}(\mathbf{x}')$
+	\begin{equation*}
+		\textcolor{red}{\varphi_{RF}(\mathbf{x}) = \tfrac{1}{\sqrt{m}} ( \xi_{\mathbf{W}_j}(\mathbf{x}) )_{j=1}^m}
+	\end{equation*}
+	\item $\kappa(\mathbf{x},\mathbf{x}')\approx \varphi_{RF}(\mathbf{x})^*\varphi_{RF}(\mathbf{x}')$
 	\vsp 
 	\item  $\kappa_{GS}(\mathbf{x},\mathbf{x}')=\exp^{-\frac{\left \| \mathbf{x}-\mathbf{x}'\right\|^2}{2\sigma^2}} \Rightarrow \varphi_{GS}(\mathbf{x}) = \frac{\sqrt{2}}{\sqrt{m}} cos( \mathbf{W}^T\mathbf{x}+b )$
-
 \end{itemize}
 \vsp
 \mycolback{
 \textbf{Theorem}
 Let $\mathcal{G}$ and $\mathcal{G}'$ be two graphs.  Assume that $|\xi_\mathbf{w}(F)| \leq 1$.
 Then, for all $\delta>0$, with probability at least $1-\delta$:
-\begin{align*}
-	\Big|\textcolor{red}{\|\mathbf{z}_\mathcal{G} - \mathbf{z}_{\mathcal{G}'}\|^2 - MMD(\mathbf{f}_\mathcal{G},\mathbf{f}_{\mathcal{G}'})^2} \Big| \leq \\\frac{4 \sqrt{\log (6/\delta)}}{\sqrt{m}} + \frac{8\left(1+\sqrt{2\log(3/\delta)}\right)}{\sqrt{{s}}}
-\end{align*}
+\begin{equation*}
+	\Big|\textcolor{red}{\|\mathbf{z}_\mathcal{G} - \mathbf{z}_{\mathcal{G}'}\|^2 - MMD(\mathbf{f}_\mathcal{G},\mathbf{f}_{\mathcal{G}'})^2} \Big| \lesssim
+	\sqrt{\log(1/\delta)\textcolor{red}{\left(m^{-1} + s^{-1}\right)}}
+\end{equation*}
+\vspace{-1cm}
 }
-\vspace{1cm}
+\begin{itemize}
+	\item MMD is a true metric between \myemph{graphlet histograms}
+	\item \textbf{$m\approx s$ is still quite big for traditional RFs}
+\end{itemize}
 \end{myalertblock}
 
-\begin{myalertblock}{4: Incorporating \myemph{Optical random featurs}}
+\begin{myalertblock}{4: Incorporating \myemph{Optical random features}}
 	\vspace{0.3cm}
 	\mycolback{
 		\begin{itemize}
 			\item  ${\varphi}_{OPU}(\mathbf{x})=|\mathbf{Wx+b}|^2 ;~\mathbf{W}\in \mathbb{R}^{m\times d}, \mathbf{x}\in \mathbb{R}^d$
 			\vsp
-			\item  $m\mapsto\infty \Rightarrow$\\ 
-			$\quad {\varphi}_{OPU}(\mathbf{x_1})^T{\varphi}_{OPU}(\mathbf{x_2})\approx \kappa_{OPU}(\mathbf{x_1}, \mathbf{x_2})$
+			\item  ${\varphi}_{OPU}(\mathbf{x_1})^T{\varphi}_{OPU}(\mathbf{x_2})\approx \kappa_{OPU}(\mathbf{x_1}, \mathbf{x_2})$
 			\vsp
 			\item \myemph{Optical Processing Units (OPUs)} evaluate $\varphi_{OPU}$ in \myemph{$\mathcal{O} (1)$} in both input/output dimensions $(d,m)$.
 		\end{itemize}
@@ -200,10 +206,17 @@ Then, for all $\delta>0$, with probability at least $1-\delta$:
 			\parbox{0.35\textwidth}{
 				\large
 				\begin{itemize}
-					\item  \myemph{Exp. cost}:  $O\big(\tbinom{v}{k} N_k C^{\cong}_k\big)$
-					\vsp
-					\item Can be a bit reduced: $O(\textcolor{red}{s}N_k C^{\cong}_k)$
-					\vsp
+					\item  \myemph{Exp. cost}:  $O\big(\tbinom{v}{k} N_k C^{\cong}_k\big)$ \vsp
+					\begin{itemize}
+						\item {\small $N_k C^{\cong}_k$: cost of \myemph{graphlet matching}, doubly exponential in $k$}
+					\end{itemize}
+					\vsp\vsp
+					\item Sampling: $O(\textcolor{red}{s}N_k C^{\cong}_k)$ \vsp
+					\begin{itemize}
+						\item {\small $s$: number of \myemph{randomly sampled} subgraphs}
+						\item {\small can use different samplers: uniform, random walk...}
+					\end{itemize}
+					\vsp\vsp
 					\item Still \myemph{exponential}.
 				\end{itemize}
 			}
@@ -213,7 +226,7 @@ Then, for all $\delta>0$, with probability at least $1-\delta$:
 
 \vspace{1cm}
 \begin{itemize}
-	\item Replace the matching with \myemph{$\varphi:$ \{size-$k$ subgraphs\} $\mapsto\mathbb{R}^m$}
+	\item Replace \emph{graphlet matching} with a \myemph{generic map} \myemph{$\varphi:$ \{size-$k$ subgraphs\} $\mapsto\mathbb{R}^m$}
 \end{itemize}
 \vspace{1cm}
 \parbox{0.4\textwidth}{
@@ -223,11 +236,13 @@ Then, for all $\delta>0$, with probability at least $1-\delta$:
 \parbox{0.35\textwidth}{
 	\large
 	\begin{itemize}
-		\item  Gen. cost: $O(s C_{\varphi})$
-		\vsp
-		\item \textbf{Gaussian} map: $O(s m k^2)$
-		\vsp
-		\item \myemph{OPU map: $O(s)$}
+		\item  \textbf{Gen. cost: $O(s C_{\varphi})$}
+		\vsp\vsp
+		\item Graphlet: $C_\varphi = N_k C^{\cong}_k$
+		\vsp\vsp
+		\item Kernel RF [3]: $C_\varphi = m k^2$
+		\vsp\vsp
+		\item \myemph{Optical RF [2]: $C_\varphi = 1$}
 	\end{itemize}
 }
 
@@ -254,7 +269,7 @@ Then, for all $\delta>0$, with probability at least $1-\delta$:
 \vspace{0.5cm}
 
 \hspace*{.0\linewidth}\begin{minipage}{.99\linewidth}
-	\begin{mynotablock}{\textbf{$GSA-\varphi_{OPU}$ Vs. graphlet kernel and GCNs}}
+	\begin{mynotablock}{\textbf{$GSA-\varphi_{OPU}$ Vs. graphlet kernel and GNNs}}
 		\small
 		\begin{itemize}
 			\item Dataset: 300 graphs based on the stochastic block model.
