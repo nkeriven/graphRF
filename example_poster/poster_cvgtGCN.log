@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.11.25)  12 APR 2021 02:08
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.11.25)  19 APR 2021 17:49
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1729,17 +1729,17 @@ Package: beamerthemeinriaposter
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
 (hyperref)                \hskip 21.90005pt
-(hyperref)                replaced by space on input line 72.
+(hyperref)                replaced by space on input line 74.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
 (hyperref)                \hskip 21.90005pt
-(hyperref)                replaced by space on input line 72.
+(hyperref)                replaced by space on input line 74.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
 (hyperref)                \hskip 21.90005pt
-(hyperref)                replaced by space on input line 72.
+(hyperref)                replaced by space on input line 74.
 
 
 (/usr/local/texlive/2020/texmf-dist/tex/generic/pgf/libraries/pgflibraryarrows.
@@ -1771,48 +1771,48 @@ s.code.tex
 brarydecorations.pathreplacing.code.tex)) (./poster_cvgtGCN.aux)
 \openout1 = `poster_cvgtGCN.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/pxmi/m/it on input line 122.
+LaTeX Font Info:    Checking defaults for OML/pxmi/m/it on input line 124.
 LaTeX Font Info:    Trying to load font information for OML+pxmi on input line 
-122.
+124.
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/pxfonts/omlpxmi.fd
 File: omlpxmi.fd 2000/12/14 v1.0
 )
-LaTeX Font Info:    ... okay on input line 122.
-LaTeX Font Info:    Checking defaults for OMS/pxsy/m/n on input line 122.
+LaTeX Font Info:    ... okay on input line 124.
+LaTeX Font Info:    Checking defaults for OMS/pxsy/m/n on input line 124.
 LaTeX Font Info:    Trying to load font information for OMS+pxsy on input line 
-122.
+124.
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/pxfonts/omspxsy.fd
 File: omspxsy.fd 2000/12/14 v1.0
 )
-LaTeX Font Info:    ... okay on input line 122.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 122.
-LaTeX Font Info:    ... okay on input line 122.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 122.
-LaTeX Font Info:    ... okay on input line 122.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 122.
-LaTeX Font Info:    ... okay on input line 122.
-LaTeX Font Info:    Checking defaults for OMX/pxex/m/n on input line 122.
+LaTeX Font Info:    ... okay on input line 124.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 124.
+LaTeX Font Info:    ... okay on input line 124.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 124.
+LaTeX Font Info:    ... okay on input line 124.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 124.
+LaTeX Font Info:    ... okay on input line 124.
+LaTeX Font Info:    Checking defaults for OMX/pxex/m/n on input line 124.
 LaTeX Font Info:    Trying to load font information for OMX+pxex on input line 
-122.
+124.
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/pxfonts/omxpxex.fd
 File: omxpxex.fd 2000/12/14 v1.0
 )
-LaTeX Font Info:    ... okay on input line 122.
-LaTeX Font Info:    Checking defaults for U/pxexa/m/n on input line 122.
+LaTeX Font Info:    ... okay on input line 124.
+LaTeX Font Info:    Checking defaults for U/pxexa/m/n on input line 124.
 LaTeX Font Info:    Trying to load font information for U+pxexa on input line 1
-22.
+24.
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/pxfonts/upxexa.fd
 File: upxexa.fd 2000/12/14 v1.0
 )
-LaTeX Font Info:    ... okay on input line 122.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 122.
-LaTeX Font Info:    ... okay on input line 122.
+LaTeX Font Info:    ... okay on input line 124.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 124.
+LaTeX Font Info:    ... okay on input line 124.
 LaTeX Font Info:    Trying to load font information for OT1+lmss on input line 
-122.
+124.
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/ot1lmss.fd
 File: ot1lmss.fd 2009/10/30 v1.6 Font defs for Latin Modern
@@ -1875,7 +1875,7 @@ e
 ))
 ABD: EveryShipout initializing macros
 \AtBeginShipoutBox=\box92
-Package hyperref Info: Link coloring OFF on input line 122.
+Package hyperref Info: Link coloring OFF on input line 124.
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
@@ -1889,55 +1889,55 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count371
 )
-LaTeX Info: Redefining \ref on input line 122.
-LaTeX Info: Redefining \pageref on input line 122.
-LaTeX Info: Redefining \nameref on input line 122.
+LaTeX Info: Redefining \ref on input line 124.
+LaTeX Info: Redefining \pageref on input line 124.
+LaTeX Info: Redefining \nameref on input line 124.
  (./poster_cvgtGCN.out) (./poster_cvgtGCN.out)
 \@outlinefile=\write6
 \openout6 = `poster_cvgtGCN.out'.
 
 LaTeX Font Info:    Overwriting symbol font `operators' in version `normal'
-(Font)                  OT1/pxss/m/n --> OT1/cmss/m/n on input line 122.
+(Font)                  OT1/pxss/m/n --> OT1/cmss/m/n on input line 124.
 LaTeX Font Info:    Overwriting symbol font `operators' in version `bold'
-(Font)                  OT1/pxss/b/n --> OT1/cmss/b/n on input line 122.
+(Font)                  OT1/pxss/b/n --> OT1/cmss/b/n on input line 124.
 \symnumbers=\mathgroup10
 \sympureletters=\mathgroup11
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `normal'
-(Font)                  OT1/cmss/m/n --> OT1/pxr/m/n on input line 122.
-LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 122.
+(Font)                  OT1/cmss/m/n --> OT1/pxr/m/n on input line 124.
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 124.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `normal'
-(Font)                  OT1/pxr/b/n --> OT1/lmss/b/n on input line 122.
+(Font)                  OT1/pxr/b/n --> OT1/lmss/b/n on input line 124.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/pxr/b/n --> OT1/lmss/b/n on input line 122.
-LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 122.
+(Font)                  OT1/pxr/b/n --> OT1/lmss/b/n on input line 124.
+LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 124.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `normal'
-(Font)                  OT1/pxss/m/n --> OT1/lmss/m/n on input line 122.
+(Font)                  OT1/pxss/m/n --> OT1/lmss/m/n on input line 124.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/pxss/b/n --> OT1/lmss/m/n on input line 122.
-LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 122.
+(Font)                  OT1/pxss/b/n --> OT1/lmss/m/n on input line 124.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 124.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `normal'
-(Font)                  OT1/pxr/m/it --> OT1/lmss/m/it on input line 122.
+(Font)                  OT1/pxr/m/it --> OT1/lmss/m/it on input line 124.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/pxr/b/it --> OT1/lmss/m/it on input line 122.
-LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 122.
+(Font)                  OT1/pxr/b/it --> OT1/lmss/m/it on input line 124.
+LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 124.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `normal'
-(Font)                  OT1/pxtt/m/n --> OT1/pxtt/m/n on input line 122.
+(Font)                  OT1/pxtt/m/n --> OT1/pxtt/m/n on input line 124.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/pxtt/b/n --> OT1/pxtt/m/n on input line 122.
+(Font)                  OT1/pxtt/b/n --> OT1/pxtt/m/n on input line 124.
 LaTeX Font Info:    Overwriting symbol font `numbers' in version `bold'
-(Font)                  OT1/lmss/m/n --> OT1/lmss/b/n on input line 122.
+(Font)                  OT1/lmss/m/n --> OT1/lmss/b/n on input line 124.
 LaTeX Font Info:    Overwriting symbol font `pureletters' in version `bold'
-(Font)                  OT1/lmss/m/it --> OT1/lmss/b/it on input line 122.
+(Font)                  OT1/lmss/m/it --> OT1/lmss/b/it on input line 124.
 LaTeX Font Info:    Overwriting math alphabet `\mathrm' in version `bold'
-(Font)                  OT1/cmss/b/n --> OT1/pxr/b/n on input line 122.
+(Font)                  OT1/cmss/b/n --> OT1/pxr/b/n on input line 124.
 LaTeX Font Info:    Overwriting math alphabet `\mathbf' in version `bold'
-(Font)                  OT1/lmss/b/n --> OT1/lmss/b/n on input line 122.
+(Font)                  OT1/lmss/b/n --> OT1/lmss/b/n on input line 124.
 LaTeX Font Info:    Overwriting math alphabet `\mathsf' in version `bold'
-(Font)                  OT1/lmss/m/n --> OT1/lmss/b/n on input line 122.
+(Font)                  OT1/lmss/m/n --> OT1/lmss/b/n on input line 124.
 LaTeX Font Info:    Overwriting math alphabet `\mathit' in version `bold'
-(Font)                  OT1/lmss/m/it --> OT1/lmss/b/it on input line 122.
+(Font)                  OT1/lmss/m/it --> OT1/lmss/b/it on input line 124.
 LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
-(Font)                  OT1/pxtt/m/n --> OT1/pxtt/b/n on input line 122.
+(Font)                  OT1/pxtt/m/n --> OT1/pxtt/b/n on input line 124.
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/translator/translator-basic-dicti
 onary-English.dict
@@ -1963,221 +1963,221 @@ Dictionary: translator-numbers-dictionary, Language: English
 tionary-English.dict
 Dictionary: translator-theorem-dictionary, Language: English 
 ) ABD: EverySelectfont initializing macros
-LaTeX Info: Redefining \selectfont on input line 122.
+LaTeX Info: Redefining \selectfont on input line 124.
 
 (./poster_cvgtGCN.nav)
 <./img/logos/cnrs.png, id=13, 894.34125pt x 894.34125pt>
 File: ./img/logos/cnrs.png Graphic file (type png)
 <use ./img/logos/cnrs.png>
-Package pdftex.def Info: ./img/logos/cnrs.png  used on input line 122.
+Package pdftex.def Info: ./img/logos/cnrs.png  used on input line 124.
 (pdftex.def)             Requested size: 170.7181pt x 170.71652pt.
-LaTeX Font Info:    Calculating math sizes for size <18> on input line 122.
+LaTeX Font Info:    Calculating math sizes for size <18> on input line 124.
 LaTeX Font Info:    Trying to load font information for U+zeur on input line 12
-2.
+4.
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/eulervm/uzeur.fd
 File: uzeur.fd 2005/01/11 v4.0 (WaS)
 )
 LaTeX Font Info:    Trying to load font information for U+zeus on input line 12
-2.
+4.
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/eulervm/uzeus.fd
 File: uzeus.fd 2005/01/11 v4.0 (WaS)
 )
 LaTeX Font Info:    Trying to load font information for U+zeuex on input line 1
-22.
+24.
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/eulervm/uzeuex.fd
 File: uzeuex.fd 2005/01/11 v4.0 (WaS)
 )
 LaTeX Font Info:    Trying to load font information for U+pxsya on input line 1
-22.
+24.
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/pxfonts/upxsya.fd
 File: upxsya.fd 2000/12/14 v1.0
 )
 LaTeX Font Info:    Trying to load font information for U+pxsyb on input line 1
-22.
+24.
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/pxfonts/upxsyb.fd
 File: utxsyb.fd 2000/12/14 v1.0
 )
 LaTeX Font Info:    Trying to load font information for OT1+pxr on input line 1
-22.
+24.
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/pxfonts/ot1pxr.fd
 File: ot1pxr.fd 2000/12/14 v1.0
 )
 LaTeX Font Info:    Trying to load font information for U+pxmia on input line 1
-22.
+24.
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/pxfonts/upxmia.fd
 File: upxmia.fd 2000/12/14 v1.0
 )
 LaTeX Font Info:    Trying to load font information for U+pxsyc on input line 1
-22.
+24.
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/pxfonts/upxsyc.fd
 File: upxsyc.fd 2000/12/14 v1.0
 )
 LaTeX Font Info:    Font shape `OT1/lmss/m/it' in size <18> not available
-(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 122.
+(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 124.
 
 LaTeX Font Info:    Font shape `OT1/lmss/m/it' in size <12.59995> not available
 
-(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 122.
+(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 124.
 
 LaTeX Font Info:    Font shape `OT1/lmss/m/it' in size <9> not available
-(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 122.
+(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 124.
 
 <./img/logos/logo-gipsa-bas-BD_transparent.png, id=14, 280.04625pt x 193.72375p
 t>
 File: ./img/logos/logo-gipsa-bas-BD_transparent.png Graphic file (type png)
 <use ./img/logos/logo-gipsa-bas-BD_transparent.png>
 Package pdftex.def Info: ./img/logos/logo-gipsa-bas-BD_transparent.png  used on
- input line 122.
+ input line 124.
 (pdftex.def)             Requested size: 246.79184pt x 170.71652pt.
 <./img/logos/PERSYVAL.png, id=16, 117.5592pt x 30.3534pt>
 File: ./img/logos/PERSYVAL.png Graphic file (type png)
 <use ./img/logos/PERSYVAL.png>
-Package pdftex.def Info: ./img/logos/PERSYVAL.png  used on input line 122.
+Package pdftex.def Info: ./img/logos/PERSYVAL.png  used on input line 124.
 (pdftex.def)             Requested size: 440.81717pt x 113.81102pt.
 LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 3
-20.
+37.
 
 (/usr/local/texlive/2020/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 
 LaTeX Font Warning: Font shape `OT1/lmss/m/sc' in size <37.32> not available
-(Font)              Font shape `OT1/lmr/m/sc' tried instead on input line 320.
+(Font)              Font shape `OT1/lmr/m/sc' tried instead on input line 337.
 
 
 LaTeX Font Warning: Font shape `OT1/lmss/bx/sc' undefined
-(Font)              using `OT1/lmss/bx/n' instead on input line 320.
+(Font)              using `OT1/lmss/bx/n' instead on input line 337.
 
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 320.
+(mdframed)              on input line 337.
 LaTeX Font Info:    Font shape `OT1/lmss/m/it' in size <37.32> not available
-(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 337.
 
 Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 320.
-LaTeX Font Info:    Calculating math sizes for size <37.32> on input line 320.
+ mdframed uses option nobreak mdframed on input line 337.
+LaTeX Font Info:    Calculating math sizes for size <37.32> on input line 337.
 LaTeX Font Info:    Font shape `OT1/lmss/m/it' in size <26.12389> not available
 
-(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 337.
 
 LaTeX Font Info:    Font shape `OT1/lmss/m/it' in size <18.66> not available
-(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 337.
 
-LaTeX Font Info:    Calculating math sizes for size <44.79> on input line 320.
+LaTeX Font Info:    Calculating math sizes for size <44.79> on input line 337.
 LaTeX Font Info:    Font shape `OT1/lmss/m/it' in size <44.79> not available
-(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 337.
 
 LaTeX Font Info:    Font shape `OT1/lmss/m/it' in size <31.35284> not available
 
-(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 337.
 
 LaTeX Font Info:    Font shape `OT1/lmss/m/it' in size <22.39499> not available
 
-(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 337.
 
 
 LaTeX Font Warning: Font shape `OT1/lmss/bx/scit' undefined
-(Font)              using `OT1/lmss/bx/it' instead on input line 320.
+(Font)              using `OT1/lmss/bx/it' instead on input line 337.
 
 LaTeX Font Info:    Font shape `OT1/lmss/bx/it' in size <44.79> not available
-(Font)              Font shape `OT1/lmss/bx/sl' tried instead on input line 320
+(Font)              Font shape `OT1/lmss/bx/sl' tried instead on input line 337
 .
-LaTeX Font Info:    Calculating math sizes for size <31.11> on input line 320.
+LaTeX Font Info:    Calculating math sizes for size <31.11> on input line 337.
 LaTeX Font Info:    Font shape `OT1/lmss/m/it' in size <31.11> not available
-(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 337.
 
 LaTeX Font Info:    Font shape `OT1/lmss/m/it' in size <21.7769> not available
-(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 337.
 
 LaTeX Font Info:    Font shape `OT1/lmss/m/it' in size <15.555> not available
-(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 337.
 
 LaTeX Font Info:    Font shape `OT1/lmss/b/n' in size <31.11> not available
-(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 337.
 
 LaTeX Font Info:    Font shape `OT1/lmss/b/n' in size <21.7769> not available
-(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 337.
 
 LaTeX Font Info:    Font shape `OT1/lmss/b/n' in size <15.555> not available
-(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 337.
 
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 320.
+(mdframed)              on input line 337.
 Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 320.
+ mdframed uses option nobreak mdframed on input line 337.
 Package mdframed Info: mdframed detected package amsthm 
  changed the theorem header of amsthm
-(mdframed)              on input line 320.
+(mdframed)              on input line 337.
 LaTeX Font Info:    Font shape `OT1/lmss/b/n' in size <37.32> not available
-(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 337.
 
 LaTeX Font Info:    Font shape `OT1/lmss/b/n' in size <26.12389> not available
-(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 337.
 
 LaTeX Font Info:    Font shape `OT1/lmss/b/n' in size <18.66> not available
-(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 337.
 
 Package mdframed Info: mdframed inside a box 
- mdframed uses option nobreak mdframed on input line 320.
+ mdframed uses option nobreak mdframed on input line 337.
 <figs/opu.png, id=23, 925.4575pt x 621.32124pt>
 File: figs/opu.png Graphic file (type png)
 <use figs/opu.png>
-Package pdftex.def Info: figs/opu.png  used on input line 320.
+Package pdftex.def Info: figs/opu.png  used on input line 337.
 (pdftex.def)             Requested size: 581.6714pt x 390.51485pt.
 LaTeX Font Info:    Font shape `OT1/lmss/b/n' in size <44.79> not available
-(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 337.
 
 LaTeX Font Info:    Font shape `OT1/lmss/b/n' in size <31.35284> not available
-(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 337.
 
 LaTeX Font Info:    Font shape `OT1/lmss/b/n' in size <22.39499> not available
-(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 337.
 
 <figs/subgraphs.pdf, id=24, 515.28864pt x 141.31631pt>
 File: figs/subgraphs.pdf Graphic file (type pdf)
 <use figs/subgraphs.pdf>
-Package pdftex.def Info: figs/subgraphs.pdf  used on input line 320.
+Package pdftex.def Info: figs/subgraphs.pdf  used on input line 337.
 (pdftex.def)             Requested size: 1037.5096pt x 284.52756pt.
 <figs/gk.pdf, id=25, 492.13925pt x 377.60344pt>
 File: figs/gk.pdf Graphic file (type pdf)
 <use figs/gk.pdf>
-Package pdftex.def Info: figs/gk.pdf  used on input line 320.
+Package pdftex.def Info: figs/gk.pdf  used on input line 337.
 (pdftex.def)             Requested size: 927.17435pt x 711.3189pt.
 
-Overfull \hbox (334.87386pt too wide) in paragraph at lines 320--320
+Overfull \hbox (334.87386pt too wide) in paragraph at lines 337--337
 [][] 
  []
 
 
-Overfull \hbox (1.11711pt too wide) in paragraph at lines 320--320
+Overfull \hbox (1.11711pt too wide) in paragraph at lines 337--337
  []| $[]$  
  []
 
 LaTeX Font Info:    Trying to load font information for OMS+lmss on input line 
-320.
-LaTeX Font Info:    No file OMSlmss.fd. on input line 320.
+337.
+LaTeX Font Info:    No file OMSlmss.fd. on input line 337.
 
 LaTeX Font Warning: Font shape `OMS/lmss/m/n' undefined
 (Font)              using `OMS/pxsy/m/n' instead
-(Font)              for symbol `textbraceleft' on input line 320.
+(Font)              for symbol `textbraceleft' on input line 337.
 
 <figs/GSA_phi.pdf, id=26, 489.43338pt x 359.59761pt>
 File: figs/GSA_phi.pdf Graphic file (type pdf)
 <use figs/GSA_phi.pdf>
-Package pdftex.def Info: figs/GSA_phi.pdf  used on input line 320.
+Package pdftex.def Info: figs/GSA_phi.pdf  used on input line 337.
 (pdftex.def)             Requested size: 968.23718pt x 711.3189pt.
 
-Overfull \hbox (369.95717pt too wide) in paragraph at lines 320--320
+Overfull \hbox (369.95717pt too wide) in paragraph at lines 337--337
 [][] 
  []
 
@@ -2187,7 +2187,7 @@ File: figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf Graphic file (type p
 df)
 <use figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf>
 Package pdftex.def Info: figs/LightOn_adj_SBM_similarity_graphlet_size_RW.pdf  
-used on input line 320.
+used on input line 337.
 (pdftex.def)             Requested size: 429.41447pt x 283.08276pt.
 <figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf, id=34, 412.52245pt x 271.93
 407pt>
@@ -2195,71 +2195,67 @@ File: figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf Graphic file (type pdf)
 
 <use figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf>
 Package pdftex.def Info: figs/LightOn_adj_SBM_Similarity_graphlet_size.pdf  use
-d on input line 320.
+d on input line 337.
 (pdftex.def)             Requested size: 429.41447pt x 283.08276pt.
 
-Overfull \hbox (6.43248pt too wide) in paragraph at lines 320--320
+Overfull \hbox (6.43248pt too wide) in paragraph at lines 337--337
  []| $[]$ 
  []
 
 <figs/phi_comparison.pdf, id=35, 412.52245pt x 272.31047pt>
 File: figs/phi_comparison.pdf Graphic file (type pdf)
 <use figs/phi_comparison.pdf>
-Package pdftex.def Info: figs/phi_comparison.pdf  used on input line 320.
+Package pdftex.def Info: figs/phi_comparison.pdf  used on input line 337.
 (pdftex.def)             Requested size: 429.41447pt x 283.47458pt.
 <figs/computational_comp.pdf, id=36, 407.17433pt x 274.43275pt>
 File: figs/computational_comp.pdf Graphic file (type pdf)
 <use figs/computational_comp.pdf>
-Package pdftex.def Info: figs/computational_comp.pdf  used on input line 320.
+Package pdftex.def Info: figs/computational_comp.pdf  used on input line 337.
 (pdftex.def)             Requested size: 429.41447pt x 289.43169pt.
 
-Overfull \hbox (6.43248pt too wide) in paragraph at lines 320--320
+Overfull \hbox (6.43248pt too wide) in paragraph at lines 337--337
  []| $[]$ 
  []
 
 <figs/DD.pdf, id=37, 404.85316pt x 272.31047pt>
 File: figs/DD.pdf Graphic file (type pdf)
 <use figs/DD.pdf>
-Package pdftex.def Info: figs/DD.pdf  used on input line 320.
+Package pdftex.def Info: figs/DD.pdf  used on input line 337.
 (pdftex.def)             Requested size: 429.41447pt x 288.83469pt.
 <figs/Reddit.pdf, id=38, 404.85316pt x 272.31047pt>
 File: figs/Reddit.pdf Graphic file (type pdf)
 <use figs/Reddit.pdf>
-Package pdftex.def Info: figs/Reddit.pdf  used on input line 320.
+Package pdftex.def Info: figs/Reddit.pdf  used on input line 337.
 (pdftex.def)             Requested size: 429.41447pt x 288.83469pt.
 
-Overfull \hbox (6.43248pt too wide) in paragraph at lines 320--320
+Overfull \hbox (6.43248pt too wide) in paragraph at lines 337--337
  []| $[]$  
  []
 
 LaTeX Font Info:    Font shape `OT1/lmss/m/it' in size <25.92> not available
-(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 320.
-
-
-Overfull \vbox (19.55411pt too high) detected at line 320
- []
+(Font)              Font shape `OT1/lmss/m/sl' tried instead on input line 337.
 
 File: ./img/logos/cnrs.png Graphic file (type png)
 <use ./img/logos/cnrs.png>
-Package pdftex.def Info: ./img/logos/cnrs.png  used on input line 320.
+Package pdftex.def Info: ./img/logos/cnrs.png  used on input line 337.
 (pdftex.def)             Requested size: 170.7181pt x 170.71652pt.
 LaTeX Font Info:    Font shape `OT1/lmss/b/n' in size <18> not available
-(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 337.
 
 LaTeX Font Info:    Font shape `OT1/lmss/b/n' in size <12.59995> not available
-(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 337.
 
 LaTeX Font Info:    Font shape `OT1/lmss/b/n' in size <9> not available
-(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 320.
+(Font)              Font shape `OT1/lmss/bx/n' tried instead on input line 337.
 
 File: ./img/logos/logo-gipsa-bas-BD_transparent.png Graphic file (type png)
 <use ./img/logos/logo-gipsa-bas-BD_transparent.png>
 Package pdftex.def Info: ./img/logos/logo-gipsa-bas-BD_transparent.png  used on
- input line 320.
+ input line 337.
 (pdftex.def)             Requested size: 246.79184pt x 170.71652pt.
 File: ./img/logos/PERSYVAL.png Graphic file (type png)
 <use ./img/logos/PERSYVAL.png>
-Package pdftex.def Info: ./img/logos/PERSYVAL.png  used on input line 320.
+Package pdftex.def Info: ./img/logos/PERSYVAL.png  used on input line 337.
 (pdftex.def)             Requested size: 440.81717pt x 113.81102pt.
 [1{/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
@@ -2308,11 +2304,11 @@ usion: multiple pdfs with page group included in a single page
 \tf@snm=\write9
 \openout9 = `poster_cvgtGCN.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 321.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 321.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 338.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 338.
  (./poster_cvgtGCN.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 321.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 321.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 338.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 338.
 Package rerunfilecheck Info: File `poster_cvgtGCN.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
 
@@ -2321,33 +2317,32 @@ LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
  ) 
 Here is how much of TeX's memory you used:
- 27373 strings out of 480608
- 534963 string characters out of 5903629
- 905848 words of memory out of 5000000
- 42478 multiletter control sequences out of 15000+600000
- 698068 words of font info for 244 fonts, out of 8000000 for 9000
+ 27397 strings out of 480608
+ 535775 string characters out of 5903629
+ 912364 words of memory out of 5000000
+ 42504 multiletter control sequences out of 15000+600000
+ 697666 words of font info for 242 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 58i,23n,73p,841b,1366s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 58i,20n,73p,841b,1367s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}</usr/local/
 texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/t
 exlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmss17.pfb></usr/local/te
 xlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/tex
-live/2020/texmf-dist/fonts/type1/public/amsfonts/euler/euex10.pfb></usr/local/t
-exlive/2020/texmf-dist/fonts/type1/public/amsfonts/euler/eufm10.pfb></usr/local
-/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/euler/eurm10.pfb></usr/loc
-al/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/euler/eusm10.pfb></usr/l
-ocal/texlive/2020/texmf-dist/fonts/type1/public/lm/lmss17.pfb></usr/local/texli
-ve/2020/texmf-dist/fonts/type1/public/lm/lmssbo10.pfb></usr/local/texlive/2020/
-texmf-dist/fonts/type1/public/lm/lmssbx10.pfb></usr/local/texlive/2020/texmf-di
-st/fonts/type1/public/lm/lmsso17.pfb></usr/local/texlive/2020/texmf-dist/fonts/
-type1/public/pxfonts/pxsy.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/p
-ublic/pxfonts/pxsya.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/
-pxfonts/pxsyb.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/pxfont
-s/pxsyc.pfb>
-Output written on poster_cvgtGCN.pdf (1 page, 1462333 bytes).
+live/2020/texmf-dist/fonts/type1/public/amsfonts/euler/eufm10.pfb></usr/local/t
+exlive/2020/texmf-dist/fonts/type1/public/amsfonts/euler/eurm10.pfb></usr/local
+/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/euler/eusm10.pfb></usr/loc
+al/texlive/2020/texmf-dist/fonts/type1/public/lm/lmss17.pfb></usr/local/texlive
+/2020/texmf-dist/fonts/type1/public/lm/lmssbo10.pfb></usr/local/texlive/2020/te
+xmf-dist/fonts/type1/public/lm/lmssbx10.pfb></usr/local/texlive/2020/texmf-dist
+/fonts/type1/public/lm/lmsso17.pfb></usr/local/texlive/2020/texmf-dist/fonts/ty
+pe1/public/pxfonts/pxsy.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/pub
+lic/pxfonts/pxsya.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/px
+fonts/pxsyb.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/public/pxfonts/
+pxsyc.pfb>
+Output written on poster_cvgtGCN.pdf (1 page, 1460110 bytes).
 PDF statistics:
- 431 PDF objects out of 1000 (max. 8388607)
- 120 compressed objects within 2 object streams
+ 427 PDF objects out of 1000 (max. 8388607)
+ 117 compressed objects within 2 object streams
  3 named destinations out of 1000 (max. 500000)
  144 words of extra memory for PDF output out of 10000 (max. 10000000)
 

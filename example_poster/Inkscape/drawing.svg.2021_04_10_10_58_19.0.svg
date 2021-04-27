@@ -12,8 +12,8 @@
    inkscape:version="1.0.2 (e86c8708, 2021-01-15)"
    id="svg8"
    version="1.1"
-   viewBox="0 0 172.96715 132.71805"
-   height="132.71805mm"
+   viewBox="0 0 172.96715 132.71243"
+   height="132.71243mm"
    width="172.96716mm">
   <defs
      id="defs2">
@@ -296,10 +296,10 @@
        only_selected="false" />
     <inkscape:perspective
        sodipodi:type="inkscape:persp3d"
-       inkscape:vp_x="0 : -15.781958 : 1"
-       inkscape:vp_y="0 : 1000 : 0"
-       inkscape:vp_z="209.99998 : -15.781958 : 1"
-       inkscape:persp3d-origin="104.99999 : -65.281959 : 1"
+       inkscape:vp_x="0 : -15.787572 : 1"
+       inkscape:vp_y="0 : 999.99994 : 0"
+       inkscape:vp_z="209.99996 : -15.787572 : 1"
+       inkscape:persp3d-origin="104.99998 : -65.28757 : 1"
        id="perspective28026" />
     <inkscape:path-effect
        effect="bspline"
@@ -2157,8 +2157,8 @@
     <inkscape:grid
        type="xygrid"
        id="grid1147"
-       originx="-44.712269"
-       originy="-143.54359" />
+       originx="-44.712263"
+       originy="-143.54358" />
   </sodipodi:namedview>
   <metadata
      id="metadata5">
@@ -2168,7 +2168,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -8925,7 +8925,7 @@
      id="layer9"
      inkscape:label="GSA_phi"
      style="display:none"
-     transform="translate(0.81043365)"
+     transform="translate(0.810434)"
      sodipodi:insensitive="true">
     <path
        style="display:inline;fill:none;stroke:#000000;stroke-width:0.410308;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -10675,7 +10675,7 @@
      inkscape:label="classifier"
      sodipodi:insensitive="true"
      style="display:none"
-     transform="translate(3.0919247)">
+     transform="translate(3.0919251)">
     <g
        id="g170532"
        transform="matrix(1.1000859,0,0,0.99839079,-1.9863362,0.0370063)">
