@@ -1,2 +1,0 @@
-- [ ] The justification of the failure of state-of-art GNNs classifying Graphs without node features  (same case of SBM model) exists in this course (https://www.youtube.com/watch?v=H6oOhElB3yE). Specifically, the beginning of the video and at time [37:36]
-- [ ] you can find refs about entire graph embeddings in report\REFs.jpg
