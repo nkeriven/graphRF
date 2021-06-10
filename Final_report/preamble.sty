@@ -1,0 +1,169 @@
+% Modify this file to complete your dissertation
+\ProvidesPackage{preamble}
+
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{bbm}
+\usepackage{ifpdf}
+\usepackage{float}
+\usepackage{fancyhdr}
+
+
+
+\ifpdf
+  \usepackage[pdftex]{graphicx}
+\else
+  \usepackage[dvips]{graphicx}
+\fi
+\usepackage{subcaption}
+
+\usepackage{afterpage}
+\usepackage{rotating}
+%\usepackage{subfigure}
+% Change the CLASS FILE from WSUclass to bookbinding (and edit class file names accordingly) after your thesis is turned in electronically so you can get your dissertation bound and don't forget to change the above from oneside to twoside!!!!!!!!!!!!!!
+\usepackage{fancyhdr}
+  \fancyfoot[C,CO]{\textbf{\thepage}}
+  \pagestyle{plain}
+  \renewcommand{\chaptermark}[1]{\markboth{\chaptername \ \thechapter \ \ #1}{}}
+  \renewcommand{\sectionmark}[1]{\markright{\thesection \ \ #1}}
+
+% The caption package allows us to change the formatting of figure captions.
+% The commands here change to the suggested caption format: single spaced and a bold tag
+\usepackage[margin=0.3in,labelfont=bf,labelsep=none]{caption}
+ \DeclareCaptionFormat{suggested}{\singlespace#1#2 #3\par\doublespace}
+ \captionsetup{format=suggested}
+
+% The cite package cleans up the way citations are handled.  For example, it
+% changes the citation [1,2,3,6,7,8,9,10,11] into [1-3,6-11].  If your advisor
+% wants superscript citations, use the overcite package instead of the cite package.
+%\usepackage{cite}
+
+% The makeidx package makes your index for you.  To make an index entry,
+% go to the place in the book that should be referenced and type
+%  \index{key}
+% An index entry labeled "key" (or whatever you type) will then
+% be included and point to the correct page.
+\usepackage{makeidx}
+
+
+\makeindex
+
+% The url package allows for the nice typesetting of URLs.  Since URLs are often
+% long with no spaces, they mess up line wrapping.  The command \url{http://www.physics.byu.edu}
+% allows LaTeX to break the url across lines at appropriate places: e.g. http://www.physics.byu.edu
+\usepackage{url}
+\urlstyle{rm}
+
+% The hyperref package provides automatic linking and bookmarking for the table
+% of contents, index, equation references, and figure references.
+%
+% To include a link in your pdf use \href{URL}{Text to be displayed}.  If your
+% display text is the URL, you probably should use the \url{} command discussed
+% above.
+%
+% To add a bookmark in the pdf you can use \pdfbookmark.  You can look up its usage
+% in the hyperref package documentation
+\usepackage[bookmarksnumbered,pdfpagelabels=true,plainpages=false,colorlinks=true,
+            linkcolor=black,citecolor=black,urlcolor=blue]{hyperref}
+            
+            
+            
+% algorithm framework package             
+\usepackage[linesnumbered,ruled,vlined]{algorithm2e}
+\newcommand\mycommfont[1]{\footnotesize\ttfamily\textcolor{blue}{#1}}
+\SetCommentSty{mycommfont}
+
+\SetKwInput{KwInput}{Input}                % Set the Input
+\SetKwInput{KwOutput}{Output}              % set the Output
+\SetKw{Hyp}{Hyperparameters}
+\SetKw{Algo}{Algorithm}
+\SetKw{tools}{Tools}        
+
+%   \makepreliminarypages : Makes the preliminary pages
+%   \clearemptydoublepage : same as \cleardoublepage but doesn't put page numbers
+%                           on blank intervening pages
+%   \singlespace          : switch to single spaced lines
+%   \doublespace          : switch to double spaced lines
+\newcommand{\bibs}{DissertationRefs}
+\newcommand{\comments}[1]{}
+\newcommand{\R}[0]{\mathbb{R}}
+\newcommand{\phlet}[0]{\mathcal{H}}
+\newcommand{\G}[0]{\mathcal{G}}
+\newcommand{\V}[0]{\mathcal{V}}
+\newcommand{\E}[0]{\mathcal{E}}
+\newcommand{\K}[0]{\mathcal{K}}
+\newcommand{\F}[0]{\mathfrak{F}}
+\newcommand{\todome}[1]{\textbf{\textcolor{green}{Hashem: #1}}}
+
+
+
+% ==================================================== %
+%                                                      %
+%   Fill in these fields for the preliminary pages     %
+%                                                      %
+% ==================================================== %
+
+% For Senior and honors this is the year and month that you submit the thesis
+% For Masters and PhD, this is your graduation date
+  \Year{2020}
+  \Month{June}
+  \Author{GHANEM Hashem}
+  \University{Grenoble Institute of Technology}
+  \Department{Gipsa lab}
+  \DegreeShort{MSc.}
+
+% If you have a long title, split it between two lines. The \TitleBottom field defines the second line
+
+  \TitleTop{Large-Scale Learning on Graphs}
+  \TitleMiddle{}
+  \TitleBottom{ }
+
+% Your research advisor
+  \Advisor{Nicolas Keriven \\ Nicolas Tremblay }
+  \AdvisorTitle{Ph.D.}
+
+% The representative of the department who will approve your thesis (usually the chair) THIS DOESN'T MATTER FOR WSU
+  \DepRep{}
+  \DepRepTitle{}
+
+% Acknowledge those who helped and supported you
+  \Acknowledgments{
+I would like to thank the following people, without whom I would not have been
+able to complete this research, and without whom I would not have made it through my masters degree.
+
+My internship supervisors Nicolas KERIVEN and Nicolas TREMBLAY whose insight and knowledge in the subject helped me tremendously especially during the hard time that the whole world went through. The support they provided was much more than what I was expecting from any prospective supervisor.
+
+Prof. Ronald PHLYPO my school supervisor for his kindness throughout the whole thing.
+
+ LightOn company for their collaboration and the free access to their OPUs that they provided and more specifically their technical team members for their hard work solving technical problems while providing a user-friendly platform.
+
+Lastly I would like to thank PERSYVAL-LAB for their scholarship offer that made everything possible, and without whom I wouldn't be writing this in the first place.
+}
+
+
+% The text of your abstract
+% Known bugs
+%   Having a tiny bit of the abstract spill to second page defeats page number removal.
+%   Workaround: make the abstract a little longer or a little shorter.
+%
+  \Abstract{
+  Graph classification is a problem that has its applications in many domains: social networks, biology, etc. To solve this problem, graph kernel machines are an elegant and efficient option. However, some kernels, especially the well-known graphlet kernel, have the drawback of high computation cost. Where for graphlet kernel to process a graph, an exhaustive enumeration of all its sub-graphs of a specific size, usually small, must be extracted, then a function we refer to as the matching function is applied on each subgraph. In fact, the exhaustive enumeration and the matching function are the reason behind the high computation cost. Graph sampling techniques are functions that randomly choose a pre-determined number of nodes from a graph, then they extract the sub-graph these nodes induce. To enhance the computation cost of the graphlet kernel, such techniques are used to sample a reasonable number of sub-graphs instead of the exhaustive enumeration. However, the matching function is still applied on each sampled sub-graph, which represents the main bottle neck here. That's because there is no method to evaluate it in a polynomial time of input's dimension. Starting from the point of graphlet kernel with graph sampling, we propose to replace the counting function with another user-defined function, the latter should be efficient and faster. 
+  
+  In this project, we propose to replace the matching function with random feature maps. More specifically, the  maps we suggest are randomized functions whose inner product's expectation define a valid kernel. One of these random feature maps is the optical random features, which given an input, the output is computed in light speed. This is done using a coherent laser, light modulator to encrypt the input, opaque material for randomization and a camera to acquire the output. For our algorithm, we define the corresponding mean kernel accompanied with the maximum mean discrepancy metric. Then we theoretically show a concentration of the  algorithm around this metric. On the practical side, we run the necessary experiments that prove the competitive performance, test accuracy, of our algorithm especially when using optical random features. This is when compared to the traditional graphlet kernel and to a model of graph convolutional networks on graph classification. More importantly, our experiments show that the proposed algorithm with the optical random features is indeed $O(1)$ in the input dimensionality, \emph{i.e.} its computation cost is not a function of this dimensionality.
+  }
+  
+
+% The text of your dedication
+% This page is OPTIONAL. To remove, comment out \dedicationpage in diss.tex
+  \Dedication{
+}
+
+
+% ------------- These remaining fields are only necessary for masters and PhD ----------------------
+
+% The members of your graduate committee (masters only need A and B, PhD need all 4)
+  \MemberA{}
+  \MemberATitle{}
+  \MemberB{}
+  \MemberBTitle{}
